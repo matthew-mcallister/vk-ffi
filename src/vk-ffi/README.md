@@ -31,9 +31,9 @@ frameworks, libraries, and applications using Rust.
 
 ## Versioning
 
-The current versioning scheme is `0.x.yy`, where `x` is the library
-release number and `yy` is the patch number of the currently supported
-Vulkan API version (i.e. `1.1.yy`). Long-term versioning is TBD.
+The current versioning scheme is `0.xx.y`, where `y` is the library
+patch number and `xx` is the patch number of the currently exposed
+Vulkan API version (i.e. `1.1.xx`). Long-term versioning is TBD.
 
 ## Contents
 
