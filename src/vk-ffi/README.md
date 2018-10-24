@@ -35,6 +35,8 @@ The current versioning scheme is `0.xx.y`, where `y` is the library
 patch number and `xx` is the patch number of the currently exposed
 Vulkan API version (i.e. `1.1.xx`). Long-term versioning is TBD.
 
+TODO: This versioning scheme is completely stupid; no benefits at all.
+
 ## Contents
 
 The top-level module includes every constant, type, and function pointer

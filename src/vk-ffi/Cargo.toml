@@ -7,3 +7,11 @@ edition = "2018"
 
 [build-dependencies]
 bindgen = "0.42"
+heck = "0.3"
+proc-macro2 = "0.4"
+quote = "0.6"
+
+[build-dependencies.syn]
+version = "0.15"
+default-features = false
+features = ["full", "parsing", "printing", "visit-mut"]
