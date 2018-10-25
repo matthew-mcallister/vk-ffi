@@ -1,6 +1,8 @@
 use heck::*;
 use proc_macro2::{Group, Ident, Literal, Punct, TokenStream, TokenTree};
 
+use crate::strip_prefix;
+
 crate fn do_rename(tokens: TokenStream) -> TokenStream {
     map_token_stream(&mut RenameMap, tokens)
 }
@@ -43,11 +45,6 @@ const MIXED_PREFIX: &'static str = "vk";
 const CAMEL_PREFIX: &'static str = "Vk";
 const SHOUTY_PREFIX: &'static str = "VK_";
 
-fn strip_prefix<'a>(s: &'a str, prefix: &str) -> Option<&'a str> {
-    if s.starts_with(prefix) { Some(&s[prefix.len()..]) }
-    else { None }
-}
-
 // Bindgen renames things that conflict with keywords by appending "_".
 // Tests whether an ident matches this pattern so we don't undo it.
 fn is_bindgen_renamed_keyword(ident: &str) -> bool {
@@ -73,8 +70,8 @@ impl MapTokens for RenameMap {
     fn map_ident(&mut self, ident: Ident) -> Ident {
         let res: Option<Ident> = try {
             let orig = ident.to_string();
-            let new = heuristic_rename(&orig[..])?;
-            Ident::new(&new[..], ident.span())
+            let new = heuristic_rename(&orig)?;
+            Ident::new(&new, ident.span())
         };
         res.unwrap_or(ident)
     }

@@ -1,5 +1,6 @@
 #![feature(crate_visibility_modifier)]
 #![feature(try_blocks)]
+#![feature(uniform_paths)]
 
 extern crate bindgen;
 extern crate heck;
@@ -17,7 +18,26 @@ use std::path::{Path, PathBuf};
 use proc_macro2::TokenStream;
 use quote::ToTokens;
 
+use self::build_src::enum_rename;
 use self::build_src::global_rename;
+
+fn split_prefix<'a>(s: &'a str, prefix: &str) -> Option<(&'a str, &'a str)> {
+    if s.starts_with(prefix) { Some(s.split_at(prefix.len())) }
+    else { None }
+}
+
+fn strip_prefix<'a>(s: &'a str, prefix: &str) -> Option<&'a str> {
+    Some(split_prefix(s, prefix)?.1)
+}
+
+fn split_suffix<'a>(s: &'a str, suffix: &str) -> Option<(&'a str, &'a str)> {
+    if s.ends_with(suffix) { Some(s.split_at(s.len() - suffix.len())) }
+    else { None }
+}
+
+fn strip_suffix<'a>(s: &'a str, suffix: &str) -> Option<&'a str> {
+    Some(split_suffix(s, suffix)?.0)
+}
 
 const VK_HEADER_DIR: &'static str = "vendor/Vulkan-Docs/include/vulkan";
 
@@ -35,7 +55,8 @@ fn main() {
     println!("cargo:rerun-if-changed=build.h");
 
     let bindings = generate_raw_bindings();
-    let bindings = rename_items(&bindings[..]);
+    let bindings = enforce_rust_naming(bindings);
+    let bindings = strip_enum_prefixes(bindings);
 
     let mut file = open_output(&out);
     write_bindings(&mut file, bindings);
@@ -54,7 +75,7 @@ fn generate_raw_bindings() -> String {
         .blacklist_item("VK_VERSION_.*")
         .blacklist_item("VK_HEADER_VERSION")
         .blacklist_item("VK_.*[a-z].*") // Extension #defines
-        .default_enum_style(bindgen::EnumVariation::Consts)
+        .default_enum_style(bindgen::EnumVariation::ModuleConsts)
         .prepend_enum_name(false)
         .impl_debug(true)
         .layout_tests(dev_mode())
@@ -65,9 +86,16 @@ fn generate_raw_bindings() -> String {
 }
 
 // Find-and-replace on identifiers to implement Rust's naming scheme.
-fn rename_items(bindings: &str) -> TokenStream {
-    let tokens = std::str::FromStr::from_str(bindings).unwrap();
+fn enforce_rust_naming(bindings: String) -> TokenStream {
+    let tokens = std::str::FromStr::from_str(&bindings).unwrap();
     global_rename::do_rename(tokens)
+}
+
+// Enums are namespaced, so prefixes are unnecessary.
+fn strip_enum_prefixes(bindings: TokenStream) -> syn::File {
+    let mut ast: syn::File = syn::parse2(bindings).unwrap();
+    enum_rename::do_rename(&mut ast);
+    ast
 }
 
 fn open_output(out: &Path) -> File {
@@ -75,9 +103,8 @@ fn open_output(out: &Path) -> File {
         .unwrap()
 }
 
-fn write_bindings<W: Write>(mut w: W, bindings: TokenStream) {
+fn write_bindings<W: Write>(mut w: W, ast: syn::File) {
     // Write one item per line for more readable error messages
-    let ast: syn::File = syn::parse2(bindings).unwrap();
     for attr in ast.attrs.into_iter() {
         writeln!(w, "{}", attr.into_token_stream()).unwrap();
     }
