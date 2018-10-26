@@ -1,8 +1,8 @@
 use heck::*;
 
-use crate::{strip_prefix, strip_suffix};
+use super::{strip_prefix, strip_suffix};
 
-crate fn do_rename(ast: &mut syn::File) {
+crate fn do_rewrite(ast: &mut syn::File) {
     syn::visit_mut::visit_file_mut(&mut EnumRenameVisitor, ast);
 }
 

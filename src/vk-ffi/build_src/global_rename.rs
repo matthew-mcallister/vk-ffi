@@ -1,7 +1,7 @@
 use heck::*;
 use proc_macro2::{Group, Ident, Literal, Punct, TokenStream, TokenTree};
 
-use crate::strip_prefix;
+use super::strip_prefix;
 
 crate fn do_rename(tokens: TokenStream) -> TokenStream {
     map_token_stream(&mut RenameMap, tokens)
@@ -59,6 +59,8 @@ fn heuristic_rename(ident: &str) -> Option<String> {
         Some(stripped.to_camel_case())
     } else if let Some(stripped) = strip_prefix(ident, SHOUTY_PREFIX) {
         Some(stripped.to_shouty_snake_case())
+    } else if ident.chars().next().unwrap().is_uppercase() {
+        Some(ident.to_camel_case())
     } else if ident.chars().next().unwrap().is_lowercase()
         && !is_bindgen_renamed_keyword(ident)
     {
