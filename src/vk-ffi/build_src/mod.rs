@@ -1,5 +1,11 @@
 use syn::Ident;
 
+macro_rules! get_variant {
+    ($var:path, $val:expr) => {
+        if let $var(inner) = $val { Some(inner) } else { None }
+    }
+}
+
 crate mod enum_rewrite;
 crate mod global_rename;
 crate mod handle_rewrite;

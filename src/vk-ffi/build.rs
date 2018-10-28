@@ -3,6 +3,8 @@
 #![feature(try_blocks)]
 #![feature(uniform_paths)]
 
+#![recursion_limit = "128"]
+
 extern crate bindgen;
 extern crate heck;
 extern crate proc_macro2;
@@ -11,6 +13,7 @@ extern crate quote;
 #[macro_use]
 extern crate syn;
 
+#[macro_use]
 mod build_src;
 
 use std::env;
@@ -33,6 +36,9 @@ fn output_file() -> PathBuf {
 fn main() {
     let out = output_file();
     println!("output_file: {:?}", &out);
+
+    // TODO: Build should depend on everything in build_src/ and
+    // Vulkan-Docs/include/vulkan
     println!("cargo:rerun-if-changed=build.h");
 
     let raw = generate_raw_bindings();
