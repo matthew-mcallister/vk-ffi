@@ -1,4 +1,5 @@
 [workspace]
 members = [
     "src/vk-ffi",
+    "src/vk-ffi-meta-defs",
 ]
