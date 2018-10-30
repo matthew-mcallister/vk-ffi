@@ -8,17 +8,17 @@ extern crate syn;
 
 mod imp;
 
-#[cfg_attr(feature = "syn_extra_traits", derive(Clone, Debug))]
+#[cfg_attr(feature = "syn-extra-traits", derive(Clone, Debug))]
 pub struct Enum {
     pub name: syn::Ident,
-    pub ty: syn::Type,
+    pub ty: Box<syn::Type>,
     pub members: Vec<EnumMember>,
 }
 
-#[cfg_attr(feature = "syn_extra_traits", derive(Clone, Debug))]
+#[cfg_attr(feature = "syn-extra-traits", derive(Clone, Debug))]
 pub struct EnumMember {
     pub name: syn::Ident,
-    pub value: syn::Expr,
+    pub value: Box<syn::Expr>,
 }
 
 impl Enum {
@@ -27,44 +27,44 @@ impl Enum {
     }
 }
 
-#[cfg_attr(feature = "syn_extra_traits", derive(Clone, Debug))]
+#[cfg_attr(feature = "syn-extra-traits", derive(Clone, Debug))]
 pub struct Const {
     pub name: syn::Ident,
-    pub ty: syn::Type,
-    pub value: syn::Expr,
+    pub ty: Box<syn::Type>,
+    pub value: Box<syn::Expr>,
 }
 
-#[cfg_attr(feature = "syn_extra_traits", derive(Clone, Debug))]
+#[cfg_attr(feature = "syn-extra-traits", derive(Clone, Debug))]
 pub struct Struct {
     pub name: syn::Ident,
     pub members: Vec<StructMember>
 }
 
-#[cfg_attr(feature = "syn_extra_traits", derive(Clone, Debug))]
+#[cfg_attr(feature = "syn-extra-traits", derive(Clone, Debug))]
 pub struct StructMember {
     pub name: syn::Ident,
     pub ty: syn::Type,
 }
 
-#[cfg_attr(feature = "syn_extra_traits", derive(Clone, Debug))]
+#[cfg_attr(feature = "syn-extra-traits", derive(Clone, Debug))]
 pub struct Union(pub Struct);
 
-#[cfg_attr(feature = "syn_extra_traits", derive(Clone, Debug))]
-pub struct FunctionPointer {
+#[cfg_attr(feature = "syn-extra-traits", derive(Clone, Debug))]
+pub struct FnPointer {
     /// The "base" name of the function, i.e. without any prefix such as
     /// `Pfn`.
     pub base_name: syn::Ident,
     pub signature: syn::TypeBareFn,
 }
 
-#[cfg_attr(feature = "syn_extra_traits", derive(Clone, Debug))]
-pub struct Alias {
+#[cfg_attr(feature = "syn-extra-traits", derive(Clone, Debug))]
+pub struct TypeAlias {
     pub name: syn::Ident,
-    pub target: syn::Ident,
+    pub target: syn::Path,
 }
 
-#[cfg_attr(feature = "syn_extra_traits", derive(Clone, Debug))]
-pub struct DispatchableHandle { pub name: syn::Ident }
-
-#[cfg_attr(feature = "syn_extra_traits", derive(Clone, Debug))]
-pub struct NonDispatchableHandle { pub name: syn::Ident }
+#[cfg_attr(feature = "syn-extra-traits", derive(Clone, Debug))]
+pub struct Handle {
+    pub name: syn::Ident,
+    pub dispatchable: bool,
+}

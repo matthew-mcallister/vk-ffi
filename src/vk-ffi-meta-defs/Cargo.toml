@@ -6,7 +6,8 @@ authors = ["Matthew McAllister <matthew.mcallister.0@gmail.com>"]
 edition = "2018"
 
 [features]
-syn_extra_traits = ["syn/extra-traits"]
+syn-extra-traits = ["syn/extra-traits"]
+syn-visit-mut = ["syn/visit-mut"]
 
 [dependencies]
 proc-macro2 = "0.4"

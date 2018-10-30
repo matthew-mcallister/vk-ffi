@@ -114,7 +114,7 @@ impl Parse for Union {
     }
 }
 
-impl ToTokens for FunctionPointer {
+impl ToTokens for FnPointer {
     fn to_tokens(&self, tokens: &mut TokenStream) {
         let base_name = &self.base_name;
         let signature = &self.signature;
@@ -122,16 +122,16 @@ impl ToTokens for FunctionPointer {
     }
 }
 
-impl Parse for FunctionPointer {
+impl Parse for FnPointer {
     fn parse(input: syn::parse::ParseStream) -> syn::parse::Result<Self> {
         let base_name = input.parse()?;
         input.parse::<Token![=]>()?;
         let signature = input.parse()?;
-        Ok(FunctionPointer { base_name, signature })
+        Ok(FnPointer { base_name, signature })
     }
 }
 
-impl ToTokens for Alias {
+impl ToTokens for TypeAlias {
     fn to_tokens(&self, tokens: &mut TokenStream) {
         let name = &self.name;
         let target = &self.target;
@@ -139,37 +139,34 @@ impl ToTokens for Alias {
     }
 }
 
-impl Parse for Alias {
+impl Parse for TypeAlias {
     fn parse(input: syn::parse::ParseStream) -> syn::parse::Result<Self> {
         let name = input.parse()?;
         input.parse::<Token![=]>()?;
         let target = input.parse()?;
-        Ok(Alias { name, target })
+        Ok(TypeAlias { name, target })
     }
 }
 
-impl ToTokens for DispatchableHandle {
+impl ToTokens for Handle {
     fn to_tokens(&self, tokens: &mut TokenStream) {
         let name = &self.name;
-        tokens.extend(quote!(#name));
+        let dispatchable = self.dispatchable;
+        tokens.extend(quote!(#name #dispatchable));
     }
 }
 
-impl Parse for DispatchableHandle {
+impl Parse for Handle {
     fn parse(input: syn::parse::ParseStream) -> syn::parse::Result<Self> {
-        Ok(DispatchableHandle { name: input.parse()? })
-    }
-}
-
-impl ToTokens for NonDispatchableHandle {
-    fn to_tokens(&self, tokens: &mut TokenStream) {
-        let name = &self.name;
-        tokens.extend(quote!(#name));
-    }
-}
-
-impl Parse for NonDispatchableHandle {
-    fn parse(input: syn::parse::ParseStream) -> syn::parse::Result<Self> {
-        Ok(NonDispatchableHandle { name: input.parse()? })
+        let name: syn::Ident = input.parse()?;
+        let dispatch_qual: Option<syn::Ident> = input.parse()?;
+        let dispatchable = if let Some(ident) = dispatch_qual {
+            match &ident.to_string()[..] {
+                "dispatchable" => true,
+                _ => return Err(syn::parse::Error::new
+                    (ident.span(), "expected `dispatchable`")),
+            }
+        } else { false };
+        Ok(Handle { name, dispatchable })
     }
 }
