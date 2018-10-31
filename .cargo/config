@@ -1,0 +1,2 @@
+[alias]
+gen = "run --release --bin vk-ffi-gen -- --input vendor/Vulkan-Docs/ --output generated/"

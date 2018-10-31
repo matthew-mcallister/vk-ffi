@@ -19,7 +19,7 @@ use std::io::Write;
 use std::fs::OpenOptions;
 use std::path::Path;
 
-use proc_macro2::TokenStream;
+use proc_macro2::{TokenStream, TokenTree};
 
 macro_rules! get_variant {
     ($var:path, $val:expr) => {
@@ -81,7 +81,9 @@ fn main() {
 
     let bindings = emit::bindings::emit(&defs);
     let bindings_path = out_dir.join("bindings.rs");
-    write_tokens(&bindings_path, bindings);
+    let mut bindings_file = OpenOptions::new()
+        .write(true).create(true).truncate(true).open(bindings_path).unwrap();
+    write_tokens(&mut bindings_file, bindings);
 }
 
 const STUB_HEADER: &'static str = r#"
@@ -118,8 +120,20 @@ fn generate_raw_bindings(in_dir: &Path) -> String {
         .to_string()
 }
 
-fn write_tokens(path: &Path, tokens: TokenStream) {
-    let mut file = OpenOptions::new()
-        .write(true).create(true).truncate(true).open(path).unwrap();
-    write!(file, "{}", tokens).unwrap();
+fn write_tokens<W: Write>(mut out: W, tokens: TokenStream) {
+    for tt in tokens.into_iter() {
+        match tt {
+            TokenTree::Group(ref grp) => match grp.delimiter() {
+                proc_macro2::Delimiter::Bracket |
+                proc_macro2::Delimiter::Brace =>
+                    writeln!(out, "{}", tt).unwrap(),
+                _ => write!(out, "{}", tt).unwrap(),
+            },
+            TokenTree::Punct(ref punct) => match punct.as_char() {
+                ';' => writeln!(out, ";").unwrap(),
+                _ => write!(out, "{}", tt).unwrap(),
+            },
+            _ => write!(out, "{} ", tt).unwrap(),
+        }
+    }
 }
