@@ -57,7 +57,7 @@ fn heuristic_rename(ident: &str) -> Option<String> {
     } else if let Some(stripped) = strip_prefix(ident, SHOUTY_PREFIX) {
         Some(stripped.to_shouty_snake_case())
     } else if let Some(stripped) = strip_prefix(ident, PFN_PREFIX) {
-        Some(stripped.to_camel_case())
+        Some(format!("Pfn{}", stripped.to_camel_case()))
     } else if ident.chars().next().unwrap().is_uppercase() {
         Some(ident.to_camel_case())
     } else if ident.chars().next().unwrap().is_lowercase()

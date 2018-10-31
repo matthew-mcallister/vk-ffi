@@ -37,7 +37,7 @@ macro_rules! vk_enumerate {
             let mut num_elems;
             vk_check!($command
                 ($object, &num_elems as *mut _, ::std::ptr::null()))?;
-            let mut vec = Vec::with_capacity(num_elems);
+            let mut vec = ::std::vec::Vec::with_capacity(num_elems);
             vk_check!($command
                 ($object, &num_elems as *mut _, vec.as_mut_ptr()))?;
             vec.set_len(num_elems);

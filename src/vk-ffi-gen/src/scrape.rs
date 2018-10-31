@@ -1,7 +1,7 @@
 use heck::*;
-use vk_ffi_meta_defs::*;
 
-use super::{Defs, strip_prefix, strip_suffix};
+use super::{map_ident, strip_prefix, strip_suffix};
+use super::defs::*;
 
 // TODO: This needs to be pulled from the registry
 const VENDOR_TAGS: &[&'static str] = &[
@@ -62,9 +62,10 @@ fn parse_enum(module: syn::ItemMod) -> Enum {
 fn parse_enum_alias(tree: syn::UseTree) -> TypeAlias {
     let (mut idents, rename) = parse_use_tree(tree);
     assert_eq!(idents.pop().unwrap().to_string(), "Type");
-    let name = idents.pop().unwrap();
+    let target = idents.pop().unwrap();
+    let target = parse_quote!(#target);
     assert_eq!(idents.pop().unwrap().to_string(), "self");
-    let target = parse_quote!(#rename);
+    let name = rename;
     TypeAlias { name, target }
 }
 
@@ -106,6 +107,9 @@ fn parse_union(decl: syn::ItemUnion) -> Union {
 
 fn parse_function_pointer(name: syn::Ident, mut path: syn::Path) -> FnPointer
 {
+    let base_name =
+        map_ident(&name, |s| strip_prefix(&s, "Pfn").unwrap().to_string());
+
     // bindgen wraps function pointers in `Option` to make them nullable
     let last_seg = path.segments.pop().unwrap().into_value();
     assert_eq!(last_seg.ident.to_string(), "Option");
@@ -117,32 +121,10 @@ fn parse_function_pointer(name: syn::Ident, mut path: syn::Path) -> FnPointer
     let ty = get_variant!(syn::GenericArgument::Type, arg).unwrap();
     let signature = get_variant!(syn::Type::BareFn, ty).unwrap();
 
-    FnPointer { base_name: name, signature }
+    FnPointer { base_name, signature }
 }
 
 // ** Top-level parsing **
-
-macro_rules! impl_def {
-    ($($component:ident,)*) => {
-        #[cfg_attr(feature = "syn-extra-traits", derive(Clone, Debug))]
-        enum Def { $($component($component),)* }
-        $(
-            impl From<$component> for Def {
-                fn from(val: $component) -> Self { Def::$component(val) }
-            }
-        )*
-    }
-}
-
-impl_def! {
-    Enum,
-    Const,
-    Struct,
-    Union,
-    FnPointer,
-    TypeAlias,
-    Handle,
-}
 
 // Parses a `use` statement of the form `use A::B::C as D`.
 fn parse_use_tree(mut tree: syn::UseTree) -> (Vec<syn::Ident>, syn::Ident) {
@@ -202,6 +184,30 @@ fn parse_item(item: syn::Item) -> Option<Def> {
     })
 }
 
+// This hack addresses the fact that many "*Flags" type alias are
+// placeholders with no corresponding "*FlagBits" definition.
+// We keep things uniform by adding an empty "*FlagBits" enum.
+fn add_placeholder_enums(defs: &mut Defs) {
+    use std::collections::HashSet;
+    let known_enums: HashSet<_> = defs.enums.iter()
+        .map(|enum_| enum_.name.to_string())
+        .collect();
+    for type_alias in defs.type_aliases.iter() {
+        if type_alias.target.segments.len() > 1 { continue; }
+        let target_ident = &type_alias.target.segments.last().unwrap()
+            .into_value().ident;
+        let target_name = target_ident.to_string();
+        if !target_name.contains("FlagBits") { continue; }
+        if !known_enums.contains(&target_name) {
+            defs.enums.push(Enum {
+                name: syn::Ident::new(&target_name, target_ident.span()),
+                ty: parse_quote!(u32),
+                members: Vec::new(),
+            });
+        }
+    }
+}
+
 crate fn parse_file(ast: syn::File) -> Defs {
     let mut defs: Defs = Default::default();
     for item in ast.items.into_iter() {
@@ -216,5 +222,6 @@ crate fn parse_file(ast: syn::File) -> Defs {
             None => continue,
         }
     }
+    add_placeholder_enums(&mut defs);
     defs
 }
