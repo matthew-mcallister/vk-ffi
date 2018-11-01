@@ -24,7 +24,7 @@ macro_rules! vk_version_patch {
 /// on whether the code signifies an error.
 #[macro_export]
 macro_rules! vk_check {
-    ($res:expr) => { if (res < 0) { Ok(res) } else { Err(res) } }
+    ($res:expr) => { if $res.0 >= 0 { Ok($res) } else { Err($res) } }
 }
 
 /// Handles the boilerplate of making two calls to `VkEnumerate*`: one
@@ -32,16 +32,22 @@ macro_rules! vk_check {
 /// macro simply fills a `Vec` and yields `Result<Vec, VkResult>`.
 #[macro_export]
 macro_rules! vk_enumerate {
-    ($command:expr, $object:expr) => {
-        try {
-            let mut num_elems;
+    ($command:expr, $object:expr) => {{
+        let res: ::std::result::Result<::std::vec::Vec<_>, $crate::Result> =
+            try
+        {
+            let mut num_elems: u32 = 0;
+            vk_check!($command(
+                $object,
+                &mut num_elems as *mut _,
+                ::std::ptr::null_mut(),
+            ))?;
+            let mut vec = ::std::vec::Vec::with_capacity(num_elems as usize);
             vk_check!($command
-                ($object, &num_elems as *mut _, ::std::ptr::null()))?;
-            let mut vec = ::std::vec::Vec::with_capacity(num_elems);
-            vk_check!($command
-                ($object, &num_elems as *mut _, vec.as_mut_ptr()))?;
-            vec.set_len(num_elems);
+                ($object, &mut num_elems as *mut _, vec.as_mut_ptr()))?;
+            vec.set_len(num_elems as usize);
             vec
-        }
-    }
+        };
+        res
+    }}
 }

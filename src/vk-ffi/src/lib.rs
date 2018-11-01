@@ -58,3 +58,9 @@ macro_rules! bitmask_impls {
 }
 
 include!(concat!(env!("CARGO_MANIFEST_DIR"), "/generated/bindings.rs"));
+
+impl Result {
+    pub fn check(self) -> ::std::result::Result<Self, Self> {
+        vk_check!(self)
+    }
+}

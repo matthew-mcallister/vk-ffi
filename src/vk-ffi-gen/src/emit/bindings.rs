@@ -85,6 +85,13 @@ fn emit_handle(def: &Handle) -> TokenStream {
             #[repr(C)]
             #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
             pub struct #name(pub *const #name_t);
+            impl #name {
+                pub fn null() -> Self { #name(0 as *const _) }
+                pub fn is_null(self) -> bool { self.0 as usize == 0 }
+            }
+            impl ::std::default::Default for #name {
+                fn default() -> Self { #name::null() }
+            }
         }
     } else {
         quote! {
