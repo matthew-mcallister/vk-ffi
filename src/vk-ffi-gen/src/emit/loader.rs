@@ -322,6 +322,7 @@ crate fn emit(fn_ptrs: &[FnPointer]) -> TokenStream {
         pub mod v1_0 {
             use vk_ffi::*;
             use crate::LoadError;
+            pub use crate::entry::v1_0::*;
             pub use crate::extensions::*;
             #tokens
         }
@@ -333,6 +334,7 @@ crate fn emit(fn_ptrs: &[FnPointer]) -> TokenStream {
         pub mod v1_1 {
             use vk_ffi::*;
             use crate::LoadError;
+            pub use crate::entry::v1_1::*;
             pub use crate::extensions::*;
             #tokens
         }
