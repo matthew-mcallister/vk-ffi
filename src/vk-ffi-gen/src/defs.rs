@@ -47,22 +47,17 @@ crate struct Union(crate Struct);
 crate struct FnPointer {
     /// The "base" name of the function, with the "PFN_vk" prefix
     /// removed, but with the case unconverted.
-    /// TODO: Just make this the symbol name
     crate base_name: syn::Ident,
     crate signature: syn::TypeBareFn,
 }
 
 impl FnPointer {
     crate fn pfn_name(&self) -> syn::Ident {
-        map_ident(&self.base_name, |s| {
-            format!("Pfn{}", s.to_camel_case())
-        })
+        map_ident(&self.base_name, |s| format!("Pfn{}", s.to_camel_case()))
     }
 
     crate fn fn_name(&self) -> syn::Ident {
-        map_ident(&self.base_name, |s| {
-            format!("Fn{}", s.to_camel_case())
-        })
+        map_ident(&self.base_name, |s| format!("Fn{}", s.to_camel_case()))
     }
 
     /// The name of the symbol corresponding to a command.

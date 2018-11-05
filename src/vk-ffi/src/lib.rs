@@ -63,4 +63,12 @@ impl Result {
     pub fn check(self) -> ::std::result::Result<Self, Self> {
         vk_check!(self)
     }
+
+    pub fn is_success(self) -> bool {
+        self.0 >= 0
+    }
+
+    pub fn is_error(self) -> bool {
+        self.0 < 0
+    }
 }

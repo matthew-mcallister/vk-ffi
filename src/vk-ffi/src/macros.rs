@@ -24,7 +24,7 @@ macro_rules! vk_version_patch {
 /// on whether the code signifies an error.
 #[macro_export]
 macro_rules! vk_check {
-    ($res:expr) => { if $res.0 >= 0 { Ok($res) } else { Err($res) } }
+    ($res:expr) => { if $res.is_success() { Ok($res) } else { Err($res) } }
 }
 
 /// Handles the boilerplate of making two calls to `VkEnumerate*`: one
