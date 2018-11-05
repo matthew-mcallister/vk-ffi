@@ -4,7 +4,6 @@
 #![feature(uniform_paths)]
 
 extern crate bindgen;
-#[macro_use]
 extern crate clap;
 #[macro_use]
 extern crate derive_more;
@@ -14,10 +13,12 @@ extern crate proc_macro2;
 extern crate quote;
 #[macro_use]
 extern crate syn;
+extern crate which;
 
 use std::io::Write;
 use std::fs::OpenOptions;
 use std::path::Path;
+use std::process::Command;
 
 use proc_macro2::{TokenStream, TokenTree};
 
@@ -67,17 +68,24 @@ fn map_ident(ident: &syn::Ident, f: impl FnOnce(String) -> String) ->
 }
 
 fn main() {
-    let matches = clap_app!(("vk-ffi-meta-gen") =>
-        (version: "0.1")
-        (about: "Generate Vulkan meta bindings")
-        (@arg INPUT_DIR: -i --input +takes_value +required
-            "Path to Vulkan-Docs repo")
-        (@arg OUTPUT_DIR: -o --output +takes_value +required
-            "Path to output directory")
-    ).get_matches();
+    let args = clap::App::new("vk-ffi-meta-gen")
+        .version("0.1")
+        .about("Generate Vulkan bindings")
+        .arg(clap::Arg::with_name("INPUT_DIR")
+            .short("i").long("input")
+            .takes_value(true).required(true)
+            .help("Path to Vulkan-Docs repo"))
+        .arg(clap::Arg::with_name("OUTPUT_DIR")
+            .short("o").long("output")
+            .takes_value(true).required(true)
+            .help("Path to output directory"))
+        .arg(clap::Arg::with_name("no_fmt")
+            .long("no-fmt")
+            .help("Skips formatting generated code"))
+        .get_matches();
 
-    let in_dir: &Path = Path::new(matches.value_of_os("INPUT_DIR").unwrap());
-    let out_dir: &Path = Path::new(matches.value_of_os("OUTPUT_DIR").unwrap());
+    let in_dir: &Path = Path::new(args.value_of_os("INPUT_DIR").unwrap());
+    let out_dir: &Path = Path::new(args.value_of_os("OUTPUT_DIR").unwrap());
 
     let raw = generate_raw_bindings(in_dir);
 
@@ -89,11 +97,13 @@ fn main() {
 
     let defs = scrape::parse_file(ast);
 
+    let format = !args.is_present("no_fmt");
+
     let bindings = emit::bindings::emit(&defs);
-    write_tokens(&out_dir.join("bindings.rs"), bindings);
+    write_tokens(&out_dir.join("bindings.rs"), bindings, format);
 
     let loader = emit::loader::emit(&defs.fn_pointers);
-    write_tokens(&out_dir.join("loader.rs"), loader);
+    write_tokens(&out_dir.join("loader.rs"), loader, format);
 }
 
 const STUB_HEADER: &'static str = r#"
@@ -130,10 +140,18 @@ fn generate_raw_bindings(in_dir: &Path) -> String {
         .to_string()
 }
 
-fn write_tokens(path: &Path, tokens: TokenStream) {
-    let mut file = OpenOptions::new()
+fn write_tokens(path: &Path, tokens: TokenStream, format: bool) {
+    let file = OpenOptions::new()
         .write(true).create(true).truncate(true).open(path).unwrap();
-    write_tokens_inner(&mut file, tokens);
+    write_tokens_inner(file, tokens);
+    if format {
+        let rustfmt = which::which("rustfmt").unwrap();
+        let status = Command::new(&rustfmt)
+            .args(&["--emit", "files"])
+            .arg(path.as_os_str())
+            .status().unwrap();
+        assert!(status.success(), "rustfmt failed");
+    }
 }
 
 fn write_tokens_inner<W: Write>(mut out: W, tokens: TokenStream) {
