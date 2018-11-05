@@ -1,3 +1,7 @@
+use heck::*;
+
+use crate::map_ident;
+
 #[derive(Clone, Debug)]
 crate struct Enum {
     crate name: syn::Ident,
@@ -41,10 +45,35 @@ crate struct Union(crate Struct);
 
 #[derive(Clone, Debug)]
 crate struct FnPointer {
-    /// The "base" name of the function, i.e. without any prefix such as
-    /// `Pfn`.
+    /// The "base" name of the function, with the "PFN_vk" prefix
+    /// removed, but with the case unconverted.
+    /// TODO: Just make this the symbol name
     crate base_name: syn::Ident,
     crate signature: syn::TypeBareFn,
+}
+
+impl FnPointer {
+    crate fn pfn_name(&self) -> syn::Ident {
+        map_ident(&self.base_name, |s| {
+            format!("Pfn{}", s.to_camel_case())
+        })
+    }
+
+    crate fn fn_name(&self) -> syn::Ident {
+        map_ident(&self.base_name, |s| {
+            format!("Fn{}", s.to_camel_case())
+        })
+    }
+
+    /// The name of the symbol corresponding to a command.
+    crate fn symbol_name(&self) -> String {
+        format!("vk{}", self.base_name.to_string())
+    }
+
+    /// For good measure, the base name converted to snake case.
+    crate fn snake_name(&self) -> syn::Ident {
+        map_ident(&self.base_name, |s| s.to_snake_case())
+    }
 }
 
 #[derive(Clone, Debug)]

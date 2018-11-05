@@ -1,0 +1,177 @@
+#!/usr/bin/env python3
+"""Scrapes the Vulkan XML __repr__for command names."""
+
+import argparse
+import xml.etree.ElementTree as etree
+from collections import namedtuple
+from enum import Enum
+
+
+VK_VERSION_1_0 = 'VK_VERSION_1_0'
+VK_VERSION_1_1 = 'VK_VERSION_1_1'
+
+
+class Level(Enum):
+    INSTANCE = 0
+    DEVICE = 1
+
+    def __str__(self):
+        return repr(self)
+
+    def __repr__(self):
+        if self == Level.INSTANCE:
+            return 'Instance'
+        else:
+            return 'Device'
+
+
+class Handle:
+    __slots__ = ('name', 'parent')
+
+    def __init__(self, name, parent):
+        self.name = name
+        self.parent = parent
+
+    def has_ancestor(self, other):
+        """Returns whether the handle is a transitive child of a handle
+        with the given name."""
+        if self.name == other:
+            return True
+        elif self.parent is None:
+            return False
+        else:
+            return self.parent.has_ancestor(other)
+
+    def level(self):
+        return Level.DEVICE if self.has_ancestor('VkDevice') else Level.INSTANCE
+
+    def __repr__(self):
+        return f'Handle(name={repr(self.name)}, parent={repr(self.parent)})'
+
+
+class Command(namedtuple('Command', ('name', 'handle'))):
+    __slots__ = ()
+
+
+class Api(namedtuple('Api', ('name', 'commands', 'level'))):
+    __slots__ = ()
+
+
+def get_handles(root):
+    handles = {}
+
+    for elem in root.findall("types/type[@category='handle']"):
+        alias = elem.get('alias')
+        if alias is not None:
+            name = elem.attrib['name']
+            target = handles[alias]
+            handles[name] = Handle(name=name, parent=target.parent)
+            continue
+
+        name = elem.find('name').text
+        parent = elem.get('parent')
+        if parent is not None:
+            # VkDisplayModeKHR is listed with 2 parents...
+            parent = parent.split(',')[0]
+        handles[name] = Handle(name=name, parent=parent)
+
+    for handle in handles.values():
+        parent = handle.parent
+        if parent is not None:
+            handle.parent = handles[parent]
+
+    return handles
+
+
+def get_commands(root, handles):
+    commands = {}
+    for elem in root.findall("commands/command"):
+        alias = elem.get('alias')
+        if alias is not None:
+            name = elem.attrib['name']
+            target = commands[alias]
+            commands[name] = Command(name=name, handle=target.handle)
+            continue
+
+        name = elem.find('proto/name').text
+        first_arg = elem.find('param/type').text
+        try:
+            handle = handles[first_arg]
+        except KeyError:
+            # Global function, such as vkCreateInstance
+            continue
+        commands[name] = Command(name=name, handle=handle)
+    return commands
+
+
+def get_apis(root, commands):
+    instance_v1_0 = Api(name='VK_instance_v1_0', commands=[], level=Level.INSTANCE)
+    instance_v1_1 = Api(name='VK_instance_v1_1', commands=[], level=Level.INSTANCE)
+    device_v1_0 = Api(name='VK_device_v1_0', commands=[], level=Level.DEVICE)
+    device_v1_1 = Api(name='VK_device_v1_1', commands=[], level=Level.DEVICE)
+
+    for elem in root.findall("feature[@name='VK_VERSION_1_0']/require/command"):
+        name = elem.attrib['name']
+        try:
+            command = commands[name]
+        except KeyError:
+            continue
+        if command.handle.level() == Level.DEVICE:
+            device_v1_0.commands.append(command)
+            device_v1_1.commands.append(command)
+        else:
+            instance_v1_0.commands.append(command)
+            instance_v1_1.commands.append(command)
+
+    for elem in root.findall("feature[@name='VK_VERSION_1_1']/require/command"):
+        name = elem.attrib['name']
+        try:
+            command = commands[name]
+        except KeyError:
+            continue
+        if command.handle.level() == Level.DEVICE:
+            device_v1_1.commands.append(command)
+        else:
+            instance_v1_1.commands.append(command)
+
+    apis = [instance_v1_0, instance_v1_1, device_v1_0, device_v1_1]
+    for elem in root.findall('extensions/extension'):
+        cmds = [
+            commands[subelem.attrib['name']]
+            for subelem in elem.findall('require/command')
+        ]
+        if not cmds:
+            continue
+
+        name = elem.attrib['name']
+        type = elem.attrib['type']
+        if type == 'instance':
+            level = Level.INSTANCE
+        else:
+            assert type == 'device', f'{type} of {name}'
+            level = level.DEVICE
+        apis.append(Api(name=name, commands=cmds, level=level))
+
+    return apis
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('input', help='Path to vk.xml')
+    args = parser.parse_args()
+
+    root = etree.parse(args.input)
+
+    handles = get_handles(root)
+    commands = get_commands(root, handles)
+    apis = get_apis(root, commands)
+
+    for api in apis:
+        print(f'{api.name}: {api.level} {{')
+        for cmd in api.commands:
+            print(f'\t{cmd.name},')
+        print('}')
+
+
+if __name__ == '__main__':
+    main()

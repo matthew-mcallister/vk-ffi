@@ -27,6 +27,12 @@ macro_rules! get_variant {
     }
 }
 
+macro_rules! get_variant_ref {
+    ($var:path, $val:expr) => {
+        if let $var(ref inner) = $val { Some(inner) } else { None }
+    }
+}
+
 mod defs;
 mod emit;
 mod rewrite;
@@ -48,6 +54,10 @@ fn split_suffix<'a>(s: &'a str, suffix: &str) -> Option<(&'a str, &'a str)> {
 
 fn strip_suffix<'a>(s: &'a str, suffix: &str) -> Option<&'a str> {
     Some(split_suffix(s, suffix)?.0)
+}
+
+fn ident<A: AsRef<str>>(s: A) -> syn::Ident {
+    syn::Ident::new(s.as_ref(), proc_macro2::Span::call_site())
 }
 
 fn map_ident(ident: &syn::Ident, f: impl FnOnce(String) -> String) ->
@@ -80,10 +90,10 @@ fn main() {
     let defs = scrape::parse_file(ast);
 
     let bindings = emit::bindings::emit(&defs);
-    let bindings_path = out_dir.join("bindings.rs");
-    let mut bindings_file = OpenOptions::new()
-        .write(true).create(true).truncate(true).open(bindings_path).unwrap();
-    write_tokens(&mut bindings_file, bindings);
+    write_tokens(&out_dir.join("bindings.rs"), bindings);
+
+    let loader = emit::loader::emit(&defs.fn_pointers);
+    write_tokens(&out_dir.join("loader.rs"), loader);
 }
 
 const STUB_HEADER: &'static str = r#"
@@ -120,7 +130,13 @@ fn generate_raw_bindings(in_dir: &Path) -> String {
         .to_string()
 }
 
-fn write_tokens<W: Write>(mut out: W, tokens: TokenStream) {
+fn write_tokens(path: &Path, tokens: TokenStream) {
+    let mut file = OpenOptions::new()
+        .write(true).create(true).truncate(true).open(path).unwrap();
+    write_tokens_inner(&mut file, tokens);
+}
+
+fn write_tokens_inner<W: Write>(mut out: W, tokens: TokenStream) {
     for tt in tokens.into_iter() {
         match tt {
             TokenTree::Group(ref grp) => match grp.delimiter() {

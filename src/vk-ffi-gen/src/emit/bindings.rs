@@ -60,13 +60,12 @@ fn emit_union(def: &Union) -> TokenStream {
 }
 
 fn emit_fn_pointer(def: &FnPointer) -> TokenStream {
-    let base_name = &def.base_name;
-    let fn_name = map_ident(base_name, |s| format!("Fn{}", s));
-    let pfn_name = map_ident(base_name, |s| format!("Pfn{}", s));
+    let fn_name = def.fn_name();
+    let pfn_name = def.pfn_name();
     let signature = &def.signature;
     quote! {
         pub type #fn_name = #signature;
-        pub type #pfn_name = ::std::option::Option<#signature>;
+        pub type #pfn_name = ::std::option::Option<#fn_name>;
     }
 }
 
