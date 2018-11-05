@@ -57,6 +57,13 @@ macro_rules! bitmask_impls {
     }
 }
 
+pub trait VkHandle: Eq + Sized {
+    fn null() -> Self;
+    fn is_null(self) -> bool { self == Self::null() }
+}
+
+pub fn null<T: VkHandle>() -> T { <T as VkHandle>::null() }
+
 include!(concat!(env!("CARGO_MANIFEST_DIR"), "/generated/bindings.rs"));
 
 impl Result {
