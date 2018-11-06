@@ -28,7 +28,7 @@ macro_rules! vk_check {
 }
 
 /// Handles the boilerplate of making two calls to `VkEnumerate*`: one
-/// to get the number of elements, and another to fill the array. The
+/// to get the number of elements, and another to fill the array. This
 /// macro yields `Result<Vec<_>, VkResult>`, and never returns
 /// VK_INCOMPLETE.
 ///
@@ -39,67 +39,57 @@ macro_rules! vk_check {
 /// `var.method`, so that the call is treated as a method invocation
 /// instead of a call to a callable struct member. To get the latter
 /// behavior, apply parentheses, as in `(var.method)`.
+///
+/// By prepending `@void`, this macro can also be used on commands like
+/// `vkGetPhysicalDeviceProperties`, which return `void` instead of
+/// `VkResult`. In this case, it just returns `Vec<_>`.
 #[macro_export]
 macro_rules! vk_enumerate {
-    ($table:ident.$method:ident) => {{
-        let res: ::std::result::Result<::std::vec::Vec<_>, $crate::Result> =
-            try
-        {
-            let mut num_elems: u32 = 0;
-            $table.$method(&mut num_elems as *mut _, ::std::ptr::null_mut())
+    // Regular versions
+    ($table:ident.$method:ident) => {
+        vk_enumerate!(@impl ($table.$method) ())
+    };
+    ($table:ident.$method:ident, $object:expr) => {
+        vk_enumerate!(@impl ($table.$method) ($object,))
+    };
+    ($command:expr) => {
+        vk_enumerate!(@impl ($command) ())
+    };
+    ($command:expr, $object:expr) => {
+        vk_enumerate!(@impl ($command) ($object,))
+    };
+    (@impl ($($command:tt)*) ($($object:tt)*)) => {{
+        let x: ::std::result::Result<_, $crate::Result> = try {
+            let mut n: u32 = 0;
+            $($command)*($($object)* &mut n as *mut _, ::std::ptr::null_mut())
                 .check()?;
-            let mut vec = ::std::vec::Vec::with_capacity(num_elems as usize);
-            $table.$method(&mut num_elems as *mut _, vec.as_mut_ptr())
+            let mut v = ::std::vec::Vec::with_capacity(n as usize);
+            $($command)*($($object)* &mut n as *mut _, v.as_mut_ptr())
                 .check()?;
-            vec.set_len(num_elems as usize);
-            vec
+            v.set_len(n as usize);
+            v
         };
-        res
+        x
     }};
-    ($table:ident.$method:ident, $object:expr) => {{
-        let res: ::std::result::Result<::std::vec::Vec<_>, $crate::Result> =
-            try
-        {
-            let mut num_elems: u32 = 0;
-            $table.$method
-                ($object, &mut num_elems as *mut _, ::std::ptr::null_mut())
-                .check()?;
-            let mut vec = ::std::vec::Vec::with_capacity(num_elems as usize);
-            $table.$method
-                ($object, &mut num_elems as *mut _, vec.as_mut_ptr())
-                .check()?;
-            vec.set_len(num_elems as usize);
-            vec
-        };
-        res
-    }};
-    ($command:expr) => {{
-        let res: ::std::result::Result<::std::vec::Vec<_>, $crate::Result> =
-            try
-        {
-            let mut num_elems: u32 = 0;
-            $command(&mut num_elems as *mut _, ::std::ptr::null_mut())
-                .check()?;
-            let mut vec = ::std::vec::Vec::with_capacity(num_elems as usize);
-            $command(&mut num_elems as *mut _, vec.as_mut_ptr()).check()?;
-            vec.set_len(num_elems as usize);
-            vec
-        };
-        res
-    }};
-    ($command:expr, $object:expr) => {{
-        let res: ::std::result::Result<::std::vec::Vec<_>, $crate::Result> =
-            try
-        {
-            let mut num_elems: u32 = 0;
-            $command($object, &mut num_elems as *mut _, ::std::ptr::null_mut())
-                .check()?;
-            let mut vec = ::std::vec::Vec::with_capacity(num_elems as usize);
-            $command($object, &mut num_elems as *mut _, vec.as_mut_ptr())
-                .check()?;
-            vec.set_len(num_elems as usize);
-            vec
-        };
-        res
+    // Void versions
+    (@void $table:ident.$method:ident) => {
+        vk_enumerate!(@impl @void ($table.$method) ())
+    };
+    (@void $table:ident.$method:ident, $object:expr) => {
+        vk_enumerate!(@impl @void ($table.$method) ($object,))
+    };
+    (@void $command:expr) => {
+        vk_enumerate!(@impl @void ($command) ())
+    };
+    (@void $command:expr, $object:expr) => {
+        vk_enumerate!(@impl @void ($command) ($object,))
+    };
+    (@impl @void ($($command:tt)*) ($($object:tt)*)) => {{
+        let mut n: u32 = 0;
+        $($command)*($($object)* &mut n as *mut _, ::std::ptr::null_mut());
+        let mut v = ::std::vec::Vec::with_capacity(n as usize);
+        $($command)*($($object)* &mut n as *mut _, v.as_mut_ptr());
+        v.set_len(n as usize);
+        v
     }};
 }
