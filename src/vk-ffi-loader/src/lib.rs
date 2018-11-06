@@ -44,8 +44,40 @@ pub mod entry {
                     )*})
                 }
             }
+            impl_v1_0_methods!();
         }
     }
+    macro_rules! impl_v1_0_methods { () => {
+        impl Entry {
+            pub unsafe fn enumerate_instance_extension_properties(
+                &self,
+                p_layer_name: *const ::std::os::raw::c_char,
+                p_property_count: *mut u32,
+                p_properties: *mut ::vk_ffi::ExtensionProperties,
+            ) -> ::vk_ffi::Result {
+                (self.enumerate_instance_extension_properties)
+                    (p_layer_name, p_property_count, p_properties)
+            }
+
+            pub unsafe fn enumerate_instance_layer_properties(
+                &self,
+                p_property_count: *mut u32,
+                p_properties: *mut ::vk_ffi::LayerProperties,
+            ) -> ::vk_ffi::Result {
+                (self.enumerate_instance_layer_properties)
+                    (p_property_count, p_properties)
+            }
+
+            pub unsafe fn create_instance(
+                &self,
+                p_create_info: *const ::vk_ffi::InstanceCreateInfo,
+                p_allocator: *const ::vk_ffi::AllocationCallbacks,
+                p_instance: *mut ::vk_ffi::Instance,
+            ) -> ::vk_ffi::Result {
+                (self.create_instance)(p_create_info, p_allocator, p_instance)
+            }
+        }
+    } }
     pub mod v1_0 {
         impl_entry! {
             enumerate_instance_extension_properties:
@@ -72,6 +104,11 @@ pub mod entry {
             create_instance:
                 ::vk_ffi::FnCreateInstance
                 = b"vkCreateInstance\0",
+        }
+        impl Entry {
+            pub unsafe fn enumerate_instance_version
+                (&self, p_api_version: *mut u32) -> ::vk_ffi::Result
+                { (self.enumerate_instance_version)(p_api_version) }
         }
     }
 }
