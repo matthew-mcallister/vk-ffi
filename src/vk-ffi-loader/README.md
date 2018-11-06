@@ -23,10 +23,10 @@ Each function table also stores the `VkInstance` or `VkDevice` parameter it was
 loaded with and defines methods which automatically pass the handle to the
 underlying command when appropriate. Thus, you get the safer and more ergonomic
 ```
-instance_table.destroy_instance();
+instance_table.destroy_instance(...);
 ```
 instead of
 ```
-(instance_table.destroy_instance)(instance);
+(instance_table.destroy_instance)(instance, ...);
 ```
 if calling the stored function pointer directly.
