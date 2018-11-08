@@ -36,13 +36,44 @@ fn emit_struct(def: &Struct) -> TokenStream {
     let members = def.members.iter().map(|member| {
         let name = &member.name;
         let ty = &member.ty;
-        quote!(pub #name: #ty,)
+        quote!(pub #name: #ty)
     });
     quote! {
         #[repr(C)]
         #[derive(Copy, Clone)]
-        pub struct #struct_name { #(#members)* }
+        pub struct #struct_name { #(#members,)* }
     }
+}
+
+/// Implements the `Default` trait for a struct. It cannot be derived
+/// because `*const` and `*mut` do not implement it (thanks rustc devs).
+/// Hence, this stopgap.
+fn emit_struct_traits(def: &Struct) -> TokenStream {
+    let mut tokens = TokenStream::new();
+    let struct_name = &def.name;
+
+    let members = def.members.iter().map(|member| {
+        let name = &member.name;
+        let value = match &member.ty {
+            syn::Type::Ptr(syn::TypePtr { mutability: Some(_), .. }) =>
+                quote!(::std::ptr::null_mut()),
+            syn::Type::Ptr(syn::TypePtr { mutability: None, .. }) =>
+                quote!(::std::ptr::null()),
+            syn::Type::Array(syn::TypeArray { ref len, .. }) =>
+                quote!([::std::default::Default::default(); #len]),
+            _ => quote!(::std::default::Default::default()),
+        };
+        quote!(#name: #value)
+    });
+    tokens.extend(quote! {
+        impl ::std::default::Default for #struct_name {
+            fn default() -> Self {
+                #struct_name { #(#members,)* }
+            }
+        }
+    });
+
+    tokens
 }
 
 fn emit_union(def: &Union) -> TokenStream {
@@ -50,13 +81,42 @@ fn emit_union(def: &Union) -> TokenStream {
     let members = def.0.members.iter().map(|member| {
         let name = &member.name;
         let ty = &member.ty;
-        quote!(pub #name: #ty,)
+        quote!(pub #name: #ty)
     });
     quote! {
         #[repr(C)]
         #[derive(Copy, Clone)]
-        pub union #union_name { #(#members)* }
+        pub union #union_name { #(#members,)* }
     }
+}
+
+/// Implements `Debug` and `Default` for unions. `Debug` is given a
+/// trivial implementation. `Default` is implemented similarly to
+/// default union initialization in C: the first member is
+/// default-initialized.
+fn emit_union_traits(def: &Union) -> TokenStream {
+    let mut tokens = TokenStream::new();
+    let union_name = &def.0.name;
+
+    tokens.extend(quote! {
+        impl ::std::fmt::Debug for #union_name {
+            fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result
+            {
+                write!(f, concat!(stringify!(#union_name), " {{ (union) }}"))
+            }
+        }
+    });
+
+    let first = &def.0.members[0].name;
+    tokens.extend(quote! {
+        impl ::std::default::Default for #union_name {
+            fn default() -> Self {
+                #union_name { #first: ::std::default::Default::default() }
+            }
+        }
+    });
+
+    tokens
 }
 
 fn emit_fn_pointer(def: &FnPointer) -> TokenStream {
@@ -109,8 +169,14 @@ crate fn emit(defs: &Defs) -> TokenStream {
     let mut tokens = TokenStream::new();
     for def in defs.enums.iter() { tokens.extend(emit_enum(&def)); }
     for def in defs.consts.iter() { tokens.extend(emit_const(&def)); }
-    for def in defs.structs.iter() { tokens.extend(emit_struct(&def)); }
-    for def in defs.unions.iter() { tokens.extend(emit_union(&def)); }
+    for def in defs.structs.iter() {
+        tokens.extend(emit_struct(&def));
+        tokens.extend(emit_struct_traits(&def));
+    }
+    for def in defs.unions.iter() {
+        tokens.extend(emit_union(&def));
+        tokens.extend(emit_union_traits(&def));
+    }
     for def in defs.fn_pointers.iter()
         { tokens.extend(emit_fn_pointer(&def)); }
     for def in defs.type_aliases.iter()
