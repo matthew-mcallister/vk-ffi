@@ -3,6 +3,9 @@ name = "vk-ffi-loader"
 description = "Loader for core Vulkan commands and extensions"
 version = "0.1.0"
 authors = ["Matthew McAllister <matthew.mcallister.0@gmail.com>"]
+readme = "README.md"
+repository = "https://gitlab.com/matthew-mcallister/vk-ffi"
+keywords = ["graphics", "vulkan"]
 edition = "2018"
 
 [dependencies]

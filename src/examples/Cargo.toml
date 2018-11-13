@@ -4,6 +4,7 @@ description = "Loader for core Vulkan commands and extensions"
 version = "0.1.0"
 authors = ["Matthew McAllister <matthew.mcallister.0@gmail.com>"]
 edition = "2018"
+publish = false
 
 [dependencies]
 libloading = "0.5"

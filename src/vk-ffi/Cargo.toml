@@ -1,8 +1,11 @@
 [package]
 name = "vk-ffi"
-description = "Direct, complete bindings to the Vulkan API"
+description = "Direct, comprehensive bindings to the Vulkan API"
 version = "0.1.0"
 authors = ["Matthew McAllister <matthew.mcallister.0@gmail.com>"]
+readme = "README.md"
+repository = "https://gitlab.com/matthew-mcallister/vk-ffi"
+keywords = ["graphics", "vulkan"]
 edition = "2018"
 
 [dependencies]
