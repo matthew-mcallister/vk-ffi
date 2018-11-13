@@ -213,11 +213,10 @@ unsafe fn unsafe_main() {
         (&allocate_info as *const _, &mut desc_set as *mut _)
         .check().unwrap();
 
-    assert_eq!(vk::WHOLE_SIZE as u64, !0u64); // TODO: Fix in vk-ffi
     let desc_buf_info = vk::DescriptorBufferInfo {
         buffer,
         offset: 0,
-        range: vk::WHOLE_SIZE as u64,
+        range: vk::WHOLE_SIZE,
     };
     let desc_write = vk::WriteDescriptorSet {
         s_type: vk::StructureType::WRITE_DESCRIPTOR_SET,

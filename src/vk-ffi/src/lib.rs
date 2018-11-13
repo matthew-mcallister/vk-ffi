@@ -66,6 +66,18 @@ pub fn null<T: VkHandle>() -> T { <T as VkHandle>::null() }
 
 include!(concat!(env!("CARGO_MANIFEST_DIR"), "/generated/bindings.rs"));
 
+// These are given incorrect types by bindgen
+pub const LOD_CLAMP_NONE: f32 = 1000.0;
+pub const REMAINING_MIP_LEVELS: u32 = !0u32;
+pub const REMAINING_ARRAY_LAYERS: u32 = !0u32;
+pub const WHOLE_SIZE: u64 = !0u64;
+pub const ATTACHMENT_UNUSED: u32 = !0u32;
+pub const QUEUE_FAMILY_IGNORED: u32 = !0u32;
+pub const QUEUE_FAMILY_EXTERNAL: u32 = !0u32 - 1;
+pub const QUEUE_FAMILY_EXTERNAL_KHR: u32 = QUEUE_FAMILY_EXTERNAL;
+pub const QUEUE_FAMILY_FOREIGN_EXT: u32 = !0u32 - 2;
+pub const SUBPASS_EXTERNAL: u32 = !0u32;
+
 impl Result {
     pub fn check(self) -> ::std::result::Result<Self, Self> {
         vk_check!(self)

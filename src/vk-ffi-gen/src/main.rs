@@ -131,6 +131,16 @@ fn generate_raw_bindings(in_dir: &Path) -> String {
         .blacklist_item("VK_HEADER_VERSION")
         .blacklist_item("VK_NULL_HANDLE")
         .blacklist_item("VK_.*[a-z].*") // Extension #defines
+        // These are given incorrect types by bindgen
+        .blacklist_item("VK_LOD_CLAMP_NONE")
+        .blacklist_item("VK_REMAINING_MIP_LEVELS")
+        .blacklist_item("VK_REMAINING_ARRAY_LAYERS")
+        .blacklist_item("VK_WHOLE_SIZE")
+        .blacklist_item("VK_ATTACHMENT_UNUSED")
+        .blacklist_item("VK_QUEUE_FAMILY_IGNORED")
+        .blacklist_item("VK_QUEUE_FAMILY_EXTERNAL(_KHR)?")
+        .blacklist_item("VK_QUEUE_FAMILY_FOREIGN_EXT")
+        .blacklist_item("VK_SUBPASS_EXTERNAL")
         .default_enum_style(bindgen::EnumVariation::ModuleConsts)
         .prepend_enum_name(false)
         .layout_tests(false)
