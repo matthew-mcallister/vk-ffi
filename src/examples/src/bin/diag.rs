@@ -1,4 +1,3 @@
-#![feature(crate_visibility_modifier)]
 #![feature(try_blocks)]
 
 extern crate examples;
