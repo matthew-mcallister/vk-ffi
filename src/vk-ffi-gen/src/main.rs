@@ -100,9 +100,11 @@ fn main() {
     let format = !args.is_present("no_fmt");
 
     let bindings = emit::bindings::emit(&defs);
+    let bindings = rewrite::rewrite_tokens_post(bindings);
     write_tokens(&out_dir.join("bindings.rs"), bindings, format);
 
     let loader = emit::loader::emit(&defs.fn_pointers);
+    let loader = rewrite::rewrite_tokens_post(loader);
     write_tokens(&out_dir.join("loader.rs"), loader, format);
 }
 

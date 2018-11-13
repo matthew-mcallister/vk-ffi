@@ -3,6 +3,7 @@ use proc_macro2::{Group, Ident, Literal, Punct, TokenStream, TokenTree};
 
 use super::strip_prefix;
 
+// TODO: map_* should return `impl ToTokens` or similar
 trait MapTokens {
     fn map_ident(&mut self, ident: Ident) -> Ident { ident }
     fn map_punct(&mut self, punct: Punct) -> Punct { punct }
@@ -56,8 +57,9 @@ fn heuristic_rename(ident: &str) -> Option<String> {
         Some(stripped.to_camel_case())
     } else if let Some(stripped) = strip_prefix(ident, SHOUTY_PREFIX) {
         Some(stripped.to_shouty_snake_case())
-    } else if let Some(stripped) = strip_prefix(ident, PFN_PREFIX) {
-        Some(format!("Pfn{}", stripped.to_camel_case()))
+    } else if ident.starts_with(PFN_PREFIX) {
+        // These identifiers are deferred until AFTER code generation
+        None
     } else if ident.chars().next().unwrap().is_uppercase() {
         Some(ident.to_camel_case())
     } else if ident.chars().next().unwrap().is_lowercase()
@@ -114,4 +116,28 @@ fn skip_compiler_types(ast: &mut syn::File) {
 crate fn rewrite_ast(ast: &mut syn::File) {
     skip_compiler_types(ast);
     syn::visit_mut::visit_file_mut(&mut EnumTypeVisitor, ast);
+}
+
+// We have to go through identifier renaming again to replace any
+// remaining occurrences of "PFN_vk*".
+struct RenamePostMap;
+
+fn rename_pfn(ident: &str) -> Option<String> {
+    let stripped = strip_prefix(ident, PFN_PREFIX)?;
+    Some(format!("Pfn{}", stripped.to_camel_case()))
+}
+
+impl MapTokens for RenamePostMap {
+    fn map_ident(&mut self, ident: Ident) -> Ident {
+        let res: Option<Ident> = try {
+            let orig = ident.to_string();
+            let new = rename_pfn(&orig)?;
+            Ident::new(&new, ident.span())
+        };
+        res.unwrap_or(ident)
+    }
+}
+
+crate fn rewrite_tokens_post(tokens: TokenStream) -> TokenStream {
+    map_token_stream(&mut RenamePostMap, tokens)
 }

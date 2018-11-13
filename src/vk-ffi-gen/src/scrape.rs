@@ -108,7 +108,7 @@ fn parse_union(decl: syn::ItemUnion) -> Union {
 fn parse_function_pointer(name: syn::Ident, mut path: syn::Path) -> FnPointer
 {
     let base_name =
-        map_ident(&name, |s| strip_prefix(&s, "Pfn").unwrap().to_string());
+        map_ident(&name, |s| strip_prefix(&s, "PFN_vk").unwrap().to_string());
 
     // bindgen wraps function pointers in `Option` to make them nullable
     let last_seg = path.segments.pop().unwrap().into_value();
