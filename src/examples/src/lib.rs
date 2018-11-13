@@ -118,7 +118,7 @@ impl VulkanSys {
             application_version: vk_make_version!(0, 1, 0),
             p_engine_name: ptr::null(),
             engine_version: vk_make_version!(0, 1, 0),
-            api_version: vk_make_version!(1, 0, 0),
+            api_version: vk::API_VERSION_1_0,
         };
         let create_info = vk::InstanceCreateInfo {
             s_type: vk::StructureType::INSTANCE_CREATE_INFO,

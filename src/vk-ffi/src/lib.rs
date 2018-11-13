@@ -78,6 +78,10 @@ pub const QUEUE_FAMILY_EXTERNAL_KHR: u32 = QUEUE_FAMILY_EXTERNAL;
 pub const QUEUE_FAMILY_FOREIGN_EXT: u32 = !0u32 - 2;
 pub const SUBPASS_EXTERNAL: u32 = !0u32;
 
+// bindgen skips these because they are defined by macro calls
+pub const API_VERSION_1_0: u32 = vk_make_version!(1, 0, 0);
+pub const API_VERSION_1_1: u32 = vk_make_version!(1, 1, 0);
+
 impl Result {
     pub fn check(self) -> ::std::result::Result<Self, Self> {
         vk_check!(self)
