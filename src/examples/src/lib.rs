@@ -140,7 +140,7 @@ impl VulkanSys {
             .unwrap();
 
         let physical_devices =
-            vk_enumerate!(instance.enumerate_physical_devices).unwrap();
+            vk_enumerate2!(instance, enumerate_physical_devices).unwrap();
         let physical_device = physical_devices[0];
 
         let queue_create_info = vk::DeviceQueueCreateInfo {

@@ -31,7 +31,7 @@ unsafe fn unsafe_main() {
     let loader = Loader::load();
     let entry = vkl::Entry::load(loader.get_instance_proc_addr).unwrap();
 
-    let layers = vk_enumerate!(entry.enumerate_instance_layer_properties)
+    let layers = vk_enumerate2!(entry, enumerate_instance_layer_properties)
         .unwrap();
     println!("layers:");
     for layer in layers.into_iter() {
@@ -45,8 +45,9 @@ unsafe fn unsafe_main() {
             ffi::CStr::from_ptr(&layer.description as *const _));
     }
 
-    let exts = vk_enumerate!(
-        entry.enumerate_instance_extension_properties,
+    let exts = vk_enumerate2!(
+        entry,
+        enumerate_instance_extension_properties,
         ptr::null()).unwrap();
     println!("extensions:");
     for ext in exts.into_iter() {
@@ -85,7 +86,7 @@ unsafe fn unsafe_main() {
         .unwrap();
 
     let physical_devices =
-        vk_enumerate!(instance_table.enumerate_physical_devices).unwrap();
+        vk_enumerate2!(instance_table, enumerate_physical_devices).unwrap();
     println!("physical_devices:");
     for &pdev in physical_devices.iter() {
         let mut props: vk::PhysicalDeviceProperties =
@@ -109,8 +110,8 @@ unsafe fn unsafe_main() {
         println!("    driver_version: {}",
             Version::from(props.driver_version));
 
-        let qf_props = vk_enumerate!(@void
-            instance_table.get_physical_device_queue_family_properties, pdev);
+        let qf_props = vk_enumerate2!(@void
+            instance_table, get_physical_device_queue_family_properties, pdev);
         println!("    queue_families:");
         for qf in qf_props.into_iter() {
             print!("      - queue_flags: ");

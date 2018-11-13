@@ -35,30 +35,66 @@ macro_rules! vk_check {
 /// The macro can take a second argument, which will be passed to the
 /// API call.
 ///
-/// The macro is overloaded when the first argument is of the form
-/// `var.method`, so that the call is treated as a method invocation
-/// instead of a call to a callable struct member. To get the latter
-/// behavior, apply parentheses, as in `(var.method)`.
-///
 /// By prepending `@void`, this macro can also be used on commands like
 /// `vkGetPhysicalDeviceProperties`, which return `void` instead of
 /// `VkResult`. In this case, it just returns `Vec<_>`.
+///
+/// # Examples
+///
+/// ```
+/// vk_enumerate!(enumerate_physical_devices, instance).check()?;
+/// vk_enumerate!(
+///     @void get_physical_device_queue_family_properties,
+///     physical_device).check()?;
+/// ```
 #[macro_export]
 macro_rules! vk_enumerate {
-    // Regular versions
-    ($table:ident.$method:ident) => {
-        vk_enumerate!(@impl ($table.$method) ())
-    };
-    ($table:ident.$method:ident, $object:expr) => {
-        vk_enumerate!(@impl ($table.$method) ($object,))
-    };
     ($command:expr) => {
-        vk_enumerate!(@impl ($command) ())
+        vk_enumerate_impl!(($command) ())
     };
     ($command:expr, $object:expr) => {
-        vk_enumerate!(@impl ($command) ($object,))
+        vk_enumerate_impl!(($command) ($object,))
     };
-    (@impl ($($command:tt)*) ($($object:tt)*)) => {{
+    (@void $command:expr) => {
+        vk_enumerate_impl!(@void ($command) ())
+    };
+    (@void $command:expr, $object:expr) => {
+        vk_enumerate_impl!(@void ($command) ($object,))
+    };
+}
+
+/// Similar to `vk_enumerate`, except the new second argument is now
+/// treated as a method of the first.
+///
+/// # Examples
+///
+/// ```
+/// vk_enumerate2!(instance_wrapper, enumerate_physical_devices).check()?;
+/// vk_enumerate2!(
+///     @void instance_wrapper,
+///     get_physical_device_queue_family_properties,
+///     physical_device).check()?;
+/// ```
+#[macro_export]
+macro_rules! vk_enumerate2 {
+    ($table:expr, $method:ident) => {
+        vk_enumerate_impl!(($table.$method) ())
+    };
+    ($table:expr, $method:ident, $object:expr) => {
+        vk_enumerate_impl!(($table.$method) ($object,))
+    };
+    (@void $table:expr, $method:ident) => {
+        vk_enumerate_impl!(@void ($table.$method) ())
+    };
+    (@void $table:expr, $method:ident, $object:expr) => {
+        vk_enumerate_impl!(@void ($table.$method) ($object,))
+    };
+}
+
+/// A private macro used to implement `vk_enumerate`.
+#[macro_export]
+macro_rules! vk_enumerate_impl {
+    (($($command:tt)*) ($($object:tt)*)) => {{
         let x: ::std::result::Result<_, $crate::Result> = try {
             let mut n: u32 = 0;
             $($command)*($($object)* &mut n as *mut _, ::std::ptr::null_mut())
@@ -71,20 +107,7 @@ macro_rules! vk_enumerate {
         };
         x
     }};
-    // Void versions
-    (@void $table:ident.$method:ident) => {
-        vk_enumerate!(@impl @void ($table.$method) ())
-    };
-    (@void $table:ident.$method:ident, $object:expr) => {
-        vk_enumerate!(@impl @void ($table.$method) ($object,))
-    };
-    (@void $command:expr) => {
-        vk_enumerate!(@impl @void ($command) ())
-    };
-    (@void $command:expr, $object:expr) => {
-        vk_enumerate!(@impl @void ($command) ($object,))
-    };
-    (@impl @void ($($command:tt)*) ($($object:tt)*)) => {{
+    (@void ($($command:tt)*) ($($object:tt)*)) => {{
         let mut n: u32 = 0;
         $($command)*($($object)* &mut n as *mut _, ::std::ptr::null_mut());
         let mut v = ::std::vec::Vec::with_capacity(n as usize);
