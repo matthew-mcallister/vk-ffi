@@ -5,9 +5,21 @@ extern crate libloading as lib;
 extern crate vk_ffi as vk;
 extern crate vk_ffi_loader;
 
+use std::ffi::CStr;
 use std::ptr;
 
 use vk_ffi_loader::v1_0 as vkl;
+
+#[macro_export]
+macro_rules! c_str {
+    ($str:expr) => { concat!($str, "\0").as_ptr() as *const _ as *const _ }
+}
+
+#[cfg(unix)]
+const VULKAN_LOADER_PATH: &'static str = "libvulkan.so";
+
+const VALIDATION_LAYER: &'static [u8] =
+    b"VK_LAYER_LUNARG_standard_validation\0";
 
 #[derive(Debug)]
 pub struct Loader {
@@ -15,9 +27,6 @@ pub struct Loader {
     pub get_instance_proc_addr: vk::FnGetInstanceProcAddr,
     pub get_device_proc_addr: vk::FnGetDeviceProcAddr,
 }
-
-#[cfg(unix)]
-const VULKAN_LOADER_PATH: &'static str = "libvulkan.so";
 
 impl Loader {
     pub unsafe fn load() -> Self {
@@ -83,11 +92,6 @@ impl std::fmt::Display for Version {
     }
 }
 
-#[macro_export]
-macro_rules! c_str {
-    ($str:expr) => { concat!($str, "\0").as_ptr() as *const _ as *const _ }
-}
-
 pub struct VulkanSys {
     pub loader: Loader,
     pub entry: vkl::Entry,
@@ -111,6 +115,25 @@ impl VulkanSys {
         let loader = Loader::load();
         let entry = vkl::Entry::load(loader.get_instance_proc_addr).unwrap();
 
+        // Enable validation if available
+        let layers = vk_enumerate2!(entry, enumerate_instance_layer_properties)
+            .unwrap();
+        let enable_validation = layers.iter().any(|layer| {
+            CStr::from_ptr(&layer.layer_name as *const _ as *const _)
+                == CStr::from_bytes_with_nul_unchecked(VALIDATION_LAYER)
+        });
+
+        let validation_layers = [VALIDATION_LAYER.as_ptr() as _];
+        let enabled_layers =
+            if enable_validation { &validation_layers[..] }
+            else { &[][..] };
+
+        // This is the minimum required to run validation layers. To log
+        // validation messages, either use the debug_utils extension or
+        // configure the validation layer settings file. See
+        //   https://vulkan.lunarg.com/doc/sdk/latest/linux/layer_configuration.html
+
+        // Create instance
         let app_info = vk::ApplicationInfo {
             s_type: vk::StructureType::APPLICATION_INFO,
             p_next: ptr::null(),
@@ -125,8 +148,8 @@ impl VulkanSys {
             p_next: ptr::null(),
             flags: Default::default(),
             p_application_info: &app_info as *const _,
-            enabled_layer_count: 0,
-            pp_enabled_layer_names: ptr::null(),
+            enabled_layer_count: enabled_layers.len() as _,
+            pp_enabled_layer_names: enabled_layers.as_ptr(),
             enabled_extension_count: 0,
             pp_enabled_extension_names: ptr::null(),
         };
@@ -139,6 +162,7 @@ impl VulkanSys {
             (vk_instance, loader.get_instance_proc_addr)
             .unwrap();
 
+        // Create device
         let physical_devices =
             vk_enumerate2!(instance, enumerate_physical_devices).unwrap();
         let physical_device = physical_devices[0];
@@ -147,6 +171,9 @@ impl VulkanSys {
             s_type: vk::StructureType::DEVICE_QUEUE_CREATE_INFO,
             p_next: ptr::null(),
             flags: Default::default(),
+            // This causes a validation warning but is actually legal
+            // because the spec requires at least one queue family.
+            // Someone should tell the validation layer authors.
             queue_family_index: 0,
             queue_count: 1,
             p_queue_priorities: &1.0f32 as *const _,
