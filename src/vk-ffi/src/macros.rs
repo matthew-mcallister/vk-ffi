@@ -32,7 +32,7 @@ macro_rules! vk_check {
 /// macro yields `Result<Vec<_>, VkResult>`, and never returns
 /// VK_INCOMPLETE.
 ///
-/// The macro can take a second argument, which will be passed to the
+/// The macro can take further arguments, which will be passed to the
 /// API call.
 ///
 /// By prepending `@void`, this macro can also be used on commands like
@@ -45,21 +45,22 @@ macro_rules! vk_check {
 /// vk_enumerate!(enumerate_physical_devices, instance).check()?;
 /// vk_enumerate!(
 ///     @void get_physical_device_queue_family_properties,
-///     physical_device).check()?;
+///     physical_device,
+/// ).check()?;
 /// ```
 #[macro_export]
 macro_rules! vk_enumerate {
-    ($command:expr) => {
-        vk_enumerate_impl!(($command) ())
+    ($command:expr $(, $param:expr)*) => {
+        vk_enumerate_impl!(($command) ($($param,)*))
     };
-    ($command:expr, $object:expr) => {
-        vk_enumerate_impl!(($command) ($object,))
+    ($command:expr $(, $param:expr)*,) => {
+        vk_enumerate_impl!(($command) ($($param,)*))
     };
-    (@void $command:expr) => {
-        vk_enumerate_impl!(@void ($command) ())
+    (@void $command:expr $(, $param:expr)*) => {
+        vk_enumerate_impl!(@void ($command) ($($param,)*))
     };
-    (@void $command:expr, $object:expr) => {
-        vk_enumerate_impl!(@void ($command) ($object,))
+    (@void $command:expr $(, $param:expr)*,) => {
+        vk_enumerate_impl!(@void ($command) ($($param,)*))
     };
 }
 
@@ -73,45 +74,46 @@ macro_rules! vk_enumerate {
 /// vk_enumerate2!(
 ///     @void instance_wrapper,
 ///     get_physical_device_queue_family_properties,
-///     physical_device).check()?;
+///     physical_device,
+/// ).check()?;
 /// ```
 #[macro_export]
 macro_rules! vk_enumerate2 {
-    ($table:expr, $method:ident) => {
-        vk_enumerate_impl!(($table.$method) ())
+    ($object:expr, $method:ident $(, $param:expr)*) => {
+        vk_enumerate_impl!(($object.$method) ($($param,)*))
     };
-    ($table:expr, $method:ident, $object:expr) => {
-        vk_enumerate_impl!(($table.$method) ($object,))
+    ($object:expr, $method:ident $(, $param:expr)*,) => {
+        vk_enumerate_impl!(($object.$method) ($($param,)*))
     };
-    (@void $table:expr, $method:ident) => {
-        vk_enumerate_impl!(@void ($table.$method) ())
+    (@void $object:expr, $method:ident $(, $param:expr)*,) => {
+        vk_enumerate_impl!(@void ($object.$method) ($($param,)*))
     };
-    (@void $table:expr, $method:ident, $object:expr) => {
-        vk_enumerate_impl!(@void ($table.$method) ($object,))
+    (@void $object:expr, $method:ident $(, $param:expr)*,) => {
+        vk_enumerate_impl!(@void ($object.$method) ($($param,)*))
     };
 }
 
 /// A private macro used to implement `vk_enumerate`.
 #[macro_export]
 macro_rules! vk_enumerate_impl {
-    (($($command:tt)*) ($($object:tt)*)) => {{
+    (($($command:tt)*) ($($param:expr,)*)) => {{
         let x: ::std::result::Result<_, $crate::Result> = try {
             let mut n: u32 = 0;
-            $($command)*($($object)* &mut n as *mut _, ::std::ptr::null_mut())
+            $($command)*($($param,)* &mut n as *mut _, ::std::ptr::null_mut())
                 .check()?;
             let mut v = ::std::vec::Vec::with_capacity(n as usize);
-            $($command)*($($object)* &mut n as *mut _, v.as_mut_ptr())
+            $($command)*($($param,)* &mut n as *mut _, v.as_mut_ptr())
                 .check()?;
             v.set_len(n as usize);
             v
         };
         x
     }};
-    (@void ($($command:tt)*) ($($object:tt)*)) => {{
+    (@void ($($command:tt)*) ($($param:expr,)*)) => {{
         let mut n: u32 = 0;
-        $($command)*($($object)* &mut n as *mut _, ::std::ptr::null_mut());
+        $($command)*($($param,)* &mut n as *mut _, ::std::ptr::null_mut());
         let mut v = ::std::vec::Vec::with_capacity(n as usize);
-        $($command)*($($object)* &mut n as *mut _, v.as_mut_ptr());
+        $($command)*($($param,)* &mut n as *mut _, v.as_mut_ptr());
         v.set_len(n as usize);
         v
     }};

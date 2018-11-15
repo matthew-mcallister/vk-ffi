@@ -48,7 +48,8 @@ unsafe fn unsafe_main() {
     let exts = vk_enumerate2!(
         entry,
         enumerate_instance_extension_properties,
-        ptr::null()).unwrap();
+        ptr::null(),
+    ).unwrap();
     println!("extensions:");
     for ext in exts.into_iter() {
         println!("  - name: {:?}",
@@ -110,8 +111,11 @@ unsafe fn unsafe_main() {
         println!("    driver_version: {}",
             Version::from(props.driver_version));
 
-        let qf_props = vk_enumerate2!(@void
-            instance_table, get_physical_device_queue_family_properties, pdev);
+        let qf_props = vk_enumerate2!(
+            @void instance_table,
+            get_physical_device_queue_family_properties,
+            pdev,
+        );
         println!("    queue_families:");
         for qf in qf_props.into_iter() {
             print!("      - queue_flags: ");
