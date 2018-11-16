@@ -179,6 +179,20 @@ unsafe fn unsafe_main() {
             };
             println!();
         }
+
+        let exts = vk_enumerate2!(
+            instance_table,
+            enumerate_device_extension_properties,
+            pdev,
+            ptr::null(),
+        ).unwrap();
+        println!("    extensions:");
+        for ext in exts.into_iter() {
+            println!("      - name: {:?}",
+                ffi::CStr::from_ptr(&ext.extension_name as *const _));
+            println!("        spec_version: {}",
+                Version::from(ext.spec_version));
+        }
     }
 
     instance_table.destroy_instance(ptr::null());
