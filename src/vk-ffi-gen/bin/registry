@@ -149,7 +149,14 @@ def get_apis(root, commands):
             level = Level.INSTANCE
         else:
             assert type == 'device', f'{type} of {name}'
-            level = level.DEVICE
+            level = Level.DEVICE
+
+        if level == Level.DEVICE:
+            # Filter out instance-level commands
+            cmds = [cmd for cmd in cmds if cmd.handle.level() == level]
+            if not cmds:
+                continue
+
         apis.append(Api(name=name, commands=cmds, level=level))
 
     return apis
