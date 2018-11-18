@@ -1,15 +1,14 @@
 #![feature(try_blocks)]
 
 extern crate examples;
-extern crate vk_ffi_loader;
 #[macro_use]
 extern crate vk_ffi as vk;
+extern crate vk_ffi_loader as vkl;
 
 use std::ffi;
 use std::ptr;
 
 use examples::*;
-use vk_ffi_loader::v1_0 as vkl;
 
 fn main() {
     unsafe { unsafe_main() }
@@ -29,7 +28,7 @@ macro_rules! print_bits {
 
 unsafe fn unsafe_main() {
     let loader = Loader::load();
-    let entry = vkl::Entry::load(loader.get_instance_proc_addr).unwrap();
+    let entry = vkl::Entry::load(loader.get_instance_proc_addr);
 
     let layers = vk_enumerate2!(entry, enumerate_instance_layer_properties)
         .unwrap();
@@ -82,9 +81,8 @@ unsafe fn unsafe_main() {
         (&create_info as *const _, ptr::null(), &mut instance as *mut _)
         .check().unwrap();
 
-    let instance_table = vkl::CoreInstance::load
-        (instance, loader.get_instance_proc_addr)
-        .unwrap();
+    let instance_table =
+        vkl::InstanceTable::load(instance, loader.get_instance_proc_addr);
 
     let physical_devices =
         vk_enumerate2!(instance_table, enumerate_physical_devices).unwrap();

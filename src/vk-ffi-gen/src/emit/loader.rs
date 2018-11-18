@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashSet, HashMap};
 use std::ffi::CString;
 use std::process::Command;
 
@@ -78,80 +78,45 @@ impl parse::Parse for ApiLevel {
 struct Api {
     name: syn::Ident,
     level: ApiLevel,
-    commands: Vec<syn::Ident>,
+    commands: HashSet<syn::Ident>,
 }
 
 impl parse::Parse for Api {
     fn parse(input: parse::ParseStream) -> parse::Result<Self> {
-        let name = input.parse().unwrap();
-        input.parse::<Token![:]>().unwrap();
         let level = input.parse().unwrap();
-        let mut commands: Vec<syn::Ident> = Vec::new();
+        let mut commands: HashSet<syn::Ident> = HashSet::new();
         let content;
         braced!(content in input);
         while !content.is_empty() {
-            commands.push(content.parse().unwrap());
+            let ident: syn::Ident = content.parse().unwrap();
+            let ident = map_ident
+                (&ident, |s| strip_prefix(&s, "vk").unwrap().to_camel_case());
+            commands.insert(ident);
             content.parse::<Token![,]>().unwrap();
         }
-        Ok(Api { name, level, commands })
-    }
-}
 
-fn rewrite_api_idents(api: &mut Api) {
-    api.name = map_ident
-        (&api.name, |s| strip_prefix(&s, "VK_").unwrap().to_camel_case());
-    for command in api.commands.iter_mut() {
-        *command = map_ident
-            (command, |s| strip_prefix(&s, "vk").unwrap().to_camel_case());
+        let name = ident(match level {
+            ApiLevel::Instance => "InstanceTable",
+            ApiLevel::Device => "DeviceTable",
+        });
+
+        Ok(Api { name, level, commands })
     }
 }
 
 #[derive(Debug)]
 struct Apis {
-    instance_v1_0: Api,
-    instance_v1_1: Api,
-    device_v1_0: Api,
-    device_v1_1: Api,
-    extensions: Vec<Api>,
-}
-
-macro_rules! parse_apis_impl {
-    ($($name:ident: $level:expr,)*) => {
-        fn parse(input: parse::ParseStream) -> parse::Result<Self> {
-            $(
-                let $name: Api = input.parse().unwrap();
-                assert_eq!(
-                    &$name.name.to_string(),
-                    concat!("VK_", stringify!($name)));
-                assert_eq!($name.level, $level);
-            )*
-            let mut extensions: Vec<Api> = Vec::new();
-            while !input.is_empty() { extensions.push(input.parse().unwrap()); }
-            Ok(Apis { $($name,)* extensions })
-        }
-    }
+    instance: Api,
+    device: Api,
 }
 
 impl parse::Parse for Apis {
-    parse_apis_impl! {
-        instance_v1_0: ApiLevel::Instance,
-        instance_v1_1: ApiLevel::Instance,
-        device_v1_0: ApiLevel::Device,
-        device_v1_1: ApiLevel::Device,
-    }
-}
-
-fn rewrite_apis_idents(apis: &mut Apis) {
-    rewrite_api_idents(&mut apis.instance_v1_0);
-    apis.instance_v1_0.name = ident("CoreInstance");
-    rewrite_api_idents(&mut apis.instance_v1_1);
-    apis.instance_v1_1.name = ident("CoreInstance");
-    rewrite_api_idents(&mut apis.device_v1_0);
-    apis.device_v1_0.name = ident("CoreDevice");
-    rewrite_api_idents(&mut apis.device_v1_1);
-    apis.device_v1_1.name = ident("CoreDevice");
-    for extension in apis.extensions.iter_mut() {
-        rewrite_api_idents(extension);
+    fn parse(input: parse::ParseStream) -> parse::Result<Self> {
+        let instance: Api = input.parse().unwrap();
+        assert_eq!(instance.level, ApiLevel::Instance);
+        let device: Api = input.parse().unwrap();
+        assert_eq!(device.level, ApiLevel::Device);
+        Ok(Apis { instance, device })
     }
 }
 
@@ -161,9 +126,7 @@ fn get_apis() -> Apis {
         .output().unwrap()
         .stdout;
     let output = String::from_utf8(output).unwrap();
-    let mut apis: Apis = syn::parse_str(&output).unwrap();
-    rewrite_apis_idents(&mut apis);
-    apis
+    syn::parse_str(&output).unwrap()
 }
 
 fn emit_table(api: &Api, fn_ptrs: &HashMap<String, &FnPointer>) -> TokenStream
@@ -173,9 +136,13 @@ fn emit_table(api: &Api, fn_ptrs: &HashMap<String, &FnPointer>) -> TokenStream
         if api.level == ApiLevel::Instance { quote!(pub instance: Instance,) }
         else { quote!(pub device: Device,) };
     for cmd_name in api.commands.iter() {
-        let pfn = fn_ptrs[&cmd_name.to_string()];
+        let pfn = match fn_ptrs.get(&cmd_name.to_string()) {
+            Some(pfn) => pfn,
+            // Commands from unsupported extensions are not loaded.
+            None => continue,
+        };
         let member_name = pfn.snake_name();
-        let ty = pfn.fn_name();
+        let ty = pfn.pfn_name();
         table_body.extend(quote!(pub #member_name: #ty,));
     }
     quote! {
@@ -194,16 +161,17 @@ fn emit_loader(api: &Api, fn_ptrs: &HashMap<String, &FnPointer>) -> TokenStream
     let api_name = &api.name;
     let mut loader_body = TokenStream::new();
     for cmd_name in api.commands.iter() {
-        let pfn = fn_ptrs[&cmd_name.to_string()];
+        let pfn = match fn_ptrs.get(&cmd_name.to_string()) {
+            Some(pfn) => pfn,
+            None => continue,
+        };
         let member_name = pfn.snake_name();
         let symbol_cstr = CString::new(pfn.symbol_name()).unwrap();
         let symbol_bytes = proc_macro2::Literal::byte_string
             (symbol_cstr.as_bytes_with_nul());
-        let symbol = symbol_cstr.to_str().unwrap();
         loader_body.extend(quote! {
             #member_name: ::std::mem::transmute({
                 #get_proc_addr(#handle, #symbol_bytes.as_ptr() as *const _)
-                    .ok_or(LoadError(#symbol))?
             }),
         });
     }
@@ -213,11 +181,11 @@ fn emit_loader(api: &Api, fn_ptrs: &HashMap<String, &FnPointer>) -> TokenStream
             pub unsafe fn load(
                 #handle: #handle_ty,
                 #get_proc_addr: #get_proc_addr_ty,
-            ) -> ::std::result::Result<Self, LoadError> {
-                Ok(#api_name {
+            ) -> Self {
+                #api_name {
                     #handle,
                     #loader_body
-                })
+                }
             }
         }
     }
@@ -225,7 +193,8 @@ fn emit_loader(api: &Api, fn_ptrs: &HashMap<String, &FnPointer>) -> TokenStream
 
 fn type_is(ty: &syn::Type, name: &str) -> bool {
     let res: Option<bool> = try {
-        let segs = &get_variant_ref!(syn::Type::Path, ty).unwrap().path.segments;
+        let segs =
+            &get_variant_ref!(syn::Type::Path, ty).unwrap().path.segments;
         if segs.len() != 1 { return false; }
         &segs[0].ident.to_string() == name
     };
@@ -270,42 +239,42 @@ fn emit_methods(api: &Api, fn_ptrs: &HashMap<String, &FnPointer>) ->
     let api_name = &api.name;
     let mut methods_body = TokenStream::new();
     for cmd_name in api.commands.iter() {
-        let pfn = fn_ptrs[&cmd_name.to_string()];
+        let pfn = match fn_ptrs.get(&cmd_name.to_string()) {
+            Some(pfn) => pfn,
+            None => continue,
+        };
         let inputs = MethodInputs::new(api.level, &pfn);
         let output = &pfn.signature.output;
 
         let member_name = pfn.snake_name();
+        let fn_type = pfn.fn_name();
         let handle = api.level.handle();
         let args = inputs.args();
         let names = inputs.names();
         methods_body.extend(if inputs.takes_handle {
             quote! {
                 pub unsafe fn #member_name(&self, #(#args,)*) #output {
-                    (self.#member_name)(self.#handle, #(#names,)*)
+                    std::mem::transmute::<_, #fn_type>(self.#member_name)
+                        (self.#handle, #(#names,)*)
                 }
             }
         } else {
             quote! {
                 pub unsafe fn #member_name(&self, #(#args,)*) #output {
-                    (self.#member_name)(#(#names,)*)
+                    std::mem::transmute::<_, #fn_type>(self.#member_name)
+                        (#(#names,)*)
                 }
             }
         });
     }
-    quote!(impl #api_name { #methods_body } )
+    quote!(impl #api_name { #methods_body })
 }
 
-fn emit_api(api: &Api, fn_ptrs: &HashMap<String, &FnPointer>) ->
-    Option<TokenStream>
-{
-    // Not all extensions are currently supported directly, namely the
-    // WSI-related ones. We'll have to skip those.
-    for cmd in api.commands.iter() { fn_ptrs.get(&cmd.to_string())?; }
-
+fn emit_api(api: &Api, fn_ptrs: &HashMap<String, &FnPointer>) -> TokenStream {
     let mut tokens = emit_table(api, fn_ptrs);
     tokens.extend(emit_loader(api, fn_ptrs));
     tokens.extend(emit_methods(api, fn_ptrs));
-    Some(tokens)
+    tokens
 }
 
 crate fn emit(fn_ptrs: &[FnPointer]) -> TokenStream {
@@ -314,45 +283,7 @@ crate fn emit(fn_ptrs: &[FnPointer]) -> TokenStream {
         .collect();
     let apis = get_apis();
 
-    let mut result = TokenStream::new();
-
-    let mut tokens = emit_api(&apis.instance_v1_0, &fn_ptr_table).unwrap();
-    tokens.extend(emit_api(&apis.device_v1_0, &fn_ptr_table).unwrap());
-    result.extend(quote! {
-        pub mod v1_0 {
-            use vk_ffi::*;
-            use crate::LoadError;
-            pub use crate::entry::v1_0::*;
-            pub use crate::extensions::*;
-            #tokens
-        }
-    });
-
-    let mut tokens = emit_api(&apis.instance_v1_1, &fn_ptr_table).unwrap();
-    tokens.extend(emit_api(&apis.device_v1_1, &fn_ptr_table).unwrap());
-    result.extend(quote! {
-        pub mod v1_1 {
-            use vk_ffi::*;
-            use crate::LoadError;
-            pub use crate::entry::v1_1::*;
-            pub use crate::extensions::*;
-            #tokens
-        }
-    });
-
-    let mut tokens = TokenStream::new();
-    for ext in apis.extensions.iter() {
-        if let Some(toks) = emit_api(ext, &fn_ptr_table) {
-            tokens.extend(toks);
-        }
-    }
-    result.extend(quote! {
-        pub mod extensions {
-            use vk_ffi::*;
-            use crate::LoadError;
-            #tokens
-        }
-    });
-
-    result
+    [&apis.instance, &apis.device].iter()
+        .map(|&api| emit_api(api, &fn_ptr_table))
+        .collect()
 }

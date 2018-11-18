@@ -3,16 +3,17 @@
 extern crate libloading as lib;
 #[macro_use]
 extern crate vk_ffi as vk;
-extern crate vk_ffi_loader;
+extern crate vk_ffi_loader as vkl;
 
 use std::ffi::CStr;
 use std::ptr;
 
-use vk_ffi_loader::v1_0 as vkl;
-
 #[macro_export]
 macro_rules! c_str {
-    ($str:expr) => { concat!($str, "\0").as_ptr() as *const _ as *const _ }
+    ($str:expr) => {
+        concat!($str, "\0")
+            as *const _ as *const _ as *const ::std::os::raw::c_char
+    }
 }
 
 #[cfg(unix)]
@@ -95,9 +96,9 @@ impl std::fmt::Display for Version {
 pub struct VulkanSys {
     pub loader: Loader,
     pub entry: vkl::Entry,
-    pub instance: vkl::CoreInstance,
+    pub instance: vkl::InstanceTable,
     pub physical_device: vk::PhysicalDevice,
-    pub device: vkl::CoreDevice,
+    pub device: vkl::DeviceTable,
     pub queue: vk::Queue,
 }
 
@@ -113,7 +114,7 @@ impl Drop for VulkanSys {
 impl VulkanSys {
     pub unsafe fn new() -> Self {
         let loader = Loader::load();
-        let entry = vkl::Entry::load(loader.get_instance_proc_addr).unwrap();
+        let entry = vkl::Entry::load(loader.get_instance_proc_addr);
 
         // Enable validation if available
         let layers = vk_enumerate2!(entry, enumerate_instance_layer_properties)
@@ -158,9 +159,8 @@ impl VulkanSys {
             (&create_info as *const _, ptr::null(), &mut vk_instance as *mut _)
             .check().unwrap();
 
-        let instance = vkl::CoreInstance::load
-            (vk_instance, loader.get_instance_proc_addr)
-            .unwrap();
+        let instance = vkl::InstanceTable::load
+            (vk_instance, loader.get_instance_proc_addr);
 
         // Create device
         let physical_devices =
@@ -199,9 +199,8 @@ impl VulkanSys {
             &mut vk_device as *mut _,
         ).check().unwrap();
 
-        let device = vkl::CoreDevice::load
-            (vk_device, loader.get_device_proc_addr)
-            .unwrap();
+        let device =
+            vkl::DeviceTable::load(vk_device, loader.get_device_proc_addr);
 
         let mut queue = vk::null();
         device.get_device_queue(0, 0, &mut queue as *mut _);
