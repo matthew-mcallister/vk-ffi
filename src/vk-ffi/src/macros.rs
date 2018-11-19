@@ -1,29 +1,29 @@
 #[macro_export]
-macro_rules! vk_make_version {
+macro_rules! make_version {
         ($major:expr, $minor:expr, $patch:expr) => {
         ($major << 22) | ($minor << 12) | $patch
     }
 }
 
 #[macro_export]
-macro_rules! vk_version_major {
+macro_rules! version_major {
     ($version:expr) => { $version >> 22 }
 }
 
 #[macro_export]
-macro_rules! vk_version_minor {
+macro_rules! version_minor {
     ($version:expr) => { ($version >> 12) & 0x3ff }
 }
 
 #[macro_export]
-macro_rules! vk_version_patch {
+macro_rules! version_patch {
     ($version:expr) => { $version & 0xfff }
 }
 
 /// Converts a `VkResult` to a `Result<VkResult, VkResult>`, branching
 /// on whether the code signifies an error.
 #[macro_export]
-macro_rules! vk_check {
+macro_rules! check {
     ($res:expr) => { if $res.is_success() { Ok($res) } else { Err($res) } }
 }
 
@@ -49,18 +49,18 @@ macro_rules! vk_check {
 /// ).check()?;
 /// ```
 #[macro_export]
-macro_rules! vk_enumerate {
+macro_rules! enumerate {
     ($command:expr $(, $param:expr)*) => {
-        vk_enumerate_impl!(($command) ($($param,)*))
+        $crate::enumerate_impl!(($command) ($($param,)*))
     };
     ($command:expr $(, $param:expr)*,) => {
-        vk_enumerate_impl!(($command) ($($param,)*))
+        $crate::enumerate_impl!(($command) ($($param,)*))
     };
     (@void $command:expr $(, $param:expr)*) => {
-        vk_enumerate_impl!(@void ($command) ($($param,)*))
+        $crate::enumerate_impl!(@void ($command) ($($param,)*))
     };
     (@void $command:expr $(, $param:expr)*,) => {
-        vk_enumerate_impl!(@void ($command) ($($param,)*))
+        $crate::enumerate_impl!(@void ($command) ($($param,)*))
     };
 }
 
@@ -78,24 +78,24 @@ macro_rules! vk_enumerate {
 /// ).check()?;
 /// ```
 #[macro_export]
-macro_rules! vk_enumerate2 {
+macro_rules! enumerate2 {
     ($object:expr, $method:ident $(, $param:expr)*) => {
-        vk_enumerate_impl!(($object.$method) ($($param,)*))
+        $crate::enumerate_impl!(($object.$method) ($($param,)*))
     };
     ($object:expr, $method:ident $(, $param:expr)*,) => {
-        vk_enumerate_impl!(($object.$method) ($($param,)*))
+        $crate::enumerate_impl!(($object.$method) ($($param,)*))
     };
     (@void $object:expr, $method:ident $(, $param:expr)*,) => {
-        vk_enumerate_impl!(@void ($object.$method) ($($param,)*))
+        $crate::enumerate_impl!(@void ($object.$method) ($($param,)*))
     };
     (@void $object:expr, $method:ident $(, $param:expr)*,) => {
-        vk_enumerate_impl!(@void ($object.$method) ($($param,)*))
+        $crate::enumerate_impl!(@void ($object.$method) ($($param,)*))
     };
 }
 
 /// A private macro used to implement `vk_enumerate`.
 #[macro_export]
-macro_rules! vk_enumerate_impl {
+macro_rules! enumerate_impl {
     (($($command:tt)*) ($($param:expr,)*)) => {{
         let x: ::std::result::Result<_, $crate::Result> = try {
             let mut n: u32 = 0;

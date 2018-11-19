@@ -6,6 +6,8 @@ use std::ops::*;
 mod macros;
 mod imp;
 
+pub use self::macros::*;
+
 macro_rules! impl_unary_op {
     ($OpName:ident, $opname:ident; $name:ident) => {
         impl $OpName for $name {
@@ -73,8 +75,8 @@ pub const QUEUE_FAMILY_FOREIGN_EXT: u32 = !0u32 - 2;
 pub const SUBPASS_EXTERNAL: u32 = !0u32;
 
 // bindgen skips these because they are defined by macro calls
-pub const API_VERSION_1_0: u32 = vk_make_version!(1, 0, 0);
-pub const API_VERSION_1_1: u32 = vk_make_version!(1, 1, 0);
+pub const API_VERSION_1_0: u32 = crate::make_version!(1, 0, 0);
+pub const API_VERSION_1_1: u32 = crate::make_version!(1, 1, 0);
 
 pub trait VkHandle: Eq + Sized {
     fn null() -> Self;
@@ -85,7 +87,7 @@ pub fn null<T: VkHandle>() -> T { <T as VkHandle>::null() }
 
 impl Result {
     pub fn check(self) -> ::std::result::Result<Self, Self> {
-        vk_check!(self)
+        crate::check!(self)
     }
 
     pub fn is_success(self) -> bool {

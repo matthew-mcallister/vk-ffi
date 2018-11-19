@@ -1,7 +1,6 @@
 #![feature(try_blocks)]
 
 extern crate examples;
-#[macro_use]
 extern crate vk_ffi as vk;
 extern crate vk_ffi_loader as vkl;
 
@@ -30,7 +29,7 @@ unsafe fn unsafe_main() {
     let loader = Loader::load();
     let entry = vkl::Entry::load(loader.get_instance_proc_addr);
 
-    let layers = vk_enumerate2!(entry, enumerate_instance_layer_properties)
+    let layers = vk::enumerate2!(entry, enumerate_instance_layer_properties)
         .unwrap();
     println!("layers:");
     for layer in layers.into_iter() {
@@ -44,7 +43,7 @@ unsafe fn unsafe_main() {
             ffi::CStr::from_ptr(&layer.description as *const _));
     }
 
-    let exts = vk_enumerate2!(
+    let exts = vk::enumerate2!(
         entry,
         enumerate_instance_extension_properties,
         ptr::null(),
@@ -61,9 +60,9 @@ unsafe fn unsafe_main() {
         s_type: vk::StructureType::APPLICATION_INFO,
         p_next: ptr::null(),
         p_application_name: c_str!("Diagnostic example"),
-        application_version: vk_make_version!(0, 1, 0),
+        application_version: vk::make_version!(0, 1, 0),
         p_engine_name: ptr::null(),
-        engine_version: vk_make_version!(0, 1, 0),
+        engine_version: vk::make_version!(0, 1, 0),
         api_version: vk::API_VERSION_1_0,
     };
     let create_info = vk::InstanceCreateInfo {
@@ -85,7 +84,7 @@ unsafe fn unsafe_main() {
         vkl::InstanceTable::load(instance, loader.get_instance_proc_addr);
 
     let physical_devices =
-        vk_enumerate2!(instance_table, enumerate_physical_devices).unwrap();
+        vk::enumerate2!(instance_table, enumerate_physical_devices).unwrap();
     println!("physical_devices:");
     for &pdev in physical_devices.iter() {
         let mut props: vk::PhysicalDeviceProperties =
@@ -109,7 +108,7 @@ unsafe fn unsafe_main() {
         println!("    driver_version: {}",
             Version::from(props.driver_version));
 
-        let qf_props = vk_enumerate2!(
+        let qf_props = vk::enumerate2!(
             @void instance_table,
             get_physical_device_queue_family_properties,
             pdev,
@@ -178,7 +177,7 @@ unsafe fn unsafe_main() {
             println!();
         }
 
-        let exts = vk_enumerate2!(
+        let exts = vk::enumerate2!(
             instance_table,
             enumerate_device_extension_properties,
             pdev,
