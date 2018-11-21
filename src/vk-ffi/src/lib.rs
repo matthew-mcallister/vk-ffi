@@ -98,3 +98,40 @@ impl Result {
         self.0 < 0
     }
 }
+
+macro_rules! impl_tuple_like {
+    ($name:ident { $($field:ident: $type:ty,)* }) => {
+        impl $name {
+            pub fn new($($field: $type,)*) -> Self {
+                $name { $($field,)* }
+            }
+        }
+
+        impl ::std::convert::From<$name> for ($($type,)*) {
+            fn from($name { $($field,)* }: $name) -> Self {
+                ($($field,)*)
+            }
+        }
+
+        impl ::std::convert::From<($($type,)*)> for $name {
+            fn from(($($field,)*): ($($type,)*)) -> Self {
+                $name { $($field,)* }
+            }
+        }
+
+        impl ::std::cmp::PartialEq for $name {
+            fn eq(&self, other: &Self) -> bool {
+                true
+                    $(&& self.$field == other.$field)*
+            }
+        }
+
+        impl ::std::cmp::Eq for $name {}
+    }
+}
+
+impl_tuple_like!(Offset2D { x: i32, y: i32, });
+impl_tuple_like!(Offset3D { x: i32, y: i32, z: i32, });
+impl_tuple_like!(Extent2D { width: u32, height: u32, });
+impl_tuple_like!(Extent3D { width: u32, height: u32, depth: u32, });
+impl_tuple_like!(Rect2D { offset: Offset2D, extent: Extent2D, });
