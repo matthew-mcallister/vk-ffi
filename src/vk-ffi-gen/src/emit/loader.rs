@@ -253,6 +253,7 @@ fn emit_methods(api: &Api, fn_ptrs: &HashMap<String, &FnPointer>) ->
         let names = inputs.names();
         methods_body.extend(if inputs.takes_handle {
             quote! {
+                #[inline]
                 pub unsafe fn #member_name(&self, #(#args,)*) #output {
                     std::mem::transmute::<_, #fn_type>(self.#member_name)
                         (self.#handle, #(#names,)*)
@@ -260,6 +261,7 @@ fn emit_methods(api: &Api, fn_ptrs: &HashMap<String, &FnPointer>) ->
             }
         } else {
             quote! {
+                #[inline]
                 pub unsafe fn #member_name(&self, #(#args,)*) #output {
                     std::mem::transmute::<_, #fn_type>(self.#member_name)
                         (#(#names,)*)

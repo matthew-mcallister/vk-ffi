@@ -12,6 +12,7 @@ macro_rules! impl_unary_op {
     ($OpName:ident, $opname:ident; $name:ident) => {
         impl $OpName for $name {
             type Output = Self;
+            #[inline]
             fn $opname(self) -> Self {
                 $name((self.0).$opname())
             }
@@ -23,6 +24,7 @@ macro_rules! impl_bin_op {
     ($OpName:ident, $opname:ident; $name:ident) => {
         impl $OpName for $name {
             type Output = Self;
+            #[inline]
             fn $opname(self, other: Self) -> Self {
                 $name((self.0).$opname(other.0))
             }
@@ -33,6 +35,7 @@ macro_rules! impl_bin_op {
 macro_rules! impl_bin_op_assign {
     ($OpAssign:ident, $opassign:ident; $name:ident) => {
         impl $OpAssign for $name {
+            #[inline]
             fn $opassign(&mut self, other: Self) {
                 (self.0).$opassign(other.0)
             }
@@ -50,10 +53,14 @@ macro_rules! bitmask_impls {
         impl_bin_op!(BitXor, bitxor; $name);
         impl_bin_op_assign!(BitXorAssign, bitxor_assign; $name);
         impl $name {
+            #[inline]
             pub fn empty() -> Self { $name(0) }
+            #[inline]
             pub fn is_empty(self) -> bool { self.0 == 0 }
+            #[inline]
             pub fn intersects(self, other: Self) -> bool
                 { self.bitand(other).0 != 0 }
+            #[inline]
             pub fn contains(self, other: Self) -> bool
                 { self.bitand(other).0 == other.0 }
         }
@@ -79,21 +86,24 @@ pub const API_VERSION_1_0: u32 = crate::make_version!(1, 0, 0);
 pub const API_VERSION_1_1: u32 = crate::make_version!(1, 1, 0);
 
 pub trait VkHandle: Eq + Sized {
+    #[inline]
     fn null() -> Self;
+    #[inline]
     fn is_null(self) -> bool { self == Self::null() }
 }
 
 pub fn null<T: VkHandle>() -> T { <T as VkHandle>::null() }
 
 impl Result {
+    #[inline]
     pub fn check(self) -> ::std::result::Result<Self, Self> {
         crate::check!(self)
     }
-
+    #[inline]
     pub fn is_success(self) -> bool {
         self.0 >= 0
     }
-
+    #[inline]
     pub fn is_error(self) -> bool {
         self.0 < 0
     }
@@ -102,24 +112,28 @@ impl Result {
 macro_rules! impl_tuple_like {
     ($name:ident { $($field:ident: $type:ty,)* }) => {
         impl $name {
+            #[inline]
             pub fn new($($field: $type,)*) -> Self {
                 $name { $($field,)* }
             }
         }
 
         impl ::std::convert::From<$name> for ($($type,)*) {
+            #[inline]
             fn from($name { $($field,)* }: $name) -> Self {
                 ($($field,)*)
             }
         }
 
         impl ::std::convert::From<($($type,)*)> for $name {
+            #[inline]
             fn from(($($field,)*): ($($type,)*)) -> Self {
                 $name { $($field,)* }
             }
         }
 
         impl ::std::cmp::PartialEq for $name {
+            #[inline]
             fn eq(&self, other: &Self) -> bool {
                 true
                     $(&& self.$field == other.$field)*
