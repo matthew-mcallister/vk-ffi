@@ -78,7 +78,7 @@ impl parse::Parse for ApiLevel {
 struct Api {
     name: syn::Ident,
     level: ApiLevel,
-    commands: HashSet<syn::Ident>,
+    commands: Vec<syn::Ident>,
 }
 
 impl parse::Parse for Api {
@@ -94,6 +94,8 @@ impl parse::Parse for Api {
             commands.insert(ident);
             content.parse::<Token![,]>().unwrap();
         }
+        let mut commands: Vec<_> = commands.into_iter().collect();
+        commands.sort();
 
         let name = ident(match level {
             ApiLevel::Instance => "InstanceTable",
