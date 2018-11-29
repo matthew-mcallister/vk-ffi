@@ -1,6 +1,8 @@
+use std::collections::HashMap;
+
 use heck::*;
 
-use crate::map_ident;
+use crate::{map_ident, to_slug};
 
 #[derive(Clone, Debug)]
 crate struct Enum {
@@ -92,6 +94,15 @@ crate struct Defs {
     crate fn_pointers: Vec<FnPointer>,
     crate type_aliases: Vec<TypeAlias>,
     crate handles: Vec<Handle>,
+    crate stype_map: HashMap<String, syn::Ident>,
+}
+
+impl Defs {
+    crate fn get_stype<S: Into<String>>(&self, name: S) ->
+        Option<&syn::Ident>
+    {
+        self.stype_map.get(&to_slug(&name.into()))
+    }
 }
 
 #[derive(Clone, Debug, From)]

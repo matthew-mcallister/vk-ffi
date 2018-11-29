@@ -1,6 +1,8 @@
+use std::collections::HashMap;
+
 use heck::*;
 
-use super::{map_ident, strip_prefix, strip_suffix};
+use super::{map_ident, strip_prefix, strip_suffix, to_slug};
 use super::defs::*;
 
 // TODO: This needs to be pulled from the registry
@@ -208,6 +210,18 @@ fn add_placeholder_enums(defs: &mut Defs) {
     }
 }
 
+crate fn map_structure_types(defs: &mut Defs) {
+    let mut map = HashMap::new();
+    let stype_enum = defs.enums.iter()
+        .find(|st| st.name.to_string() == "StructureType")
+        .unwrap();
+    for name in stype_enum.members.iter().map(|mem| &mem.name) {
+        let slug = to_slug(&name.to_string());
+        map.insert(slug, name.clone());
+    }
+    defs.stype_map = map;
+}
+
 crate fn parse_file(ast: syn::File) -> Defs {
     let mut defs: Defs = Default::default();
     for item in ast.items.into_iter() {
@@ -223,5 +237,6 @@ crate fn parse_file(ast: syn::File) -> Defs {
         }
     }
     add_placeholder_enums(&mut defs);
+    map_structure_types(&mut defs);
     defs
 }

@@ -45,24 +45,31 @@ fn emit_struct(def: &Struct) -> TokenStream {
     }
 }
 
-/// Implements the `Default` trait for a struct. It cannot be derived
-/// because `*const` and `*mut` do not implement it (thanks rustc devs).
-/// Hence, this stopgap.
-fn emit_struct_traits(def: &Struct) -> TokenStream {
+fn emit_struct_traits(defs: &Defs, def: &Struct) -> TokenStream {
     let mut tokens = TokenStream::new();
     let struct_name = &def.name;
 
     let members = def.members.iter().map(|member| {
         let name = &member.name;
-        let value = match &member.ty {
-            syn::Type::Ptr(syn::TypePtr { mutability: Some(_), .. }) =>
-                quote!(::std::ptr::null_mut()),
-            syn::Type::Ptr(syn::TypePtr { mutability: None, .. }) =>
-                quote!(::std::ptr::null()),
-            syn::Type::Array(syn::TypeArray { ref len, .. }) =>
-                quote!([::std::default::Default::default(); #len]),
-            _ => quote!(::std::default::Default::default()),
+        let value: Option<_> = try {
+            // If the field name is `s_type`, attempt to look up the
+            // corresponding `VkStructureType` member.
+            if name.to_string() != "s_type" { None? }
+            let struct_type = defs.get_stype(struct_name.to_string())?;
+            quote!(StructureType::#struct_type)
         };
+        let value = value.unwrap_or_else(|| {
+            // For other fields, use the default you'd expect from C.
+            match &member.ty {
+                syn::Type::Ptr(syn::TypePtr { mutability: Some(_), .. }) =>
+                    quote!(::std::ptr::null_mut()),
+                syn::Type::Ptr(syn::TypePtr { mutability: None, .. }) =>
+                    quote!(::std::ptr::null()),
+                syn::Type::Array(syn::TypeArray { ref len, .. }) =>
+                    quote!([::std::default::Default::default(); #len]),
+                _ => quote!(::std::default::Default::default()),
+            }
+        });
         quote!(#name: #value)
     });
     tokens.extend(quote! {
@@ -167,20 +174,20 @@ fn emit_handle(def: &Handle) -> TokenStream {
 
 crate fn emit(defs: &Defs) -> TokenStream {
     let mut tokens = TokenStream::new();
-    for def in defs.enums.iter() { tokens.extend(emit_enum(&def)); }
-    for def in defs.consts.iter() { tokens.extend(emit_const(&def)); }
+    for def in defs.enums.iter() { tokens.extend(emit_enum(def)); }
+    for def in defs.consts.iter() { tokens.extend(emit_const(def)); }
     for def in defs.structs.iter() {
-        tokens.extend(emit_struct(&def));
-        tokens.extend(emit_struct_traits(&def));
+        tokens.extend(emit_struct(def));
+        tokens.extend(emit_struct_traits(defs, def));
     }
     for def in defs.unions.iter() {
-        tokens.extend(emit_union(&def));
-        tokens.extend(emit_union_traits(&def));
+        tokens.extend(emit_union(def));
+        tokens.extend(emit_union_traits(def));
     }
     for def in defs.fn_pointers.iter()
-        { tokens.extend(emit_fn_pointer(&def)); }
+        { tokens.extend(emit_fn_pointer(def)); }
     for def in defs.type_aliases.iter()
-        { tokens.extend(emit_type_alias(&def)); }
-    for def in defs.handles.iter() { tokens.extend(emit_handle(&def)); }
+        { tokens.extend(emit_type_alias(def)); }
+    for def in defs.handles.iter() { tokens.extend(emit_handle(def)); }
     tokens
 }

@@ -136,23 +136,20 @@ impl VulkanSys {
 
         // Create instance
         let app_info = vk::ApplicationInfo {
-            s_type: vk::StructureType::APPLICATION_INFO,
-            p_next: ptr::null(),
             p_application_name: c_str!("vk-ffi demo"),
             application_version: vk::make_version!(0, 1, 0),
             p_engine_name: ptr::null(),
             engine_version: vk::make_version!(0, 1, 0),
             api_version: vk::API_VERSION_1_0,
+            ..Default::default()
         };
         let create_info = vk::InstanceCreateInfo {
-            s_type: vk::StructureType::INSTANCE_CREATE_INFO,
-            p_next: ptr::null(),
-            flags: Default::default(),
             p_application_info: &app_info as *const _,
             enabled_layer_count: enabled_layers.len() as _,
             pp_enabled_layer_names: enabled_layers.as_ptr(),
             enabled_extension_count: 0,
             pp_enabled_extension_names: ptr::null(),
+            ..Default::default()
         };
         let mut vk_instance = vk::null();
         entry.create_instance
@@ -168,21 +165,16 @@ impl VulkanSys {
         let physical_device = physical_devices[0];
 
         let queue_create_info = vk::DeviceQueueCreateInfo {
-            s_type: vk::StructureType::DEVICE_QUEUE_CREATE_INFO,
-            p_next: ptr::null(),
-            flags: Default::default(),
             // This causes a validation warning but is actually legal
             // because the spec requires at least one queue family.
             // Someone should tell the validation layer authors.
             queue_family_index: 0,
             queue_count: 1,
             p_queue_priorities: &1.0f32 as *const _,
+            ..Default::default()
         };
         let features: vk::PhysicalDeviceFeatures = Default::default();
         let create_info = vk::DeviceCreateInfo {
-            s_type: vk::StructureType::DEVICE_CREATE_INFO,
-            p_next: ptr::null(),
-            flags: Default::default(),
             queue_create_info_count: 1,
             p_queue_create_infos: &queue_create_info as *const _,
             enabled_layer_count: 0,
@@ -190,6 +182,7 @@ impl VulkanSys {
             enabled_extension_count: 0,
             pp_enabled_extension_names: ptr::null(),
             p_enabled_features: &features as *const _,
+            ..Default::default()
         };
         let mut vk_device = vk::null();
         instance.create_device(

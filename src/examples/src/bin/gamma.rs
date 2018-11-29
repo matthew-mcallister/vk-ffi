@@ -70,11 +70,9 @@ unsafe fn unsafe_main() {
 
     // Create compute pipeline
     let create_info = vk::ShaderModuleCreateInfo {
-        s_type: vk::StructureType::SHADER_MODULE_CREATE_INFO,
-        p_next: ptr::null(),
-        flags: Default::default(),
         code_size: GAMMA_SPV_BYTES.len(),
         p_code: from_bytes_le(GAMMA_SPV_BYTES).as_ptr(),
+        ..Default::default()
     };
     let mut shader_mod = vk::null();
     sys.device.create_shader_module
@@ -89,11 +87,9 @@ unsafe fn unsafe_main() {
         p_immutable_samplers: ptr::null(),
     };
     let create_info = vk::DescriptorSetLayoutCreateInfo {
-        s_type: vk::StructureType::DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
-        p_next: ptr::null(),
-        flags: Default::default(),
         binding_count: 1,
         p_bindings: &binding as *const _,
+        ..Default::default()
     };
     let mut set_layout = vk::null();
     sys.device.create_descriptor_set_layout
@@ -101,13 +97,9 @@ unsafe fn unsafe_main() {
         .check().unwrap();
 
     let create_info = vk::PipelineLayoutCreateInfo {
-        s_type: vk::StructureType::PIPELINE_LAYOUT_CREATE_INFO,
-        p_next: ptr::null(),
-        flags: Default::default(),
         set_layout_count: 1,
         p_set_layouts: &set_layout as *const _,
-        push_constant_range_count: 0,
-        p_push_constant_ranges: ptr::null(),
+        ..Default::default()
     };
     let mut layout = vk::null();
     sys.device.create_pipeline_layout
@@ -115,22 +107,16 @@ unsafe fn unsafe_main() {
         .check().unwrap();
 
     let stage_create_info = vk::PipelineShaderStageCreateInfo {
-        s_type: vk::StructureType::PIPELINE_SHADER_STAGE_CREATE_INFO,
-        p_next: ptr::null(),
-        flags: Default::default(),
         stage: vk::ShaderStageFlags::COMPUTE_BIT,
         p_name: c_str!("main"),
         module: shader_mod,
         p_specialization_info: ptr::null(),
+        ..Default::default()
     };
     let create_info = vk::ComputePipelineCreateInfo {
-        s_type: vk::StructureType::COMPUTE_PIPELINE_CREATE_INFO,
-        p_next: ptr::null(),
-        flags: Default::default(),
         stage: stage_create_info,
         layout,
-        base_pipeline_handle: vk::null(),
-        base_pipeline_index: 0,
+        ..Default::default()
     };
     let mut pipeline = vk::null();
     sys.device.create_compute_pipelines(
@@ -156,10 +142,9 @@ unsafe fn unsafe_main() {
 
     let buf_size = (num_elems * std::mem::size_of::<[f32; 2]>()) as u64;
     let allocate_info = vk::MemoryAllocateInfo {
-        s_type: vk::StructureType::MEMORY_ALLOCATE_INFO,
-        p_next: ptr::null(),
         allocation_size: buf_size,
         memory_type_index: mem_type,
+        ..Default::default()
     };
     let mut buf_mem = vk::null();
     sys.device.allocate_memory
@@ -167,14 +152,10 @@ unsafe fn unsafe_main() {
         .check().unwrap();
 
     let create_info = vk::BufferCreateInfo {
-        s_type: vk::StructureType::BUFFER_CREATE_INFO,
-        p_next: ptr::null(),
-        flags: Default::default(),
         size: buf_size,
         usage: vk::BufferUsageFlags::STORAGE_BUFFER_BIT,
         sharing_mode: vk::SharingMode::EXCLUSIVE,
-        queue_family_index_count: 0,
-        p_queue_family_indices: ptr::null(),
+        ..Default::default()
     };
     let mut buffer = vk::null();
     sys.device.create_buffer
@@ -189,12 +170,10 @@ unsafe fn unsafe_main() {
         descriptor_count: 1,
     };
     let create_info = vk::DescriptorPoolCreateInfo {
-        s_type: vk::StructureType::DESCRIPTOR_POOL_CREATE_INFO,
-        p_next: ptr::null(),
-        flags: Default::default(),
         max_sets: 1,
         pool_size_count: 1,
         p_pool_sizes: &pool_size as *const _,
+        ..Default::default()
     };
     let mut desc_pool = vk::null();
     sys.device.create_descriptor_pool
@@ -202,11 +181,10 @@ unsafe fn unsafe_main() {
         .check().unwrap();
 
     let allocate_info = vk::DescriptorSetAllocateInfo {
-        s_type: vk::StructureType::DESCRIPTOR_SET_ALLOCATE_INFO,
-        p_next: ptr::null(),
         descriptor_pool: desc_pool,
         descriptor_set_count: 1,
         p_set_layouts: &set_layout as *const _,
+        ..Default::default()
     };
     let mut desc_set = vk::null();
     sys.device.allocate_descriptor_sets
@@ -219,38 +197,29 @@ unsafe fn unsafe_main() {
         range: vk::WHOLE_SIZE,
     };
     let desc_write = vk::WriteDescriptorSet {
-        s_type: vk::StructureType::WRITE_DESCRIPTOR_SET,
-        p_next: ptr::null(),
         dst_set: desc_set,
         dst_binding: 0,
         dst_array_element: 0,
         descriptor_count: 1,
         descriptor_type: vk::DescriptorType::STORAGE_BUFFER,
-        p_image_info: ptr::null(),
         p_buffer_info: &desc_buf_info as *const _,
-        p_texel_buffer_view: ptr::null(),
+        ..Default::default()
     };
     sys.device.update_descriptor_sets
         (1, &desc_write as *const _, 0, ptr::null());
 
     // Create and record to command buffer
-    let create_info = vk::CommandPoolCreateInfo {
-        s_type: vk::StructureType::COMMAND_POOL_CREATE_INFO,
-        p_next: ptr::null(),
-        flags: Default::default(),
-        queue_family_index: 0,
-    };
+    let create_info = Default::default();
     let mut command_pool = vk::null();
     sys.device.create_command_pool
         (&create_info as *const _, ptr::null(), &mut command_pool as *mut _)
         .check().unwrap();
 
     let allocate_info = vk::CommandBufferAllocateInfo {
-        s_type: vk::StructureType::COMMAND_BUFFER_ALLOCATE_INFO,
-        p_next: ptr::null(),
         command_pool,
         level: vk::CommandBufferLevel::PRIMARY,
         command_buffer_count: 1,
+        ..Default::default()
     };
     let mut cmd_buf = vk::null();
     sys.device.allocate_command_buffers
@@ -258,10 +227,8 @@ unsafe fn unsafe_main() {
         .check().unwrap();
 
     let begin_info = vk::CommandBufferBeginInfo {
-        s_type: vk::StructureType::COMMAND_BUFFER_BEGIN_INFO,
-        p_next: ptr::null(),
         flags: vk::CommandBufferUsageFlags::ONE_TIME_SUBMIT_BIT,
-        p_inheritance_info: ptr::null(),
+        ..Default::default()
     };
     sys.device.begin_command_buffer(cmd_buf, &begin_info as *const _)
         .check().unwrap();
@@ -282,15 +249,9 @@ unsafe fn unsafe_main() {
 
     // Submit
     let submit_info = vk::SubmitInfo {
-        s_type: vk::StructureType::SUBMIT_INFO,
-        p_next: ptr::null(),
-        wait_semaphore_count: 0,
-        p_wait_semaphores: ptr::null(),
-        p_wait_dst_stage_mask: ptr::null(),
         command_buffer_count: 1,
         p_command_buffers: &cmd_buf as *const _,
-        signal_semaphore_count: 0,
-        p_signal_semaphores: ptr::null(),
+        ..Default::default()
     };
     sys.device.queue_submit(sys.queue, 1, &submit_info as *const _, vk::null())
         .check().unwrap();

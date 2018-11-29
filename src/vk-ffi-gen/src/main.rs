@@ -57,6 +57,13 @@ fn strip_suffix<'a>(s: &'a str, suffix: &str) -> Option<&'a str> {
     Some(split_suffix(s, suffix)?.0)
 }
 
+fn to_slug(s: &str) -> String {
+    s.chars()
+        .filter(|&c| c.is_alphanumeric())
+        .flat_map(char::to_lowercase)
+        .collect()
+}
+
 fn ident<A: AsRef<str>>(s: A) -> syn::Ident {
     syn::Ident::new(s.as_ref(), proc_macro2::Span::call_site())
 }

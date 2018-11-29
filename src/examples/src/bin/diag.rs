@@ -57,23 +57,20 @@ unsafe fn unsafe_main() {
     }
 
     let app_info = vk::ApplicationInfo {
-        s_type: vk::StructureType::APPLICATION_INFO,
-        p_next: ptr::null(),
         p_application_name: c_str!("Diagnostic example"),
         application_version: vk::make_version!(0, 1, 0),
         p_engine_name: ptr::null(),
         engine_version: vk::make_version!(0, 1, 0),
         api_version: vk::API_VERSION_1_0,
+        ..Default::default()
     };
     let create_info = vk::InstanceCreateInfo {
-        s_type: vk::StructureType::INSTANCE_CREATE_INFO,
-        p_next: ptr::null(),
-        flags: Default::default(),
         p_application_info: &app_info as *const _,
         enabled_layer_count: 0,
         pp_enabled_layer_names: ptr::null(),
         enabled_extension_count: 0,
         pp_enabled_extension_names: ptr::null(),
+        ..Default::default()
     };
     let mut instance = vk::null();
     entry.create_instance
