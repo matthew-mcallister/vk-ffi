@@ -135,8 +135,8 @@ fn emit_table(api: &Api, fn_ptrs: &HashMap<String, &FnPointer>) -> TokenStream
 {
     let api_name = &api.name;
     let mut table_body: TokenStream =
-        if api.level == ApiLevel::Instance { quote!(pub instance: Instance,) }
-        else { quote!(pub device: Device,) };
+        if api.level == ApiLevel::Instance { quote!(instance: Instance,) }
+        else { quote!(device: Device,) };
     for cmd_name in api.commands.iter() {
         let pfn = match fn_ptrs.get(&cmd_name.to_string()) {
             Some(pfn) => pfn,
@@ -145,12 +145,9 @@ fn emit_table(api: &Api, fn_ptrs: &HashMap<String, &FnPointer>) -> TokenStream
         };
         let member_name = pfn.snake_name();
         let ty = pfn.pfn_name();
-        table_body.extend(quote!(pub #member_name: #ty,));
+        table_body.extend(quote!(#member_name: #ty,));
     }
-    quote! {
-        #[derive(Clone, Copy)]
-        pub struct #api_name { #table_body }
-    }
+    quote!(declare_api! { #api_name { #table_body } })
 }
 
 fn emit_loader(api: &Api, fn_ptrs: &HashMap<String, &FnPointer>) -> TokenStream

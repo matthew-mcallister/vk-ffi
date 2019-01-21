@@ -2,6 +2,10 @@ extern crate vk_ffi;
 
 use vk_ffi::*;
 
+macro_rules! opt_to_ptr {
+    ($opt:expr) => { $opt.map_or(std::ptr::null(), |ptr| ptr as *const ()) }
+}
+
 // Possibly easier to implement this manually than to rig the generator to.
 macro_rules! impl_entry {
     ($(
@@ -36,6 +40,13 @@ macro_rules! impl_entry {
                         ($($param,)*)
                 }
             )*
+        }
+        impl std::fmt::Debug for Entry {
+            fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+                f.debug_struct("Entry")
+                    $(.field(stringify!($member), &opt_to_ptr!(self.$member)))*
+                    .finish()
+            }
         }
     }
 }
@@ -78,6 +89,27 @@ impl_entry! {
         fn_ty: FnEnumerateInstanceVersion,
         symbol: b"vkEnumerateInstanceVersion\0",
     },
+}
+
+macro_rules! declare_api {
+    ($name:ident {
+        $owner:ident: $owner_ty:ident,
+        $($member:ident: $type:ty,)*
+    }) => {
+        #[derive(Clone, Copy)]
+        pub struct $name {
+            pub $owner: $owner_ty,
+            $(pub $member: $type,)*
+        }
+        impl std::fmt::Debug for $name {
+            fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+                f.debug_struct(stringify!($name))
+                    .field(stringify!($owner), &self.$owner)
+                    $(.field(stringify!($member), &opt_to_ptr!(self.$member)))*
+                    .finish()
+            }
+        }
+    }
 }
 
 include!(concat!(env!("CARGO_MANIFEST_DIR"), "/generated/loader.rs"));

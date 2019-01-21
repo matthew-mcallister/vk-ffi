@@ -92,6 +92,7 @@ impl std::fmt::Display for Version {
     }
 }
 
+#[derive(Debug)]
 pub struct VulkanSys {
     pub loader: Loader,
     pub entry: vkl::Entry,
