@@ -109,6 +109,7 @@ def render_alias(alias):
 
 class BindingsVisitor:
     def __init__(self):
+        self.externs = []
         self.bitmasks = []
         self.enums = []
         self.aliases = []
@@ -129,6 +130,11 @@ class BindingsVisitor:
             self.visit_command(command)
         for extension in tree['extensions']:
             self.visit_extension(extension)
+        for extern in tree['externs']:
+            self.visit_extern(extern)
+
+    def visit_extern(self, extern):
+        self.externs.append(extern['name'])
 
     def visit_enum(self, enum):
         parts = [enum['name'], '{']
@@ -199,6 +205,7 @@ def render_bindings(registry):
     res = []
 
     for macro, entries in (
+        ('externs', visitor.externs),
         ('bitmasks', visitor.bitmasks),
         ('enums', visitor.enums),
         ('aliases', visitor.aliases),
