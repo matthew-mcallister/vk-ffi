@@ -8,9 +8,22 @@ regenerated each time.
 """
 import argparse
 import os
+import re
 import xml.etree.ElementTree as etree
 
 from vkreg import Registry
+
+
+TITLE_WORDS_REGEX = re.compile(
+    r'(?<=[a-z])[A-Z0-9]|' +
+    r'(?<=[A-Z])[A-Z0-9][a-z]|' +
+    r'(?<=[0-9])[A-Z][a-z]'
+)
+
+def camel_to_snake(ident):
+    def span(m):
+        return f'_{m.group(0)}'
+    return TITLE_WORDS_REGEX.sub(span, ident).lower()
 
 
 BUILTIN_MAP = {
@@ -57,8 +70,14 @@ def render_type_expr(type):
     return parts
 
 
+def rename_var(name):
+    if name == 'type':
+        name = '_type'
+    return camel_to_snake(name)
+
+
 def render_decl(decl):
-    return [decl['name'], ':'] + render_type_expr(decl['type'])
+    return [rename_var(decl['name']), ':'] + render_type_expr(decl['type'])
 
 
 def render_func(func):
