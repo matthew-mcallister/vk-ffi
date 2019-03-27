@@ -4,3 +4,6 @@
 [submodule "vk-ffi-gensrcs"]
 	path = generated
 	url = https://gitlab.com/matthew-mcallister/vk-ffi-gensrcs
+[submodule "vendor/vk-reg-json"]
+	path = vendor/vkreg-py
+	url = https://gitlab.com/matthew-mcallister/vk-reg-json

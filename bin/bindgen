@@ -1,0 +1,249 @@
+#!/usr/bin/env python3
+"""This script generates Vulkan bindings for Rust.
+
+It depends on the Vulkan XML registry and a separate parser for it. Due
+to the Python dependency, and to save compile time, bindings are
+generated ahead in advance and distributed directly rather than being
+regenerated each time.
+"""
+import argparse
+import os
+import xml.etree.ElementTree as etree
+
+from vkreg import Registry
+
+
+BUILTIN_MAP = {
+    'void': 'c_void',
+    'char': 'c_char',
+    'int': 'c_int',
+    'float': 'c_float',
+    'uint8_t': 'u8',
+    'uint16_t': 'u16',
+    'uint32_t': 'u32',
+    'uint64_t': 'u64',
+    'int32_t': 'i32',
+    'size_t': 'usize',
+}
+
+def translate_builtin(type):
+    return BUILTIN_MAP.get(type, type)
+
+
+def render_quals(quals):
+    quals = list(reversed(quals))
+    res = []
+    idx = 0
+    while idx < len(quals):
+        idx += 1
+        if quals[idx - 1] != '*':
+            continue
+        if idx < len(quals) and quals[idx] == 'const':
+            idx += 1
+            res.append('*const')
+        else:
+            res.append('*mut')
+    return res
+
+
+def render_type_expr(type):
+    parts = render_quals(type['qualifiers'])
+    parts.append(translate_builtin(type['base']))
+    try:
+        len = type['len']
+        parts = ['['] + parts + [';', str(len), ']']
+    except KeyError:
+        pass
+    return parts
+
+
+def render_decl(decl):
+    return [decl['name'], ':'] + render_type_expr(decl['type'])
+
+
+def render_func(func):
+    parts = [func['name'], '(']
+    for arg in func['args']:
+        if arg['name']:
+            parts += render_decl(arg)
+            parts.append(',')
+    parts.append(')')
+    type = render_type_expr(func['ret'])
+    if type != ['c_void']:
+        parts.append('->')
+        parts += type
+    return parts
+
+
+def render_aggregate(agg):
+    parts = [agg['name'], '{']
+    for member in agg['members']:
+        parts += render_decl(member)
+        parts.append(',')
+    parts.append('}')
+    return parts
+
+
+def render_alias(alias):
+    return [alias['name'], '=', alias['target']]
+
+
+class BindingsVisitor:
+    def __init__(self):
+        self.bitmasks = []
+        self.enums = []
+        self.aliases = []
+        self.disp_handles = []
+        self.nondisp_handles = []
+        self.func_pointers = []
+        self.structs = []
+        self.unions = []
+        self.commands = []
+        self.extension_names = []
+
+    def visit(self, tree):
+        for enum in tree['enums']:
+            self.visit_enum(enum)
+        for type in tree['types']:
+            self.visit_type(type)
+        for command in tree['commands']:
+            self.visit_command(command)
+        for extension in tree['extensions']:
+            self.visit_extension(extension)
+
+    def visit_enum(self, enum):
+        parts = [enum['name'], '{']
+        for member in enum['members']:
+            name = member['name']
+            if name[0] in '0123456789':
+                name = f'_{name}'
+            parts += [name, '=', str(member['value']), ',']
+        parts.append('}')
+
+        assert enum['enum_type'] in ('bitmask', 'enum')
+        if enum['enum_type'] == 'bitmask':
+            self.bitmasks.append(parts)
+            alt_name = enum['name'].replace('FlagBits', 'Flags')
+            self.aliases.append([alt_name, '=', enum['name']])
+        else:
+            self.enums.append(parts)
+
+    def visit_alias(self, alias):
+        target = translate_builtin(alias['target'])
+        self.aliases.append([alias['name'], '=', target])
+
+    def visit_handle(self, handle):
+        if handle['dispatchable']:
+            self.disp_handles.append(handle['name'])
+        else:
+            self.nondisp_handles.append(handle['name'])
+
+    def visit_type(self, type):
+        category = type['category']
+        if category == 'type_alias':
+            self.visit_alias(type)
+        elif category == 'basetype':
+            self.visit_basetype(type)
+        elif category == 'handle':
+            self.visit_handle(type)
+        elif category == 'func_pointer':
+            self.visit_func_pointer(type)
+        elif category == 'struct':
+            self.visit_struct(type)
+        elif category == 'union':
+            self.visit_union(type)
+        else:
+            raise ValueError(f'unexpected category: {category}')
+
+    def visit_func_pointer(self, func):
+        self.func_pointers.append(render_func(func))
+
+    def visit_struct(self, struct):
+        self.structs.append(render_aggregate(struct))
+
+    def visit_union(self, union):
+        self.unions.append(render_aggregate(union))
+
+    def visit_command(self, command):
+        self.commands.append(render_func(command))
+
+    def visit_extension(self, ext):
+        self.extension_names.append(ext['name'])
+
+
+def render_bindings(registry):
+    tree = registry.tree()
+
+    visitor = BindingsVisitor()
+    visitor.visit(tree)
+
+    res = []
+
+    for macro, entries in (
+        ('bitmasks', visitor.bitmasks),
+        ('enums', visitor.enums),
+        ('aliases', visitor.aliases),
+        ('dispatchable_handles', visitor.disp_handles),
+        ('nondispatchable_handles', visitor.nondisp_handles),
+        ('func_pointers', visitor.func_pointers),
+        ('structs', visitor.structs),
+        ('unions', visitor.unions),
+        ('commands', visitor.commands),
+        ('extensions', visitor.extension_names),
+    ):
+        res += [f'\n\nimpl_{macro}!', '{']
+        for entry in entries:
+            if isinstance(entry, str):
+                res.append(entry)
+            else:
+                res += entry
+            res.append(';')
+        res.append('}')
+
+    return res
+
+
+def write_bindings(f, strs):
+    INDENT = '    '
+    indent_lvl = 0
+    for i, s in enumerate(strs):
+        if s in ('(', '{'):
+            indent_lvl += 1
+            f.write(s)
+            f.write('\n')
+            f.write(INDENT * indent_lvl)
+        elif s in (')', '}'):
+            indent_lvl -= 1
+            f.write('\n')
+            f.write(INDENT * indent_lvl)
+            f.write(s)
+        elif s in (',', ';'):
+            f.write(s)
+            f.write('\n')
+            f.write(INDENT * indent_lvl)
+        else:
+            f.write(s)
+        f.write(' ')
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('-i', '--input', help='Path to vk.xml.')
+    parser.add_argument('-o', '--output',
+        help='Output directory for generated sources')
+    args = parser.parse_args()
+
+    root = etree.parse(args.input).getroot()
+
+    registry = Registry()
+    registry.parse_registry(root)
+
+    bindings = render_bindings(registry)
+
+    bindings_file = os.path.join(args.output, 'bindings.rs')
+    with open(bindings_file, 'w') as f:
+        write_bindings(f, bindings)
+
+
+if __name__ == '__main__':
+    main()
