@@ -144,7 +144,13 @@ class BindingsVisitor:
         self.externs.append(extern['name'])
 
     def visit_enum(self, enum):
-        parts = [enum['name'], '{']
+        assert enum['enum_type'] in ('bitmask', 'enum')
+
+        enum_name = enum['name']
+        if enum['enum_type'] == 'bitmask':
+            enum_name += 'Flags'
+
+        parts = [enum_name, '{']
         for member in enum['members']:
             name = member['name']
             if name[0] in '0123456789':
@@ -152,11 +158,10 @@ class BindingsVisitor:
             parts += [name, '=', str(member['value']), ',']
         parts.append('}')
 
-        assert enum['enum_type'] in ('bitmask', 'enum')
         if enum['enum_type'] == 'bitmask':
             self.bitmasks.append(parts)
-            alt_name = enum['name'].replace('FlagBits', 'Flags')
-            self.aliases.append([alt_name, '=', enum['name']])
+            alt_name = enum['name'] + 'FlagBits'
+            self.aliases.append([alt_name, '=', enum_name])
         else:
             self.enums.append(parts)
 
