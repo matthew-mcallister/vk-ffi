@@ -249,8 +249,8 @@ def fill_command_levels(tree):
 
 
 class CoreApi:
-    def __init__(self, name, level, commands):
-        self.name = f"{level}V{name.replace('.', '_')}"
+    def __init__(self, level, commands):
+        self.name = f'{level}Table'
         self.level = level
 
         self.self_cmds = []
@@ -278,30 +278,24 @@ class CoreApi:
         parts = [f'impl_{self.level.lower()}_table!', '{', self.name, '{']
         for command in self.commands():
             parts += [command['snake'], ':', command['name'], ',']
-        parts += ['}', '}']
+        parts += ['}', '}', '\n\n']
         return parts
 
     def render_methods(self):
-        parts = [
-            f'impl_{self.level.lower()}_self_methods!', '{',
-            self.name, '{',
-        ]
-        for command in self.self_cmds:
-            parts.append(command['snake'])
-            parts += render_signature(command)
-            parts.append(',')
-        parts += ['}', '}']
-
-        parts += [
-            f'impl_{self.level.lower()}_child_methods!', '{',
-            self.name, '{',
-        ]
-        for command in self.child_cmds:
-            parts.append(command['snake'])
-            parts += render_signature(command)
-            parts.append(',')
-        parts += ['}', '}']
-
+        parts = []
+        for commands, name in (
+            (self.self_cmds, 'self'),
+            (self.child_cmds, 'child'),
+        ):
+            parts = [
+                f'impl_{self.level.lower()}_{name}_methods!', '{',
+                self.name, '{',
+            ]
+            for command in commands:
+                parts.append(command['snake'])
+                parts += render_signature(command)
+                parts.append(',')
+            parts += ['}', '}', '\n\n']
         return parts
 
 
@@ -317,13 +311,8 @@ def sort_api_commands(commands):
 
 
 def render_loader(tree):
-    cmd_map = {command['name']: command for command in tree['commands']}
-    apis = []
-    for api in tree['core_apis']:
-        commands = [cmd_map[command] for command in api['commands']]
-        sorted = sort_api_commands(commands)
-        for level, cmds in sorted.items():
-            apis.append(CoreApi(api['name'], level, cmds))
+    sorted = sort_api_commands(tree['commands'])
+    apis = (CoreApi(level, cmds) for level, cmds in sorted.items())
 
     parts = []
     for api in apis:
