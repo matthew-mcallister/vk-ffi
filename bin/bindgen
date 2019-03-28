@@ -7,11 +7,14 @@ generated ahead in advance and distributed directly rather than being
 regenerated each time.
 """
 import argparse
+import itertools
 import os
 import re
 import xml.etree.ElementTree as etree
 
 from vkreg import Registry
+
+# TODO: Use classes instead of dicts for encapsulation
 
 
 TITLE_WORDS_REGEX = re.compile(
@@ -80,8 +83,8 @@ def render_decl(decl):
     return [rename_var(decl['name']), ':'] + render_type_expr(decl['type'])
 
 
-def render_func(func):
-    parts = [func['name'], '(']
+def render_signature(func):
+    parts = ['(']
     for arg in func['args']:
         if arg['name']:
             parts += render_decl(arg)
@@ -92,6 +95,10 @@ def render_func(func):
         parts.append('->')
         parts += type
     return parts
+
+
+def render_func(func):
+    return [func['name']] + render_signature(func)
 
 
 def render_aggregate(agg):
@@ -196,9 +203,7 @@ class BindingsVisitor:
         self.extension_names.append(ext['name'])
 
 
-def render_bindings(registry):
-    tree = registry.tree()
-
+def render_bindings(tree):
     visitor = BindingsVisitor()
     visitor.visit(tree)
 
@@ -229,7 +234,106 @@ def render_bindings(registry):
     return res
 
 
-def write_bindings(f, strs):
+def fill_command_levels(tree):
+    handle_map = {
+        type['name']: type
+        for type in tree['types']
+        if type['category'] == 'handle'
+    }
+    for command in tree['commands']:
+        first = command['args'][0]['type']['base']
+        try:
+            command['level'] = handle_map[first]['level']
+        except KeyError:
+            pass
+
+
+class CoreApi:
+    def __init__(self, name, level, commands):
+        self.name = f"{level}V{name.replace('.', '_')}"
+        self.level = level
+
+        self.self_cmds = []
+        self.child_cmds = []
+        for command in commands:
+            assert command['level'] == level
+            obj_type = command['args'][0]['type']['base']
+            if obj_type == level:
+                ls = self.self_cmds
+                args = command['args'][1:]
+            else:
+                ls = self.child_cmds
+                args = command['args']
+            ls.append({
+                'name': command['name'],
+                'snake': camel_to_snake(command['name']),
+                'args': args,
+                'ret': command['ret'],
+            })
+
+    def commands(self):
+        return itertools.chain(iter(self.self_cmds), iter(self.child_cmds))
+
+    def render_table(self):
+        parts = [f'impl_{self.level.lower()}_table!', '{', self.name, '{']
+        for command in self.commands():
+            parts += [command['snake'], ':', command['name'], ',']
+        parts += ['}', '}']
+        return parts
+
+    def render_methods(self):
+        parts = [
+            f'impl_{self.level.lower()}_self_methods!', '{',
+            self.name, '{',
+        ]
+        for command in self.self_cmds:
+            parts.append(command['snake'])
+            parts += render_signature(command)
+            parts.append(',')
+        parts += ['}', '}']
+
+        parts += [
+            f'impl_{self.level.lower()}_child_methods!', '{',
+            self.name, '{',
+        ]
+        for command in self.child_cmds:
+            parts.append(command['snake'])
+            parts += render_signature(command)
+            parts.append(',')
+        parts += ['}', '}']
+
+        return parts
+
+
+def sort_api_commands(commands):
+    sorted = {'Instance': [], 'Device': []}
+    for command in commands:
+        level = command['args'][0]
+        try:
+            sorted[command['level']].append(command)
+        except KeyError:
+            pass
+    return sorted
+
+
+def render_loader(tree):
+    cmd_map = {command['name']: command for command in tree['commands']}
+    apis = []
+    for api in tree['core_apis']:
+        commands = [cmd_map[command] for command in api['commands']]
+        sorted = sort_api_commands(commands)
+        for level, cmds in sorted.items():
+            apis.append(CoreApi(api['name'], level, cmds))
+
+    parts = []
+    for api in apis:
+        parts += api.render_table()
+        parts += api.render_methods()
+
+    return parts
+
+
+def write_code(f, strs):
     INDENT = '    '
     indent_lvl = 0
     for i, s in enumerate(strs):
@@ -263,12 +367,19 @@ def main():
 
     registry = Registry()
     registry.parse_registry(root)
+    tree = registry.tree()
 
-    bindings = render_bindings(registry)
-
+    bindings = render_bindings(tree)
     bindings_file = os.path.join(args.output, 'bindings.rs')
     with open(bindings_file, 'w') as f:
-        write_bindings(f, bindings)
+        write_code(f, bindings)
+
+    fill_command_levels(tree)
+
+    loader = render_loader(tree)
+    loader_file = os.path.join(args.output, 'loader.rs')
+    with open(loader_file, 'w') as f:
+        write_code(f, loader)
 
 
 if __name__ == '__main__':
