@@ -18,15 +18,15 @@ from vkreg import Registry
 
 
 TITLE_WORDS_REGEX = re.compile(
-    r'(?<=[a-z])[A-Z0-9]|' +
-    r'(?<=[A-Z])[A-Z0-9][a-z]|' +
-    r'(?<=[0-9])[A-Z][a-z]'
+    r'(?<=[a-z])(?=[A-Z0-9])|' +
+    r'(?<=[A-Z])(?=[0-9])|' +
+    r'(?<=[A-Z])(?=[A-Z][a-z])|' +
+    r'(?<=[0-9])(?=[A-Z][a-z])|' +
+    r'(?<=[0-9])(?=[A-Z]{2,}$)'
 )
 
 def camel_to_snake(ident):
-    def span(m):
-        return f'_{m.group(0)}'
-    return TITLE_WORDS_REGEX.sub(span, ident).lower()
+    return TITLE_WORDS_REGEX.sub('_', ident).lower()
 
 
 BUILTIN_MAP = {
