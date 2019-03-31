@@ -1,6 +1,6 @@
 [package]
 name = "vk-ffi"
-description = "Direct, comprehensive bindings to the Vulkan API"
+description = "Comprehensive bindings to the Vulkan API"
 version = "0.1.0"
 authors = ["Matthew McAllister <matthew.mcallister.0@gmail.com>"]
 readme = "README.md"

@@ -93,7 +93,7 @@ macro_rules! enumerate2 {
     };
 }
 
-/// A private macro used to implement `vk_enumerate`.
+/// A private macro used to implement `enumerate!`.
 #[macro_export]
 macro_rules! enumerate_impl {
     (($($command:tt)*) ($($param:expr,)*)) => {{

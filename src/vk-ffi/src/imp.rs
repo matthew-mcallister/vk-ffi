@@ -1,9 +1,9 @@
-//! In this module, we implement some traits that couldn't be derived.
+//! This module implements some traits that couldn't be derived.
 
 use crate::*;
 
-impl ::std::fmt::Display for Result {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
+impl std::fmt::Display for Result {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(f, "{}", match *self {
             Result::SUCCESS => "success",
             Result::NOT_READY => "not ready",
@@ -41,4 +41,4 @@ impl ::std::fmt::Display for Result {
     }
 }
 
-impl ::std::error::Error for Result {}
+impl std::error::Error for Result {}

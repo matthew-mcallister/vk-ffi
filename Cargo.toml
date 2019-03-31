@@ -1,7 +1,7 @@
 [workspace]
 members = [
-    "src/examples",
-    #"src/vk-ffi",
+    #"src/examples",
+    "src/vk-ffi",
     #"src/vk-ffi-gen",
     #"src/vk-ffi-loader",
 ]

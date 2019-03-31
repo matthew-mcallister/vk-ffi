@@ -14,7 +14,10 @@ import xml.etree.ElementTree as etree
 
 from vkreg import Registry
 
-# TODO: Use classes instead of dicts for encapsulation
+
+def strip_prefix(prefix, string):
+    assert string[:len(prefix)] == prefix
+    return string[len(prefix):]
 
 
 TITLE_WORDS_REGEX = re.compile(
@@ -42,8 +45,13 @@ BUILTIN_MAP = {
     'size_t': 'usize',
 }
 
-def translate_builtin(type):
-    return BUILTIN_MAP.get(type, type)
+def render_type_expr_base(name):
+    if name.namespace == 'PFN_vk':
+        return 'crate::pfn::' + name.base
+    elif name.namespace == 'Vk':
+        return 'crate::data::' + name.base
+    else:
+        return BUILTIN_MAP.get(name.base, name.base)
 
 
 def render_quals(quals):
@@ -62,61 +70,60 @@ def render_quals(quals):
     return res
 
 
-def render_type_expr(type):
-    parts = render_quals(type['qualifiers'])
-    parts.append(translate_builtin(type['base']))
-    try:
-        len = type['len']
-        parts = ['['] + parts + [';', str(len), ']']
-    except KeyError:
-        pass
+def render_type_expr(expr):
+    parts = render_quals(expr.qualifiers)
+    parts.append(render_type_expr_base(expr.base))
+    if expr.len is not None:
+        parts = ['['] + parts + [';', str(expr.len), ']']
     return parts
 
 
-def rename_var(name):
+def render_var(name):
+    name = name.base
     if name == 'type':
-        name = '_type'
+        return '_type'
     return camel_to_snake(name)
 
 
 def render_decl(decl):
-    return [rename_var(decl['name']), ':'] + render_type_expr(decl['type'])
+    return [render_var(decl.name), ':'] + render_type_expr(decl.ty)
 
 
 def render_signature(func):
     parts = ['(']
-    for arg in func['args']:
-        if arg['name']:
+    for arg in func.args:
+        if arg.name:
             parts += render_decl(arg)
             parts.append(',')
+        else:
+            assert arg.ty.base.base == 'void'
+            assert len(func.args) == 1
     parts.append(')')
-    type = render_type_expr(func['ret'])
-    if type != ['c_void']:
+    ty = render_type_expr(func.ret)
+    if ty != ['c_void']:
         parts.append('->')
-        parts += type
+        parts += ty
     return parts
 
 
 def render_func(func):
-    return [func['name']] + render_signature(func)
+    return [func.name.base] + render_signature(func)
 
 
-def render_aggregate(agg):
-    parts = [agg['name'], '{']
-    for member in agg['members']:
+def render_aggregate(agg, stype=None):
+    parts = [agg.name.base]
+    if stype:
+        parts += [':', stype]
+    parts.append('{')
+    for member in agg.members:
         parts += render_decl(member)
         parts.append(',')
     parts.append('}')
     return parts
 
 
-def render_alias(alias):
-    return [alias['name'], '=', alias['target']]
-
-
 class BindingsVisitor:
     def __init__(self):
-        self.externs = []
         self.bitmasks = []
         self.enums = []
         self.aliases = []
@@ -124,98 +131,110 @@ class BindingsVisitor:
         self.nondisp_handles = []
         self.func_pointers = []
         self.structs = []
+        self.chain_structs = []
         self.unions = []
         self.commands = []
-        self.extension_names = []
+        self.extensions = []
 
-    def visit(self, tree):
-        for enum in tree['enums']:
+        # If a type depends on an external header, remember it here
+        self.excised = set()
+
+
+    def visit(self, reg):
+        for extern in reg.externs:
+            self.excised.add(extern.name)
+        for enum in reg.enums:
             self.visit_enum(enum)
-        for type in tree['types']:
-            self.visit_type(type)
-        for command in tree['commands']:
+        for ty in reg.types:
+            self.visit_type(ty)
+        for command in reg.commands:
             self.visit_command(command)
-        for extension in tree['extensions']:
+        for extension in reg.extensions:
             self.visit_extension(extension)
-        for extern in tree['externs']:
-            self.visit_extern(extern)
 
-    def visit_extern(self, extern):
-        self.externs.append(extern['name'])
+
+    def visit_extension(self, extension):
+        name = strip_prefix('VK_', extension.name).upper() + '_EXTENSION_NAME'
+        self.extensions.append([name, '=', extension.name])
+
 
     def visit_enum(self, enum):
-        assert enum['enum_type'] in ('bitmask', 'enum')
+        assert enum.ty in ('bitmask', 'enum')
 
-        enum_name = enum['name']
-        if enum['enum_type'] == 'bitmask':
-            enum_name += 'Flags'
-
-        parts = [enum_name, '{']
-        for member in enum['members']:
-            name = member['name']
+        parts = [enum.name.base, '{']
+        for member in enum.members:
+            name = member.name.base
             if name[0] in '0123456789':
                 name = f'_{name}'
-            parts += [name, '=', str(member['value']), ',']
+            parts += [name, '=', str(member.value), ',']
         parts.append('}')
 
-        if enum['enum_type'] == 'bitmask':
+        if enum.ty == 'bitmask':
             self.bitmasks.append(parts)
-            alt_name = enum['name'] + 'FlagBits'
-            self.aliases.append([alt_name, '=', enum_name])
         else:
             self.enums.append(parts)
 
-    def visit_alias(self, alias):
-        target = translate_builtin(alias['target'])
-        self.aliases.append([alias['name'], '=', target])
 
-    def visit_handle(self, handle):
-        if handle['dispatchable']:
-            self.disp_handles.append(handle['name'])
-        else:
-            self.nondisp_handles.append(handle['name'])
+    def visit_command(self, command):
+        if any(arg.ty.base.base in self.excised for arg in command.args):
+            # Depends on an external header
+            return
+        self.commands.append(render_func(command))
 
-    def visit_type(self, type):
-        category = type['category']
+
+    def visit_type(self, ty):
+        category = ty.category()
         if category == 'type_alias':
-            self.visit_alias(type)
-        elif category == 'basetype':
-            self.visit_basetype(type)
+            self.visit_alias(ty)
         elif category == 'handle':
-            self.visit_handle(type)
+            self.visit_handle(ty)
         elif category == 'func_pointer':
-            self.visit_func_pointer(type)
-        elif category == 'struct':
-            self.visit_struct(type)
-        elif category == 'union':
-            self.visit_union(type)
+            self.func_pointers.append(render_func(ty))
+        elif category == 'aggregate':
+            self.visit_aggregate(ty)
         else:
             raise ValueError(f'unexpected category: {category}')
 
-    def visit_func_pointer(self, func):
-        self.func_pointers.append(render_func(func))
 
-    def visit_struct(self, struct):
-        self.structs.append(render_aggregate(struct))
-
-    def visit_union(self, union):
-        self.unions.append(render_aggregate(union))
-
-    def visit_command(self, command):
-        self.commands.append(render_func(command))
-
-    def visit_extension(self, ext):
-        self.extension_names.append(ext['name'])
+    def visit_alias(self, alias):
+        parts = [alias.name.base, '=', render_type_expr_base(alias.target)]
+        self.aliases.append(parts)
 
 
-def render_bindings(tree):
+    def visit_handle(self, handle):
+        if handle.dispatchable:
+            self.disp_handles.append(handle.name.base)
+        else:
+            self.nondisp_handles.append(handle.name.base)
+
+
+    def visit_aggregate(self, agg):
+        assert agg.ty in ('struct', 'union')
+
+        if any(mem.ty.base.base in self.excised for mem in agg.members):
+            # Depends on an external header
+            self.excised.add(agg.name.base)
+            return
+
+        if agg.ty == 'struct':
+            for mem in agg.members:
+                if mem.values:
+                    stype = strip_prefix('VK_STRUCTURE_TYPE_', mem.values[0])
+                    self.chain_structs.append(render_aggregate(agg, stype))
+                    break
+            else:
+                self.structs.append(render_aggregate(agg))
+        else:
+            self.unions.append(render_aggregate(agg))
+
+
+def render_bindings(reg):
     visitor = BindingsVisitor()
-    visitor.visit(tree)
+    visitor.visit(reg)
 
     res = []
 
     for macro, entries in (
-        ('externs', visitor.externs),
         ('bitmasks', visitor.bitmasks),
         ('enums', visitor.enums),
         ('aliases', visitor.aliases),
@@ -223,9 +242,10 @@ def render_bindings(tree):
         ('nondispatchable_handles', visitor.nondisp_handles),
         ('func_pointers', visitor.func_pointers),
         ('structs', visitor.structs),
+        ('chain_structs', visitor.chain_structs),
         ('unions', visitor.unions),
         ('commands', visitor.commands),
-        ('extensions', visitor.extension_names),
+        ('extensions', visitor.extensions),
     ):
         res += [f'\n\nimpl_{macro}!', '{']
         for entry in entries:
@@ -239,104 +259,16 @@ def render_bindings(tree):
     return res
 
 
-def fill_command_levels(tree):
-    handle_map = {
-        type['name']: type
-        for type in tree['types']
-        if type['category'] == 'handle'
-    }
-    for command in tree['commands']:
-        first = command['args'][0]['type']['base']
-        try:
-            command['level'] = handle_map[first]['level']
-        except KeyError:
-            pass
-
-
-class CoreApi:
-    def __init__(self, level, commands):
-        self.name = f'{level}Table'
-        self.level = level
-
-        self.self_cmds = []
-        self.child_cmds = []
-        for command in commands:
-            assert command['level'] == level
-            obj_type = command['args'][0]['type']['base']
-            if obj_type == level:
-                ls = self.self_cmds
-                args = command['args'][1:]
-            else:
-                ls = self.child_cmds
-                args = command['args']
-            ls.append({
-                'name': command['name'],
-                'snake': camel_to_snake(command['name']),
-                'args': args,
-                'ret': command['ret'],
-            })
-
-    def commands(self):
-        return itertools.chain(iter(self.self_cmds), iter(self.child_cmds))
-
-    def render_table(self):
-        parts = [f'impl_{self.level.lower()}_table!', '{', self.name, '{']
-        for command in self.commands():
-            parts += [command['snake'], ':', command['name'], ',']
-        parts += ['}', '}', '\n\n']
-        return parts
-
-    def render_methods(self):
-        parts = []
-        for commands, name in (
-            (self.self_cmds, 'self'),
-            (self.child_cmds, 'child'),
-        ):
-            parts = [
-                f'impl_{self.level.lower()}_{name}_methods!', '{',
-                self.name, '{',
-            ]
-            for command in commands:
-                parts.append(command['snake'])
-                parts += render_signature(command)
-                parts.append(',')
-            parts += ['}', '}', '\n\n']
-        return parts
-
-
-def sort_api_commands(commands):
-    sorted = {'Instance': [], 'Device': []}
-    for command in commands:
-        level = command['args'][0]
-        try:
-            sorted[command['level']].append(command)
-        except KeyError:
-            pass
-    return sorted
-
-
-def render_loader(tree):
-    sorted = sort_api_commands(tree['commands'])
-    apis = (CoreApi(level, cmds) for level, cmds in sorted.items())
-
-    parts = []
-    for api in apis:
-        parts += api.render_table()
-        parts += api.render_methods()
-
-    return parts
-
-
 def write_code(f, strs):
     INDENT = '    '
     indent_lvl = 0
     for i, s in enumerate(strs):
-        if s in ('(', '{'):
+        if s in ('(', '{', '['):
             indent_lvl += 1
             f.write(s)
             f.write('\n')
             f.write(INDENT * indent_lvl)
-        elif s in (')', '}'):
+        elif s in (')', '}', ']'):
             indent_lvl -= 1
             f.write('\n')
             f.write(INDENT * indent_lvl)
@@ -361,19 +293,11 @@ def main():
 
     registry = Registry()
     registry.parse_registry(root)
-    tree = registry.tree()
 
-    bindings = render_bindings(tree)
+    bindings = render_bindings(registry)
     bindings_file = os.path.join(args.output, 'bindings.rs')
     with open(bindings_file, 'w') as f:
         write_code(f, bindings)
-
-    fill_command_levels(tree)
-
-    loader = render_loader(tree)
-    loader_file = os.path.join(args.output, 'loader.rs')
-    with open(loader_file, 'w') as f:
-        write_code(f, loader)
 
 
 if __name__ == '__main__':
