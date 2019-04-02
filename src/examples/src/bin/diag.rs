@@ -4,8 +4,6 @@ use std::ffi;
 use std::ptr;
 
 use examples::*;
-use vk_ffi as vk;
-use vk_ffi_loader as vkl;
 
 fn main() {
     unsafe { unsafe_main() }

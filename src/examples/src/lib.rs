@@ -4,10 +4,6 @@
 use std::ffi::CStr;
 use std::ptr;
 
-use libloading as lib;
-use vk_ffi as vk;
-use vk_ffi_loader as vkl;
-
 #[macro_export]
 macro_rules! c_str {
     ($str:expr) => {

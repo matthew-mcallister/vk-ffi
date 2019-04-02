@@ -7,7 +7,6 @@ use std::io::Write;
 use std::ptr;
 
 use examples::*;
-use vk_ffi as vk;
 
 const GAMMA_SPV_BYTES: &'static [u8] =
     include_bytes!(data_file!("gamma/gamma.spv"));
