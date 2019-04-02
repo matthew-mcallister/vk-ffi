@@ -7,6 +7,7 @@ generated ahead in advance and distributed directly rather than being
 regenerated each time.
 """
 import argparse
+import dataclasses
 import itertools
 import os
 import re
@@ -45,81 +46,101 @@ BUILTIN_MAP = {
     'size_t': 'usize',
 }
 
-def render_type_expr_base(name):
-    if name.namespace == 'PFN_vk':
-        return 'crate::pfn::' + name.base
-    elif name.namespace == 'Vk':
-        return 'crate::data::' + name.base
-    else:
-        return BUILTIN_MAP.get(name.base, name.base)
+class Renderer:
+    def __init__(self, **kwargs):
+        self.namespace_data = kwargs.get('namespace_data', True)
+        self.namespace_pfn = kwargs.get('namespace_pfn', True)
 
 
-def render_quals(quals):
-    quals = list(reversed(quals))
-    res = []
-    idx = 0
-    while idx < len(quals):
-        idx += 1
-        if quals[idx - 1] != '*':
-            continue
-        if idx < len(quals) and quals[idx] == 'const':
+    def render_data(self, ident):
+        if self.namespace_data:
+            return f'crate::data::{ident}'
+        else:
+            return ident
+
+
+    def render_pfn(self, ident):
+        if self.namespace_pfn:
+            return f'crate::pfn::{ident}'
+        else:
+            return ident
+
+
+    def render_type_expr_base(self, name):
+        if name.namespace == 'PFN_vk':
+            return self.render_pfn(name.base)
+        elif name.namespace == 'Vk':
+            return self.render_data(name.base)
+        else:
+            return BUILTIN_MAP.get(name.base, name.base)
+
+
+    def render_quals(self, quals):
+        quals = list(reversed(quals))
+        res = []
+        idx = 0
+        while idx < len(quals):
             idx += 1
-            res.append('*const')
-        else:
-            res.append('*mut')
-    return res
+            if quals[idx - 1] != '*':
+                continue
+            if idx < len(quals) and quals[idx] == 'const':
+                idx += 1
+                res.append('*const')
+            else:
+                res.append('*mut')
+        return res
 
 
-def render_type_expr(expr):
-    parts = render_quals(expr.qualifiers)
-    parts.append(render_type_expr_base(expr.base))
-    if expr.len is not None:
-        parts = ['['] + parts + [';', str(expr.len), ']']
-    return parts
+    def render_type_expr(self, expr):
+        parts = self.render_quals(expr.qualifiers)
+        parts.append(self.render_type_expr_base(expr.base))
+        if expr.len is not None:
+            parts = ['['] + parts + [';', str(expr.len), ']']
+        return parts
 
 
-def render_var(name):
-    name = name.base
-    if name == 'type':
-        return '_type'
-    return camel_to_snake(name)
+    def render_var(self, name):
+        if name == 'type':
+            return '_type'
+        return camel_to_snake(name)
 
 
-def render_decl(decl):
-    return [render_var(decl.name), ':'] + render_type_expr(decl.ty)
+    def render_decl(self, decl):
+        ty = self.render_type_expr(decl.ty)
+        return [self.render_var(decl.name), ':'] + ty
 
 
-def render_signature(func):
-    parts = ['(']
-    for arg in func.args:
-        if arg.name:
-            parts += render_decl(arg)
+    def render_signature(self, func):
+        parts = ['(']
+        for arg in func.args:
+            if arg.name:
+                parts += self.render_decl(arg)
+                parts.append(',')
+            else:
+                assert arg.ty.base.base == 'void'
+                assert len(func.args) == 1
+        parts.append(')')
+        ty = self.render_type_expr(func.ret)
+        if ty != ['c_void']:
+            parts.append('->')
+            parts += ty
+        return parts
+
+
+    def render_func(self, func):
+        return [func.name.base] + self.render_signature(func)
+
+
+    def render_aggregate(self, agg, stype=None):
+        parts = [agg.name.base]
+        if stype:
+            parts += [':', stype]
+        parts.append('{')
+        for member in agg.members:
+            parts += self.render_decl(member)
             parts.append(',')
-        else:
-            assert arg.ty.base.base == 'void'
-            assert len(func.args) == 1
-    parts.append(')')
-    ty = render_type_expr(func.ret)
-    if ty != ['c_void']:
-        parts.append('->')
-        parts += ty
-    return parts
-
-
-def render_func(func):
-    return [func.name.base] + render_signature(func)
-
-
-def render_aggregate(agg, stype=None):
-    parts = [agg.name.base]
-    if stype:
-        parts += [':', stype]
-    parts.append('{')
-    for member in agg.members:
-        parts += render_decl(member)
-        parts.append(',')
-    parts.append('}')
-    return parts
+        parts.append('}')
+        return parts
 
 
 class BindingsVisitor:
@@ -136,8 +157,13 @@ class BindingsVisitor:
         self.commands = []
         self.extensions = []
 
+        self.renderer = Renderer()
         # If a type depends on an external header, remember it here
         self.excised = set()
+
+
+    def command_is_excised(self, command):
+        return any(arg.ty.base.base in self.excised for arg in command.args)
 
 
     def visit(self, reg):
@@ -176,10 +202,10 @@ class BindingsVisitor:
 
 
     def visit_command(self, command):
-        if any(arg.ty.base.base in self.excised for arg in command.args):
+        if self.command_is_excised(command):
             # Depends on an external header
             return
-        self.commands.append(render_func(command))
+        self.commands.append(self.renderer.render_func(command))
 
 
     def visit_type(self, ty):
@@ -189,7 +215,7 @@ class BindingsVisitor:
         elif category == 'handle':
             self.visit_handle(ty)
         elif category == 'func_pointer':
-            self.func_pointers.append(render_func(ty))
+            self.func_pointers.append(self.renderer.render_func(ty))
         elif category == 'aggregate':
             self.visit_aggregate(ty)
         else:
@@ -197,8 +223,8 @@ class BindingsVisitor:
 
 
     def visit_alias(self, alias):
-        parts = [alias.name.base, '=', render_type_expr_base(alias.target)]
-        self.aliases.append(parts)
+        ty = self.renderer.render_type_expr_base(alias.target)
+        self.aliases.append([alias.name.base, '=', ty])
 
 
     def visit_handle(self, handle):
@@ -220,20 +246,17 @@ class BindingsVisitor:
             for mem in agg.members:
                 if mem.values:
                     stype = strip_prefix('VK_STRUCTURE_TYPE_', mem.values[0])
-                    self.chain_structs.append(render_aggregate(agg, stype))
+                    rendered = self.renderer.render_aggregate(agg, stype)
+                    self.chain_structs.append(rendered)
                     break
             else:
-                self.structs.append(render_aggregate(agg))
+                self.structs.append(self.renderer.render_aggregate(agg))
         else:
-            self.unions.append(render_aggregate(agg))
+            self.unions.append(self.renderer.render_aggregate(agg))
 
 
-def render_bindings(reg):
-    visitor = BindingsVisitor()
-    visitor.visit(reg)
-
+def render_bindings(visitor):
     res = []
-
     for macro, entries in (
         ('bitmasks', visitor.bitmasks),
         ('enums', visitor.enums),
@@ -255,8 +278,87 @@ def render_bindings(reg):
                 res += entry
             res.append(';')
         res.append('}')
-
     return res
+
+
+class Api:
+    def __init__(self, registry, bindings, level):
+        self.level = level
+
+        handle_level = {
+            ty.name.base: ty.level
+            for ty in registry.types
+            if ty.category() == 'handle'
+        }
+
+        self.commands = []
+        for command in registry.commands:
+            if bindings.command_is_excised(command):
+                continue
+            obj = command.args[0].ty.base.base
+            obj_level = handle_level.get(obj)
+            if obj_level != self.level:
+                continue
+            self.commands.append({
+                'obj': obj,
+                'command': command,
+            })
+
+        self.renderer = Renderer(namespace_data=False)
+
+    @property
+    def name(self):
+        return f'{self.level}Table'
+
+    @property
+    def get_proc_addr(self):
+        return f'Get{self.level}ProcAddr'
+
+    @property
+    def handle(self):
+        return self.level.lower()
+
+    def render(self):
+        parts = [
+            'impl_table!',
+            '{',
+            'name:', self.name, ',',
+            'get_proc_addr:', self.get_proc_addr, ',',
+            'handle:',
+            '{',
+            'name:', self.handle, ',',
+            'type:', self.level, ',',
+            '}', ',',
+            'members:',
+            '[',
+        ]
+        for entry in self.commands:
+            command, obj = entry['command'], entry['obj']
+            takes_handle = obj == self.level
+            method_name = camel_to_snake(command.name.base)
+
+            args = command.args[1:] if takes_handle else command.args
+            func = dataclasses.replace(command, args=args)
+            sig = self.renderer.render_signature(func)
+
+            parts += [
+                '{',
+                'name:', f'pfn_{method_name}', ',',
+                'method_name:', method_name, ',',
+                'ptr:', command.name.base, ',',
+            ]
+            parts += ['signature:'] + sig + [',']
+            parts += [
+                'takes_handle:', str(takes_handle).lower(), ',',
+                '}', ',',
+            ]
+        parts += [']', ',', '}', '\n\n']
+        return parts
+
+
+def render_loader(registry, bindings):
+    apis = (Api(registry, bindings, level) for level in ('Instance', 'Device'))
+    return sum((api.render() for api in apis), [])
 
 
 def write_code(f, strs):
@@ -294,10 +396,17 @@ def main():
     registry = Registry()
     registry.parse_registry(root)
 
-    bindings = render_bindings(registry)
+    bindings = BindingsVisitor()
+    bindings.visit(registry)
+    rendered = render_bindings(bindings)
     bindings_file = os.path.join(args.output, 'bindings.rs')
     with open(bindings_file, 'w') as f:
-        write_code(f, bindings)
+        write_code(f, rendered)
+
+    loader = render_loader(registry, bindings)
+    loader_file = os.path.join(args.output, 'loader.rs')
+    with open(loader_file, 'w') as f:
+        write_code(f, loader)
 
 
 if __name__ == '__main__':

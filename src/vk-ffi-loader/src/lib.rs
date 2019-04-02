@@ -1,113 +1,187 @@
-extern crate vk_ffi;
+#![allow(unused_parens)]
+
+use std;
+use std::fmt::Debug;
+use std::ffi::c_void;
+use std::os::raw::*;
 
 use vk_ffi::*;
 
-macro_rules! opt_to_ptr {
-    ($opt:expr) => { $opt.map_or(std::ptr::null(), |ptr| ptr as *const ()) }
+macro_rules! vk_symbol {
+    ($cmd:ident) => {
+        concat!(concat!("vk", stringify!($cmd)), "\0")
+            as *const str as *const c_char
+    }
 }
 
-// Possibly easier to implement this manually than to rig the generator to.
-macro_rules! impl_entry {
-    ($(
-        $member:ident {
-            params: ($($param:ident: $param_ty:ty,)*),
-            pfn_ty: $pfn_ty:ty,
-            fn_ty: $fn_ty:ty,
-            symbol: $symbol:expr,
-        },
-    )*) => {
-        #[derive(Clone, Copy)]
-        pub struct Entry { $(pub $member: $pfn_ty,)* }
-        impl Entry {
-            pub unsafe fn load(
-                get_instance_proc_addr: ::vk_ffi::FnGetInstanceProcAddr,
-            ) -> Self {
-                Entry {$(
-                    $member: ::std::mem::transmute({
-                        get_instance_proc_addr(
-                            ::vk_ffi::null(),
-                            $symbol as *const _ as *const _ as *const _,
-                        )
-                    }),
-                )*}
-            }
+macro_rules! opt_to_ptr {
+    ($opt:expr) => { $opt.map_or(std::ptr::null(), |p| p as *const c_void) }
+}
 
-            $(
-                pub unsafe fn $member(&self, $($param: $param_ty,)*)
-                    -> ::vk_ffi::Result
-                {
-                    ::std::mem::transmute::<_, $fn_ty>(self.$member)
-                        ($($param,)*)
+// Easier to implement this manually than to rig the generator to.
+macro_rules! impl_entry {
+    (
+        $(
+            {
+                name: $member:ident,
+                method_name: $method:ident,
+                ptr: $pfn:ident,
+                signature: ($($arg:ident: $type:ty,)*) $(-> $ret:ty)*,
+            },
+        )*
+    ) => {
+        #[derive(Clone, Copy)]
+        pub struct Entry { $(pub $member: Option<pfn::$pfn>,)* }
+        impl Entry {
+            pub unsafe fn load(get_proc_addr: pfn::GetInstanceProcAddr) -> Self
+            {
+                Entry {
+                    $(
+                        $member: {
+                            let symbol = vk_symbol!($pfn);
+                            std::mem::transmute(get_proc_addr(null(), symbol))
+                        },
+                    )*
                 }
-            )*
+            }
         }
-        impl std::fmt::Debug for Entry {
+        impl Debug for Entry {
             fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-                f.debug_struct("Entry")
+                f.debug_struct(stringify!(Entry))
                     $(.field(stringify!($member), &opt_to_ptr!(self.$member)))*
                     .finish()
             }
+        }
+        impl Entry {
+            $(
+                pub unsafe fn $method(&self, $($arg: $type,)*) $(-> $ret)* {
+                    std::mem::transmute::<_, pfn::$pfn>(self.$member)
+                        ($($arg,)*)
+                }
+            )*
         }
     }
 }
 
 impl_entry! {
-    enumerate_instance_extension_properties {
-        params: (
-            p_layer_name: *const ::std::os::raw::c_char,
+    {
+        name: pfn_enumerate_instance_extension_properties,
+        method_name: enumerate_instance_extension_properties,
+        ptr: EnumerateInstanceExtensionProperties,
+        signature: (
+            p_layer_name: *const c_char,
             p_property_count: *mut u32,
-            p_properties: *mut ::vk_ffi::ExtensionProperties,
-        ),
-        pfn_ty: PfnEnumerateInstanceExtensionProperties,
-        fn_ty: FnEnumerateInstanceExtensionProperties,
-        symbol: b"vkEnumerateInstanceExtensionProperties\0",
+            p_properties: *mut ExtensionProperties,
+        ) -> Result,
     },
-    enumerate_instance_layer_properties {
-        params: (
+    {
+        name: pfn_enumerate_instance_layer_properties,
+        method_name: enumerate_instance_layer_properties,
+        ptr: EnumerateInstanceLayerProperties,
+        signature: (
             p_property_count: *mut u32,
-            p_properties: *mut ::vk_ffi::LayerProperties,
-        ),
-        pfn_ty: PfnEnumerateInstanceLayerProperties,
-        fn_ty: FnEnumerateInstanceLayerProperties,
-        symbol: b"vkEnumerateInstanceLayerProperties\0",
+            p_properties: *mut LayerProperties,
+        ) -> Result,
     },
-    create_instance {
-        params: (
-            p_create_info: *const ::vk_ffi::InstanceCreateInfo,
-            p_allocator: *const ::vk_ffi::AllocationCallbacks,
-            p_instance: *mut ::vk_ffi::Instance,
-        ),
-        pfn_ty: PfnCreateInstance,
-        fn_ty: FnCreateInstance,
-        symbol: b"vkCreateInstance\0",
+    {
+        name: pfn_create_instance,
+        method_name: create_instance,
+        ptr: CreateInstance,
+        signature: (
+            p_create_info: *const InstanceCreateInfo,
+            p_allocator: *const AllocationCallbacks,
+            p_instance: *mut Instance,
+        ) -> Result,
     },
-    enumerate_instance_version {
-        params: (
+    {
+        name: pfn_enumerate_instance_version,
+        method_name: enumerate_instance_version,
+        ptr: EnumerateInstanceVersion,
+        signature: (
             p_api_version: *mut u32,
-        ),
-        pfn_ty: PfnEnumerateInstanceVersion,
-        fn_ty: FnEnumerateInstanceVersion,
-        symbol: b"vkEnumerateInstanceVersion\0",
+        ) -> Result,
     },
 }
 
-macro_rules! declare_api {
-    ($name:ident {
-        $owner:ident: $owner_ty:ident,
-        $($member:ident: $type:ty,)*
-    }) => {
+macro_rules! call_cmd {
+    (
+        fn: $fn:expr,
+        args: [$($arg:expr,)*],
+        handle: $handle:expr,
+        takes_handle: true,
+    ) => {
+        $fn($handle, $($arg,)*)
+    };
+    (
+        fn: $fn:expr,
+        args: [$($arg:expr,)*],
+        handle: $handle:expr,
+        takes_handle: false,
+    ) => {
+        $fn($($arg,)*)
+    };
+}
+
+macro_rules! impl_table {
+    (
+        name: $name:ident,
+        get_proc_addr: $get_proc_addr:ident,
+        handle: {
+            name: $handle:ident,
+            type: $handle_type:ty,
+        },
+        members: [
+            $(
+                {
+                    name: $member:ident,
+                    method_name: $method:ident,
+                    ptr: $pfn:ident,
+                    signature: ($($arg:ident: $type:ty,)*) $(-> $ret:ty)*,
+                    takes_handle: $takes_handle:tt,
+                },
+            )*
+        ],
+    ) => {
         #[derive(Clone, Copy)]
         pub struct $name {
-            pub $owner: $owner_ty,
-            $(pub $member: $type,)*
+            pub $handle: $handle_type,
+            $(pub $member: Option<pfn::$pfn>,)*
         }
-        impl std::fmt::Debug for $name {
+        impl $name {
+            pub unsafe fn load(
+                get_proc_addr: pfn::$get_proc_addr,
+                $handle: $handle_type,
+            ) -> Self {
+                $name {
+                    $handle,
+                    $(
+                        $member: {
+                            let symbol = vk_symbol!($pfn);
+                            std::mem::transmute(get_proc_addr($handle, symbol))
+                        },
+                    )*
+                }
+            }
+        }
+        impl Debug for $name {
             fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
                 f.debug_struct(stringify!($name))
-                    .field(stringify!($owner), &self.$owner)
+                    .field(stringify!($handle), &self.$handle.0)
                     $(.field(stringify!($member), &opt_to_ptr!(self.$member)))*
                     .finish()
             }
+        }
+        impl $name {
+            $(
+                pub unsafe fn $method(&self, $($arg: $type,)*) $(-> $ret)* {
+                    call_cmd! {
+                        fn: std::mem::transmute::<_, pfn::$pfn>(self.$member),
+                        args: [$($arg,)*],
+                        handle: self.$handle,
+                        takes_handle: $takes_handle,
+                    }
+                }
+            )*
         }
     }
 }

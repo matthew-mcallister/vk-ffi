@@ -1,32 +1,29 @@
 # vk-ffi-loader
 
 This crate provides an API for loading Vulkan commands using a loader
-library. It is agnostic to how you link to the loader: at compile-time, at
-run-time, or through an intermediate library such as GLFW.
+library. It is agnostic to how you link to the loader: linking to the
+library at compile time or loading it at runtime are both possible. It
+is also agnostic to API version and supports almost all extensions, so
+it is usable with older implementations.
 
-The Vulkan API is broken up into many smaller APIs and corresponding function
-pointer tables are defined covering core functionality for versions 1.0 and 1.1
-as well as extensions. Each API is either an instance-level API or a
-device-level API and the corresponding function pointer table's `load` method
-takes `VkInstance` and `PFN_vkGetInstanceProcAddr` or `VkDevice` and
-`PFN_vkGetDeviceProcAddr` parameters, respectively.
-
-Extension function tables are located in the `extensions` module, while core
-interfaces are in the `v1_0` and `v1_1` modules as `CoreInstance` and
-`CoreDevice`. The latter two modules re-export everything in `extensions`, so
-you can use a single import statement like so:
+Given a pointer to `vkGetInstanceProcAddr` or `vkGetDeviceProcAddr`, you
+can load a method table containing all instance- or device-level
+commands exposed by the implementation. This table stores the
+`VkInstance` or `VkDevice` parameter it was loaded with and defines
+methods which automatically pass the handle to the underlying command
+when appropriate. Thus, you get robust and ergonomic
 ```
-use vk_ffi_loader::v1_1 as vk_loader;
-```
-
-Each function table also stores the `VkInstance` or `VkDevice` parameter it was
-loaded with and defines methods which automatically pass the handle to the
-underlying command when appropriate. Thus, you get the safer and more ergonomic
-```
-instance_table.destroy_instance(...);
+device_table.destroy_device(...);
 ```
 instead of
 ```
-(instance_table.destroy_instance)(instance, ...);
+(device_table.pfn_destroy_device)(device, ...);
 ```
 if calling the stored function pointer directly.
+
+
+## Caveats
+
+This library doesn't do any validation to make sure that the extensions
+you attempt to use were actually enabled. Unavailable function pointers
+will be set to null, which you can check for if desired.
