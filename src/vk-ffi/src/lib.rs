@@ -129,7 +129,7 @@ macro_rules! impl_dispatchable_handles {
             #[repr(transparent)]
             #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
             pub struct $name(pub *const std::ffi::c_void);
-            impl crate::HandleType for $name {
+            impl crate::traits::HandleType for $name {
                 #[inline]
                 fn null() -> Self { $name(0 as *const _) }
                 #[inline]
@@ -137,7 +137,7 @@ macro_rules! impl_dispatchable_handles {
             }
             impl std::default::Default for $name {
                 #[inline]
-                fn default() -> Self { <Self as crate::HandleType>::null() }
+                fn default() -> Self { crate::null() }
             }
         )*}
     }
@@ -149,7 +149,7 @@ macro_rules! impl_nondispatchable_handles {
             #[repr(transparent)]
             #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
             pub struct $name(pub u64);
-            impl crate::HandleType for $name {
+            impl crate::traits::HandleType for $name {
                 #[inline]
                 fn null() -> Self { $name(0) }
                 #[inline]
@@ -157,7 +157,7 @@ macro_rules! impl_nondispatchable_handles {
             }
             impl std::default::Default for $name {
                 #[inline]
-                fn default() -> Self { <Self as crate::HandleType>::null() }
+                fn default() -> Self { crate::null() }
             }
         )*}
     }
@@ -166,21 +166,8 @@ macro_rules! impl_nondispatchable_handles {
 // Structs and unions
 
 macro_rules! impl_structs {
-    ($($name:ident { $($member:ident: $type:ty,)* };)*) => {
+    ($($name:ident $(: $stype:ident)* { $($member:ident: $type:ty,)* };)*) => {
         mod structs {
-            use std::os::raw::*;
-            $(
-                #[repr(C)]
-                #[derive(Clone, Copy)]
-                pub struct $name { $(pub $member: $type,)* }
-            )*
-        }
-    }
-}
-
-macro_rules! impl_chain_structs {
-    ($($name:ident : $stype:ident { $($member:ident: $type:ty,)* };)*) => {
-        mod chain_structs {
             use std::os::raw::*;
             $(
                 #[repr(C)]
@@ -190,7 +177,7 @@ macro_rules! impl_chain_structs {
                     #[inline]
                     fn default() -> Self {
                         $name {
-                            s_type: crate::data::StructureType::$stype,
+                            $(s_type: crate::data::StructureType::$stype,)*
                             ..unsafe { std::mem::zeroed() }
                         }
                     }
@@ -208,6 +195,10 @@ macro_rules! impl_unions {
                 #[repr(C)]
                 #[derive(Clone, Copy)]
                 pub union $name { $(pub $member: $type,)* }
+                impl Default for $name {
+                    #[inline]
+                    fn default() -> Self { unsafe { std::mem::zeroed() } }
+                }
             )*
         }
     }
@@ -254,7 +245,6 @@ mod data {
     pub use crate::enums::*;
     pub use crate::bitmasks::*;
     pub use crate::structs::*;
-    pub use crate::chain_structs::*;
     pub use crate::unions::*;
 }
 
@@ -280,16 +270,20 @@ pub const SUBPASS_EXTERNAL: u32 = !0u32;
 pub const API_VERSION_1_0: u32 = crate::make_version!(1, 0, 0);
 pub const API_VERSION_1_1: u32 = crate::make_version!(1, 1, 0);
 
-pub trait HandleType: Eq + Sized {
-    #[inline]
-    fn null() -> Self;
+pub mod traits {
+    pub trait HandleType: Eq + Sized {
+        #[inline]
+        fn null() -> Self;
 
-    #[inline]
-    fn is_null(self) -> bool { self == Self::null() }
+        #[inline]
+        fn is_null(self) -> bool { self == Self::null() }
+    }
 }
 
 /// Returns a null-valued handle.
-pub fn null<T: HandleType>() -> T { <T as HandleType>::null() }
+pub fn null<T: crate::traits::HandleType>() -> T {
+    <T as crate::traits::HandleType>::null()
+}
 
 impl Result {
     #[inline]

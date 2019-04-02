@@ -1,6 +1,6 @@
 [package]
 name = "examples"
-description = "Loader for core Vulkan commands and extensions"
+description = "Usage examples for vk-ffi"
 version = "0.1.0"
 authors = ["Matthew McAllister <matthew.mcallister.0@gmail.com>"]
 edition = "2018"

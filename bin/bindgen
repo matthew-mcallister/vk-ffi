@@ -131,10 +131,12 @@ class Renderer:
         return [func.name.base] + self.render_signature(func)
 
 
-    def render_aggregate(self, agg, stype=None):
+    def render_aggregate(self, agg):
         parts = [agg.name.base]
-        if stype:
-            parts += [':', stype]
+        for mem in agg.members:
+            if mem.name == 'sType' and mem.values:
+                s_type = strip_prefix('VK_STRUCTURE_TYPE_', mem.values[0])
+                parts += [':', s_type]
         parts.append('{')
         for member in agg.members:
             parts += self.render_decl(member)
@@ -152,7 +154,6 @@ class BindingsVisitor:
         self.nondisp_handles = []
         self.func_pointers = []
         self.structs = []
-        self.chain_structs = []
         self.unions = []
         self.commands = []
         self.extensions = []
@@ -244,11 +245,8 @@ class BindingsVisitor:
 
         if agg.ty == 'struct':
             for mem in agg.members:
-                if mem.values:
-                    stype = strip_prefix('VK_STRUCTURE_TYPE_', mem.values[0])
-                    rendered = self.renderer.render_aggregate(agg, stype)
-                    self.chain_structs.append(rendered)
-                    break
+                self.structs.append(self.renderer.render_aggregate(agg))
+                break
             else:
                 self.structs.append(self.renderer.render_aggregate(agg))
         else:
@@ -265,7 +263,6 @@ def render_bindings(visitor):
         ('nondispatchable_handles', visitor.nondisp_handles),
         ('func_pointers', visitor.func_pointers),
         ('structs', visitor.structs),
-        ('chain_structs', visitor.chain_structs),
         ('unions', visitor.unions),
         ('commands', visitor.commands),
         ('extensions', visitor.extensions),

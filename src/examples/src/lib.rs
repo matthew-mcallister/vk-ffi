@@ -1,17 +1,18 @@
 #![feature(try_blocks)]
-
-extern crate libloading as lib;
-extern crate vk_ffi as vk;
-extern crate vk_ffi_loader as vkl;
+#![feature(uniform_paths)]
 
 use std::ffi::CStr;
 use std::ptr;
+
+use libloading as lib;
+use vk_ffi as vk;
+use vk_ffi_loader as vkl;
 
 #[macro_export]
 macro_rules! c_str {
     ($str:expr) => {
         concat!($str, "\0")
-            as *const _ as *const _ as *const ::std::os::raw::c_char
+            as *const _ as *const _ as *const std::os::raw::c_char
     }
 }
 
@@ -24,8 +25,8 @@ const VALIDATION_LAYER: &'static [u8] =
 #[derive(Debug)]
 pub struct Loader {
     pub lib: lib::Library,
-    pub get_instance_proc_addr: vk::FnGetInstanceProcAddr,
-    pub get_device_proc_addr: vk::FnGetDeviceProcAddr,
+    pub get_instance_proc_addr: vk::pfn::GetInstanceProcAddr,
+    pub get_device_proc_addr: vk::pfn::GetDeviceProcAddr,
 }
 
 impl Loader {

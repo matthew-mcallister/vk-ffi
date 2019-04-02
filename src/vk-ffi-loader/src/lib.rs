@@ -1,6 +1,5 @@
 #![allow(unused_parens)]
 
-use std;
 use std::fmt::Debug;
 use std::ffi::c_void;
 use std::os::raw::*;
@@ -149,8 +148,8 @@ macro_rules! impl_table {
         }
         impl $name {
             pub unsafe fn load(
-                get_proc_addr: pfn::$get_proc_addr,
                 $handle: $handle_type,
+                get_proc_addr: pfn::$get_proc_addr,
             ) -> Self {
                 $name {
                     $handle,

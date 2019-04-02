@@ -2,15 +2,12 @@
 // function in a rectangular region (with Re(z) > 1/2).
 #![feature(try_blocks)]
 
-extern crate examples;
-extern crate vk_ffi_loader;
-extern crate vk_ffi as vk;
-
 use std::ffi::c_void;
 use std::io::Write;
 use std::ptr;
 
 use examples::*;
+use vk_ffi as vk;
 
 const GAMMA_SPV_BYTES: &'static [u8] =
     include_bytes!(data_file!("gamma/gamma.spv"));
@@ -166,7 +163,7 @@ unsafe fn unsafe_main() {
 
     // Create and update descriptor set
     let pool_size = vk::DescriptorPoolSize {
-        type_: vk::DescriptorType::STORAGE_BUFFER,
+        _type: vk::DescriptorType::STORAGE_BUFFER,
         descriptor_count: 1,
     };
     let create_info = vk::DescriptorPoolCreateInfo {

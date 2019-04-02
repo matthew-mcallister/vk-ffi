@@ -97,11 +97,11 @@ macro_rules! enumerate2 {
 #[macro_export]
 macro_rules! enumerate_impl {
     (($($command:tt)*) ($($param:expr,)*)) => {{
-        let x: ::std::result::Result<_, $crate::Result> = try {
+        let x: std::result::Result<_, $crate::Result> = try {
             let mut n: u32 = 0;
-            $($command)*($($param,)* &mut n as *mut _, ::std::ptr::null_mut())
+            $($command)*($($param,)* &mut n as *mut _, std::ptr::null_mut())
                 .check()?;
-            let mut v = ::std::vec::Vec::with_capacity(n as usize);
+            let mut v = std::vec::Vec::with_capacity(n as usize);
             $($command)*($($param,)* &mut n as *mut _, v.as_mut_ptr())
                 .check()?;
             v.set_len(n as usize);
@@ -111,8 +111,8 @@ macro_rules! enumerate_impl {
     }};
     (@void ($($command:tt)*) ($($param:expr,)*)) => {{
         let mut n: u32 = 0;
-        $($command)*($($param,)* &mut n as *mut _, ::std::ptr::null_mut());
-        let mut v = ::std::vec::Vec::with_capacity(n as usize);
+        $($command)*($($param,)* &mut n as *mut _, std::ptr::null_mut());
+        let mut v = std::vec::Vec::with_capacity(n as usize);
         $($command)*($($param,)* &mut n as *mut _, v.as_mut_ptr());
         v.set_len(n as usize);
         v
