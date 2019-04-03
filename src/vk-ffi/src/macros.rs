@@ -42,11 +42,11 @@ macro_rules! check {
 /// # Examples
 ///
 /// ```
-/// vk_enumerate!(enumerate_physical_devices, instance).check()?;
+/// vk_enumerate!(enumerate_physical_devices, instance)?;
 /// vk_enumerate!(
 ///     @void get_physical_device_queue_family_properties,
 ///     physical_device,
-/// ).check()?;
+/// )?;
 /// ```
 #[macro_export]
 macro_rules! enumerate {
@@ -70,12 +70,12 @@ macro_rules! enumerate {
 /// # Examples
 ///
 /// ```
-/// vk_enumerate2!(instance_wrapper, enumerate_physical_devices).check()?;
+/// vk_enumerate2!(instance_wrapper, enumerate_physical_devices)?;
 /// vk_enumerate2!(
 ///     @void instance_wrapper,
 ///     get_physical_device_queue_family_properties,
 ///     physical_device,
-/// ).check()?;
+/// )?;
 /// ```
 #[macro_export]
 macro_rules! enumerate2 {

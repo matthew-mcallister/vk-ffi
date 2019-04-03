@@ -251,6 +251,10 @@ pub mod pfn {
 
 pub use data::*;
 
+// TODO: Could stand to make Bool32 an enum
+pub const FALSE: Bool32 = 0;
+pub const TRUE: Bool32 = 1;
+
 pub const LOD_CLAMP_NONE: f32 = 1000.0;
 pub const REMAINING_MIP_LEVELS: u32 = !0u32;
 pub const REMAINING_ARRAY_LAYERS: u32 = !0u32;
