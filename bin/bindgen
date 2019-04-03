@@ -12,8 +12,11 @@ import itertools
 import os
 import re
 import xml.etree.ElementTree as etree
+from textwrap import dedent
 
+import jinja2
 from vkreg import Registry
+from vkreg.registry import Name
 
 
 def strip_prefix(prefix, string):
@@ -33,23 +36,14 @@ def camel_to_snake(ident):
     return TITLE_WORDS_REGEX.sub('_', ident).lower()
 
 
-BUILTIN_MAP = {
-    'void': 'c_void',
-    'char': 'c_char',
-    'int': 'c_int',
-    'float': 'c_float',
-    'uint8_t': 'u8',
-    'uint16_t': 'u16',
-    'uint32_t': 'u32',
-    'uint64_t': 'u64',
-    'int32_t': 'i32',
-    'size_t': 'usize',
-}
-
 class Renderer:
     def __init__(self, **kwargs):
         self.namespace_data = kwargs.get('namespace_data', True)
         self.namespace_pfn = kwargs.get('namespace_pfn', True)
+
+
+    def indent(self, lines, count=1):
+        return (count * self.indent_str + line for line in lines)
 
 
     def render_data(self, ident):
@@ -66,13 +60,26 @@ class Renderer:
             return ident
 
 
+    BUILTIN_MAP = {
+        'void': 'c_void',
+        'char': 'c_char',
+        'int': 'c_int',
+        'float': 'c_float',
+        'uint8_t': 'u8',
+        'uint16_t': 'u16',
+        'uint32_t': 'u32',
+        'uint64_t': 'u64',
+        'int32_t': 'i32',
+        'size_t': 'usize',
+    }
+
     def render_type_expr_base(self, name):
         if name.namespace == 'PFN_vk':
             return self.render_pfn(name.base)
         elif name.namespace == 'Vk':
             return self.render_data(name.base)
         else:
-            return BUILTIN_MAP.get(name.base, name.base)
+            return self.BUILTIN_MAP.get(name.base, name.base)
 
 
     def render_quals(self, quals):
@@ -92,11 +99,13 @@ class Renderer:
 
 
     def render_type_expr(self, expr):
-        parts = self.render_quals(expr.qualifiers)
-        parts.append(self.render_type_expr_base(expr.base))
+        quals = self.render_quals(expr.qualifiers)
+        base = self.render_type_expr_base(expr.base)
+        basic = ' '.join(itertools.chain(quals, [base]))
         if expr.len is not None:
-            parts = ['['] + parts + [';', str(expr.len), ']']
-        return parts
+            return f'[{basic}; {expr.len}]'
+        else:
+            return basic
 
 
     def render_var(self, name):
@@ -106,61 +115,125 @@ class Renderer:
 
 
     def render_decl(self, decl):
+        name = self.render_var(decl.name)
         ty = self.render_type_expr(decl.ty)
-        return [self.render_var(decl.name), ':'] + ty
-
-
-    def render_signature(self, func):
-        parts = ['(']
-        for arg in func.args:
-            if arg.name:
-                parts += self.render_decl(arg)
-                parts.append(',')
-            else:
-                assert arg.ty.base.base == 'void'
-                assert len(func.args) == 1
-        parts.append(')')
-        ty = self.render_type_expr(func.ret)
-        if ty != ['c_void']:
-            parts.append('->')
-            parts += ty
-        return parts
+        return f'{name}: {ty}'
 
 
     def render_func(self, func):
-        return [func.name.base] + self.render_signature(func)
+        if any(arg.name is None for arg in func.args):
+            assert len(func.args) == 1
+            assert func.args[0].ty.base.base == 'void'
+            args = ()
+        else:
+            args = (self.render_decl(arg) for arg in func.args)
+
+        ret_ty = self.render_type_expr(func.ret)
+        ret = '' if ret_ty == 'c_void' else ' -> ' + ret_ty
+
+        return {'name': func.name.base, 'args': args, 'ret': ret}
 
 
     def render_aggregate(self, agg):
-        parts = [agg.name.base]
-        for mem in agg.members:
-            if mem.name == 'sType' and mem.values:
+        def default(mem):
+            if mem.values and mem.name == 'sType':
                 s_type = strip_prefix('VK_STRUCTURE_TYPE_', mem.values[0])
-                parts += [':', s_type]
-        parts.append('{')
-        for member in agg.members:
-            parts += self.render_decl(member)
-            parts.append(',')
-        parts.append('}')
-        return parts
+                enum = self.render_type_expr_base(Name('Vk', 'StructureType'))
+                return f' = {enum}::{s_type}'
+            else:
+                return ''
+
+        members = (
+            {
+                'decl': self.render_decl(member),
+                'default': default(member)
+            }
+            for member in agg.members
+        )
+        return {'name': agg.name.base, 'ty': agg.ty, 'members': members}
 
 
 class BindingsVisitor:
+    TEMPLATE = dedent("""\
+        impl_enums! {
+          {% for enum in bindings.enums %}
+            {{enum['ty']}} {{enum['name']}} {
+              {% for member in enum['members'] %}
+                {{member['name']}} = {{member['value']}},
+              {% endfor %}
+            };
+          {% endfor %}
+        }
+
+        impl_aliases! {
+          {% for alias in bindings.aliases %}
+            {{alias['name']}} = {{alias['target']}};
+          {% endfor %}
+        }
+
+        impl_handles! {
+          {% for handle in bindings.handles %}
+            {{handle['name']}} { dispatchable: {{handle['disp']|lower}} };
+          {% endfor %}
+        }
+
+        impl_func_pointers! {
+          {% for func in bindings.func_pointers %}
+            {{func['name']}}(
+              {% for arg in func['args'] %}
+                {{arg}},
+              {% endfor %}
+            ){{func['ret']}};
+          {% endfor %}
+        }
+
+        impl_aggregates! {
+          {% for agg in bindings.aggregates %}
+            {{agg['ty']}} {{agg['name']}} {
+              {% for member in agg['members'] %}
+                {{member['decl']}}{{member['default']}},
+              {% endfor %}
+            };
+          {% endfor %}
+        }
+
+        impl_commands! {
+          {% for func in bindings.commands %}
+            {{func['name']}}(
+              {% for arg in func['args'] %}
+                {{arg}},
+              {% endfor %}
+            ){{func['ret']}};
+          {% endfor %}
+        }
+
+        impl_extensions! {
+          {% for ext in bindings.extensions %}
+            {{ext['name']}} = {{ext['value']}};
+          {% endfor %}
+        }
+    """)
+
+
     def __init__(self):
-        self.bitmasks = []
         self.enums = []
         self.aliases = []
-        self.disp_handles = []
-        self.nondisp_handles = []
+        self.handles = []
         self.func_pointers = []
-        self.structs = []
-        self.unions = []
+        self.aggregates = []
         self.commands = []
         self.extensions = []
 
         self.renderer = Renderer()
         # If a type depends on an external header, remember it here
         self.excised = set()
+
+        self.env = jinja2.Environment(
+            loader=jinja2.DictLoader({'bindings.rs': self.TEMPLATE}),
+            undefined=jinja2.StrictUndefined,
+            trim_blocks=True,
+            lstrip_blocks=True,
+        )
 
 
     def command_is_excised(self, command):
@@ -182,24 +255,30 @@ class BindingsVisitor:
 
     def visit_extension(self, extension):
         name = strip_prefix('VK_', extension.name).upper() + '_EXTENSION_NAME'
-        self.extensions.append([name, '=', extension.name])
+        self.extensions.append({'name': name, 'value': extension.name})
 
 
     def visit_enum(self, enum):
         assert enum.ty in ('bitmask', 'enum')
 
-        parts = [enum.name.base, '{']
-        for member in enum.members:
-            name = member.name.base
-            if name[0] in '0123456789':
-                name = f'_{name}'
-            parts += [name, '=', str(member.value), ',']
-        parts.append('}')
+        def ensure_valid(ident):
+            if ident[0] in '0123456789':
+                return f'_{ident}'
+            return ident
 
-        if enum.ty == 'bitmask':
-            self.bitmasks.append(parts)
-        else:
-            self.enums.append(parts)
+        members = (
+            {
+                'name': ensure_valid(member.name.base),
+                'value': str(member.value),
+            }
+            for member in enum.members
+        )
+
+        self.enums.append({
+            'name': enum.name.base,
+            'ty': enum.ty,
+            'members': members,
+        })
 
 
     def visit_command(self, command):
@@ -225,14 +304,14 @@ class BindingsVisitor:
 
     def visit_alias(self, alias):
         ty = self.renderer.render_type_expr_base(alias.target)
-        self.aliases.append([alias.name.base, '=', ty])
+        self.aliases.append({'name': alias.name.base, 'target': ty})
 
 
     def visit_handle(self, handle):
-        if handle.dispatchable:
-            self.disp_handles.append(handle.name.base)
-        else:
-            self.nondisp_handles.append(handle.name.base)
+        self.handles.append({
+            'name': handle.name.base,
+            'disp': handle.dispatchable,
+        })
 
 
     def visit_aggregate(self, agg):
@@ -243,65 +322,86 @@ class BindingsVisitor:
             self.excised.add(agg.name.base)
             return
 
-        if agg.ty == 'struct':
-            for mem in agg.members:
-                self.structs.append(self.renderer.render_aggregate(agg))
-                break
-            else:
-                self.structs.append(self.renderer.render_aggregate(agg))
-        else:
-            self.unions.append(self.renderer.render_aggregate(agg))
+        self.aggregates.append(self.renderer.render_aggregate(agg))
 
 
-def render_bindings(visitor):
-    res = []
-    for macro, entries in (
-        ('bitmasks', visitor.bitmasks),
-        ('enums', visitor.enums),
-        ('aliases', visitor.aliases),
-        ('dispatchable_handles', visitor.disp_handles),
-        ('nondispatchable_handles', visitor.nondisp_handles),
-        ('func_pointers', visitor.func_pointers),
-        ('structs', visitor.structs),
-        ('unions', visitor.unions),
-        ('commands', visitor.commands),
-        ('extensions', visitor.extensions),
-    ):
-        res += [f'\n\nimpl_{macro}!', '{']
-        for entry in entries:
-            if isinstance(entry, str):
-                res.append(entry)
-            else:
-                res += entry
-            res.append(';')
-        res.append('}')
-    return res
+    def render(self, out):
+        template = self.env.get_template('bindings.rs')
+        out.writelines(template.generate(bindings=self))
 
 
 class Api:
-    def __init__(self, registry, bindings, level):
-        self.level = level
+    TEMPLATE = dedent("""\
+        impl_table! {
+            name: {{api.name}},
+            get_proc_addr: {{api.get_proc_addr}},
+            handle: {
+                name: {{api.handle}},
+                type: {{api.level}},
+            },
+            members: [
+              {% for member in api.members %}
+                {
+                    name: pfn_{{member['method']}},
+                    method_name: {{member['method']}},
+                    ptr: {{member['ptr']}},
+                    signature: (
+                      {% for arg in member['signature']['args'] %}
+                        {{arg}},
+                      {% endfor %}
+                    ){{member['signature']['ret']}},
+                    takes_handle: {{member['takes_handle']|lower}},
+                },
+              {% endfor %}
+            ],
+        }
 
+
+    """)
+
+    def __init__(self, registry, bindings, level):
+        self.registry = registry
+        self.bindings = bindings
+        self.level = level
+        self.renderer = Renderer(namespace_data=False)
+
+        self.env = jinja2.Environment(
+            loader=jinja2.DictLoader({'loader.rs': self.TEMPLATE}),
+            undefined=jinja2.StrictUndefined,
+            trim_blocks=True,
+            lstrip_blocks=True,
+        )
+
+    @property
+    def members(self):
         handle_level = {
             ty.name.base: ty.level
-            for ty in registry.types
+            for ty in self.registry.types
             if ty.category() == 'handle'
         }
 
-        self.commands = []
-        for command in registry.commands:
-            if bindings.command_is_excised(command):
+        for command in self.registry.commands:
+            if self.bindings.command_is_excised(command):
                 continue
+
             obj = command.args[0].ty.base.base
             obj_level = handle_level.get(obj)
             if obj_level != self.level:
                 continue
-            self.commands.append({
-                'obj': obj,
-                'command': command,
-            })
 
-        self.renderer = Renderer(namespace_data=False)
+            takes_handle = obj == self.level
+            method_name = camel_to_snake(command.name.base)
+
+            args = command.args[1:] if takes_handle else command.args
+            func = dataclasses.replace(command, args=args)
+            sig = self.renderer.render_func(func)
+
+            yield {
+                'method': method_name,
+                'ptr': command.name.base,
+                'takes_handle': str(takes_handle).lower(),
+                'signature': sig,
+            }
 
     @property
     def name(self):
@@ -315,70 +415,14 @@ class Api:
     def handle(self):
         return self.level.lower()
 
-    def render(self):
-        parts = [
-            'impl_table!',
-            '{',
-            'name:', self.name, ',',
-            'get_proc_addr:', self.get_proc_addr, ',',
-            'handle:',
-            '{',
-            'name:', self.handle, ',',
-            'type:', self.level, ',',
-            '}', ',',
-            'members:',
-            '[',
-        ]
-        for entry in self.commands:
-            command, obj = entry['command'], entry['obj']
-            takes_handle = obj == self.level
-            method_name = camel_to_snake(command.name.base)
-
-            args = command.args[1:] if takes_handle else command.args
-            func = dataclasses.replace(command, args=args)
-            sig = self.renderer.render_signature(func)
-
-            parts += [
-                '{',
-                'name:', f'pfn_{method_name}', ',',
-                'method_name:', method_name, ',',
-                'ptr:', command.name.base, ',',
-            ]
-            parts += ['signature:'] + sig + [',']
-            parts += [
-                'takes_handle:', str(takes_handle).lower(), ',',
-                '}', ',',
-            ]
-        parts += [']', ',', '}', '\n\n']
-        return parts
+    def render(self, out):
+        template = self.env.get_template('loader.rs')
+        out.writelines(template.generate(api=self))
 
 
-def render_loader(registry, bindings):
-    apis = (Api(registry, bindings, level) for level in ('Instance', 'Device'))
-    return sum((api.render() for api in apis), [])
-
-
-def write_code(f, strs):
-    INDENT = '    '
-    indent_lvl = 0
-    for i, s in enumerate(strs):
-        if s in ('(', '{', '['):
-            indent_lvl += 1
-            f.write(s)
-            f.write('\n')
-            f.write(INDENT * indent_lvl)
-        elif s in (')', '}', ']'):
-            indent_lvl -= 1
-            f.write('\n')
-            f.write(INDENT * indent_lvl)
-            f.write(s)
-        elif s in (',', ';'):
-            f.write(s)
-            f.write('\n')
-            f.write(INDENT * indent_lvl)
-        else:
-            f.write(s)
-        f.write(' ')
+def render_loader(registry, bindings, out):
+    for level in ('Instance', 'Device'):
+        Api(registry, bindings, level).render(out)
 
 
 def main():
@@ -395,15 +439,13 @@ def main():
 
     bindings = BindingsVisitor()
     bindings.visit(registry)
-    rendered = render_bindings(bindings)
     bindings_file = os.path.join(args.output, 'bindings.rs')
     with open(bindings_file, 'w') as f:
-        write_code(f, rendered)
+        bindings.render(f)
 
-    loader = render_loader(registry, bindings)
     loader_file = os.path.join(args.output, 'loader.rs')
     with open(loader_file, 'w') as f:
-        write_code(f, loader)
+        render_loader(registry, bindings, f)
 
 
 if __name__ == '__main__':

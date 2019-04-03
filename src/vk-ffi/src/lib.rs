@@ -72,37 +72,36 @@ macro_rules! bitmask_impls {
 }
 
 macro_rules! impl_enum {
-    ($name:ident[$type:ty] {$($member:ident = $value:expr,)*}) => {
+    (enum $name:ident {$($member:ident = $value:expr,)*}) => {
         #[repr(transparent)]
         #[derive(Clone, Copy, Debug, Default, Eq, Hash, PartialEq)]
-        pub struct $name(pub $type);
+        pub struct $name(pub i32);
         impl $name {
             $(pub const $member: $name = $name($value);)*
         }
-    }
+    };
+    (bitmask $name:ident {$($member:ident = $value:expr,)*}) => {
+        #[repr(transparent)]
+        #[derive(Clone, Copy, Debug, Default, Eq, Hash, PartialEq)]
+        pub struct $name(pub u32);
+        impl $name {
+            $(pub const $member: $name = $name($value);)*
+        }
+        bitmask_impls!($name);
+    };
 }
 
 macro_rules! impl_enums {
-    ($($name:ident {$($member:ident = $value:expr,)*};)*) => {
+    //($($ty:ident $name:ident {$($member:ident = $value:expr,)*};)*) => {
+    ($($ty:ident $name:ident $body:tt;)*) => {
         mod enums {
-            $(impl_enum!($name[i32] {$($member = $value,)*});)*
-        }
-    }
-}
-
-macro_rules! impl_bitmasks {
-    ($($name:ident {$($member:ident = $value:expr,)*};)*) => {
-        mod bitmasks {
             use std::ops::*;
-            $(
-                impl_enum!($name[u32] {$($member = $value,)*});
-                bitmask_impls!($name);
-            )*
+            $(impl_enum!($ty $name $body);)*
         }
     }
 }
 
-// Extern types, aliases, extensions
+// Aliases and extensions
 
 macro_rules! impl_aliases {
     ($($name:ident = $target:path;)*) => {
@@ -123,83 +122,82 @@ macro_rules! impl_extensions {
 
 // Handles
 
-macro_rules! impl_dispatchable_handles {
-    ($($name:ident;)*) => {
-        mod disp_handles {$(
-            #[repr(transparent)]
-            #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
-            pub struct $name(pub *const std::ffi::c_void);
-            impl crate::traits::HandleType for $name {
-                #[inline]
-                fn null() -> Self { $name(0 as *const _) }
-                #[inline]
-                fn is_null(self) -> bool { self.0 as usize == 0 }
-            }
-            impl std::default::Default for $name {
-                #[inline]
-                fn default() -> Self { crate::null() }
-            }
-        )*}
+macro_rules! impl_handle {
+    ($name:ident { dispatchable: true }) => {
+        #[repr(transparent)]
+        #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+        pub struct $name(pub *const std::ffi::c_void);
+        impl crate::traits::HandleType for $name {
+            #[inline]
+            fn null() -> Self { $name(0 as *const _) }
+            #[inline]
+            fn is_null(self) -> bool { self.0 as usize == 0 }
+        }
+        impl std::default::Default for $name {
+            #[inline]
+            fn default() -> Self { crate::null() }
+        }
+    };
+    ($name:ident { dispatchable: false }) => {
+        #[repr(transparent)]
+        #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+        pub struct $name(pub u64);
+        impl crate::traits::HandleType for $name {
+            #[inline]
+            fn null() -> Self { $name(0) }
+            #[inline]
+            fn is_null(self) -> bool { self.0 == 0 }
+        }
+        impl std::default::Default for $name {
+            #[inline]
+            fn default() -> Self { crate::null() }
+        }
     }
 }
 
-macro_rules! impl_nondispatchable_handles {
-    ($($name:ident;)*) => {
-        mod nondisp_handles {$(
-            #[repr(transparent)]
-            #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
-            pub struct $name(pub u64);
-            impl crate::traits::HandleType for $name {
-                #[inline]
-                fn null() -> Self { $name(0) }
-                #[inline]
-                fn is_null(self) -> bool { self.0 == 0 }
-            }
-            impl std::default::Default for $name {
-                #[inline]
-                fn default() -> Self { crate::null() }
-            }
-        )*}
+macro_rules! impl_handles {
+    ($($name:ident { dispatchable: $value:ident };)*) => {
+        mod handles { $(impl_handle!($name { dispatchable: $value });)* }
     }
 }
 
 // Structs and unions
 
-macro_rules! impl_structs {
-    ($($name:ident $(: $stype:ident)* { $($member:ident: $type:ty,)* };)*) => {
-        mod structs {
-            use std::os::raw::*;
-            $(
-                #[repr(C)]
-                #[derive(Clone, Copy)]
-                pub struct $name { $(pub $member: $type,)* }
-                impl Default for $name {
-                    #[inline]
-                    fn default() -> Self {
-                        $name {
-                            $(s_type: crate::data::StructureType::$stype,)*
-                            ..unsafe { std::mem::zeroed() }
-                        }
-                    }
-                }
-            )*
+macro_rules! impl_aggregate {
+    (
+        struct $name:ident {
+            $($member:ident: $type:ty $(= $default:expr)*,)*
         }
-    }
+    ) => {
+        #[repr(C)]
+        #[derive(Clone, Copy)]
+        pub struct $name { $(pub $member: $type,)* }
+        impl Default for $name {
+            #[inline]
+            fn default() -> Self {
+                $name {
+                    $($($member: $default,)*)*
+                    ..unsafe { std::mem::zeroed() }
+                }
+            }
+        }
+    };
+    (union $name:ident { $($member:ident: $type:ty,)* }) => {
+        #[repr(C)]
+        #[derive(Clone, Copy)]
+        pub union $name { $(pub $member: $type,)* }
+        impl Default for $name {
+            #[inline]
+            fn default() -> Self { unsafe { std::mem::zeroed() } }
+        }
+    };
 }
 
-macro_rules! impl_unions {
-    ($($name:ident { $($member:ident: $type:ty,)* };)*) => {
-        mod unions {
+macro_rules! impl_aggregates {
+    ($($ty:ident $name:ident $body:tt;)*) => {
+        mod aggregates {
             use std::os::raw::*;
-            $(
-                #[repr(C)]
-                #[derive(Clone, Copy)]
-                pub union $name { $(pub $member: $type,)* }
-                impl Default for $name {
-                    #[inline]
-                    fn default() -> Self { unsafe { std::mem::zeroed() } }
-                }
-            )*
+            $(impl_aggregate!($ty $name $body);)*
         }
     }
 }
@@ -240,12 +238,9 @@ include!(concat!(env!("CARGO_MANIFEST_DIR"), "/generated/bindings.rs"));
 // This module represents the "VK*" types
 mod data {
     pub use crate::aliases::*;
-    pub use crate::disp_handles::*;
-    pub use crate::nondisp_handles::*;
+    pub use crate::handles::*;
     pub use crate::enums::*;
-    pub use crate::bitmasks::*;
-    pub use crate::structs::*;
-    pub use crate::unions::*;
+    pub use crate::aggregates::*;
 }
 
 // This module represents the "PFN_vk*" types
