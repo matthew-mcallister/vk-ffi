@@ -6,6 +6,8 @@ use std::os::raw::*;
 #[macro_use]
 mod macros;
 mod imp;
+#[cfg(test)]
+mod tests;
 
 pub use crate::macros::*;
 
@@ -71,27 +73,35 @@ macro_rules! bitmask_impls {
 }
 
 macro_rules! impl_enum {
-    (enum $name:ident {$($member:ident = $value:expr,)*}) => {
+    (@inner $name:ident[$type:ty] {$($member:ident = $value:expr,)*}) => {
         #[repr(transparent)]
         #[derive(Clone, Copy, Debug, Default, Eq, Hash, PartialEq)]
-        pub struct $name(pub i32);
+        pub struct $name(pub $type);
         impl $name {
             $(pub const $member: $name = $name($value);)*
+        }
+        #[cfg(feature = "extra-traits")]
+        impl std::str::FromStr for $name {
+            type Err = crate::internal::ParseEnumError;
+            #[allow(unreachable_code)]
+            fn from_str(s: &str) -> std::result::Result<Self, Self::Err> {
+                Ok(match s {
+                    $(stringify!($member) => $name::$member,)*
+                    _ => return Err(Default::default()),
+                })
+            }
         }
     };
+    (enum $name:ident {$($member:ident = $value:expr,)*}) => {
+        impl_enum!(@inner $name[i32] {$($member = $value,)*});
+    };
     (bitmask $name:ident {$($member:ident = $value:expr,)*}) => {
-        #[repr(transparent)]
-        #[derive(Clone, Copy, Debug, Default, Eq, Hash, PartialEq)]
-        pub struct $name(pub u32);
-        impl $name {
-            $(pub const $member: $name = $name($value);)*
-        }
+        impl_enum!(@inner $name[u32] {$($member = $value,)*});
         bitmask_impls!($name);
     };
 }
 
 macro_rules! impl_enums {
-    //($($ty:ident $name:ident {$($member:ident = $value:expr,)*};)*) => {
     ($($ty:ident $name:ident $body:tt;)*) => {
         mod enums {
             use std::ops::*;
@@ -267,6 +277,20 @@ pub const SUBPASS_EXTERNAL: u32 = !0u32;
 
 pub const API_VERSION_1_0: u32 = crate::make_version!(1, 0, 0);
 pub const API_VERSION_1_1: u32 = crate::make_version!(1, 1, 0);
+
+#[cfg(feature = "extra-traits")]
+pub mod internal {
+    #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+    pub struct ParseEnumError { _priv: () }
+
+    impl std::fmt::Display for ParseEnumError {
+        fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+            write!(f, "unknown enum member")
+        }
+    }
+
+    impl std::error::Error for ParseEnumError {}
+}
 
 pub mod traits {
     pub trait HandleType: Eq + Sized {

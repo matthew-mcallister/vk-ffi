@@ -9,3 +9,7 @@ keywords = ["graphics", "vulkan"]
 edition = "2018"
 
 [dependencies]
+
+[features]
+default = []
+extra-traits = []

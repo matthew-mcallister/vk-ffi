@@ -41,7 +41,7 @@ macro_rules! check {
 ///
 /// # Examples
 ///
-/// ```
+/// ```ignore
 /// vk_enumerate!(enumerate_physical_devices, instance)?;
 /// vk_enumerate!(
 ///     @void get_physical_device_queue_family_properties,
@@ -69,9 +69,9 @@ macro_rules! enumerate {
 ///
 /// # Examples
 ///
-/// ```
-/// vk_enumerate2!(instance_wrapper, enumerate_physical_devices)?;
-/// vk_enumerate2!(
+/// ```ignore
+/// enumerate2!(instance_wrapper, enumerate_physical_devices)?;
+/// enumerate2!(
 ///     @void instance_wrapper,
 ///     get_physical_device_queue_family_properties,
 ///     physical_device,
