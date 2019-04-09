@@ -1,5 +1,4 @@
 #![feature(try_blocks)]
-#![feature(uniform_paths)]
 
 use std::ffi::CStr;
 use std::ptr;

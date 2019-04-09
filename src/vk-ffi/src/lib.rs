@@ -1,5 +1,4 @@
 #![feature(extern_types)]
-#![feature(uniform_paths)]
 #![allow(non_upper_case_globals)]
 
 use std::os::raw::*;

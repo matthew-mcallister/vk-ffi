@@ -108,10 +108,12 @@ class Renderer:
             return basic
 
 
+    KEYWORD_MAP = {
+        'type': 'ty',
+    }
+
     def render_var(self, name):
-        if name == 'type':
-            return '_type'
-        return camel_to_snake(name)
+        return camel_to_snake(self.KEYWORD_MAP.get(name, name))
 
 
     def render_decl(self, decl):

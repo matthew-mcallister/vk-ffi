@@ -162,7 +162,7 @@ unsafe fn unsafe_main() {
 
     // Create and update descriptor set
     let pool_size = vk::DescriptorPoolSize {
-        _type: vk::DescriptorType::STORAGE_BUFFER,
+        ty: vk::DescriptorType::STORAGE_BUFFER,
         descriptor_count: 1,
     };
     let create_info = vk::DescriptorPoolCreateInfo {
