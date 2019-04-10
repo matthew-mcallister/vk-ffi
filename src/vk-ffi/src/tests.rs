@@ -3,7 +3,7 @@ mod reflection {
     use std::str::FromStr;
 
     use crate as vk;
-    use crate::reflection::{Aggregate, Enum, ParseEnumError};
+    use crate::reflection::{AggregateInfo, EnumInfo, ParseEnumError};
 
     #[test]
     fn test_enum_from_str() -> Result<(), ParseEnumError> {

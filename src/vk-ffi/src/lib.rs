@@ -69,6 +69,7 @@ macro_rules! bitmask_impls {
             pub fn contains(self, other: Self) -> bool
                 { self.bitand(other).0 == other.0 }
         }
+        impl crate::traits::Bitmask for $name {}
     }
 }
 
@@ -92,7 +93,7 @@ macro_rules! impl_enum {
             }
         }
         #[cfg(feature = "reflection")]
-        impl crate::reflection::Enum for $name {
+        impl crate::reflection::EnumInfo for $name {
             const MEMBERS: &'static [&'static str] =
                 &[$(stringify!($member),)*];
             const VALUES: &'static [Self] = &[$($name::$member,)*];
@@ -106,6 +107,7 @@ macro_rules! impl_enum {
     };
     (enum $name:ident {$($member:ident = $value:expr,)*}) => {
         impl_enum!(@inner $name[i32] {$($member = $value,)*});
+        impl crate::traits::Enum for $name {}
     };
     (bitmask $name:ident {$($member:ident = $value:expr,)*}) => {
         impl_enum!(@inner $name[u32] {$($member = $value,)*});
@@ -190,7 +192,7 @@ macro_rules! impl_aggregate {
         #[derive(Clone, Copy)]
         pub struct $name { $(pub $member: $type,)* }
         #[cfg(feature = "reflection")]
-        impl crate::reflection::Aggregate for $name {
+        impl crate::reflection::AggregateInfo for $name {
             const FIELDS: &'static [&'static str] =
                 &[$(stringify!($member),)*];
         }
@@ -298,12 +300,12 @@ pub const API_VERSION_1_1: u32 = crate::make_version!(1, 1, 0);
 
 #[cfg(feature = "reflection")]
 pub mod reflection {
-    pub trait Enum: 'static + std::str::FromStr {
+    pub trait EnumInfo: 'static + std::str::FromStr {
         const MEMBERS: &'static [&'static str];
         const VALUES: &'static [Self];
     }
 
-    pub trait Aggregate {
+    pub trait AggregateInfo: 'static {
         const FIELDS: &'static [&'static str];
     }
 
@@ -320,6 +322,9 @@ pub mod reflection {
 }
 
 pub mod traits {
+    use std::fmt::Debug;
+    use std::ops::*;
+
     pub trait HandleType: Eq + Sized {
         #[inline]
         fn null() -> Self;
@@ -327,6 +332,14 @@ pub mod traits {
         #[inline]
         fn is_null(self) -> bool { self == Self::null() }
     }
+
+    pub trait Enum: Sized + Copy + Default + Debug + Eq + From<i32> + Into<i32>
+    {}
+
+    pub trait Bitmask: Sized + Copy + Default + Debug + Eq + From<u32> +
+        Into<u32> + Not + BitAnd + BitAndAssign + BitOr + BitOrAssign +
+        BitXor + BitXorAssign
+    {}
 }
 
 /// Returns a null-valued handle.
