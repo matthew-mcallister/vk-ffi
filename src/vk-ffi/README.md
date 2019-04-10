@@ -25,9 +25,10 @@ Struct/enum members and function arguments have been renamed to be more
 idiomatic, but definitions are not changed. Bitmasks and enums have been
 made into proper types, improving type safety.
 
-Some traits are implemented out of the box, such as `Default`, but
-more specific traits can be enabled with the `extra-traits` feature,
-e.g. `FromStr` for enums and bitmasks.
+Some traits are implemented out of the box, such as `Default` and
+`BitAnd`/`Or`/`Xor` for bitmasks. Some handy traits are implemented when
+the `reflection` feature is enabled, such as `FromStr` for enums and
+bitmasks. See the `reflection` module.
 
 Some Rust macros are exported, including translations of C macros
 defined by the standard as well as Rust-specific convenience macros.

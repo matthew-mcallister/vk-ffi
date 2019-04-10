@@ -80,9 +80,9 @@ macro_rules! impl_enum {
         impl $name {
             $(pub const $member: $name = $name($value);)*
         }
-        #[cfg(feature = "extra-traits")]
+        #[cfg(feature = "reflection")]
         impl std::str::FromStr for $name {
-            type Err = crate::internal::ParseEnumError;
+            type Err = crate::reflection::ParseEnumError;
             #[allow(unreachable_code)]
             fn from_str(s: &str) -> std::result::Result<Self, Self::Err> {
                 Ok(match s {
@@ -90,6 +90,12 @@ macro_rules! impl_enum {
                     _ => return Err(Default::default()),
                 })
             }
+        }
+        #[cfg(feature = "reflection")]
+        impl crate::reflection::Enum for $name {
+            const MEMBERS: &'static [&'static str] =
+                &[$(stringify!($member),)*];
+            const VALUES: &'static [Self] = &[$($name::$member,)*];
         }
     };
     (enum $name:ident {$($member:ident = $value:expr,)*}) => {
@@ -173,14 +179,22 @@ macro_rules! impl_handles {
 // Structs and unions
 
 macro_rules! impl_aggregate {
+    (@inner $kw:tt $name:ident { $($member:ident: $type:ty,)* }) => {
+        #[repr(C)]
+        #[derive(Clone, Copy)]
+        pub struct $name { $(pub $member: $type,)* }
+        #[cfg(feature = "reflection")]
+        impl crate::reflection::Aggregate for $name {
+            const FIELDS: &'static [&'static str] =
+                &[$(stringify!($member),)*];
+        }
+    };
     (
         struct $name:ident {
             $($member:ident: $type:ty $(= $default:expr)*,)*
         }
     ) => {
-        #[repr(C)]
-        #[derive(Clone, Copy)]
-        pub struct $name { $(pub $member: $type,)* }
+        impl_aggregate!(@inner struct $name { $($member: $type,)* });
         impl Default for $name {
             #[inline]
             fn default() -> Self {
@@ -192,9 +206,7 @@ macro_rules! impl_aggregate {
         }
     };
     (union $name:ident { $($member:ident: $type:ty,)* }) => {
-        #[repr(C)]
-        #[derive(Clone, Copy)]
-        pub union $name { $(pub $member: $type,)* }
+        impl_aggregate!(@inner enum $name { $($member: $type,)* });
         impl Default for $name {
             #[inline]
             fn default() -> Self { unsafe { std::mem::zeroed() } }
@@ -278,8 +290,17 @@ pub const SUBPASS_EXTERNAL: u32 = !0u32;
 pub const API_VERSION_1_0: u32 = crate::make_version!(1, 0, 0);
 pub const API_VERSION_1_1: u32 = crate::make_version!(1, 1, 0);
 
-#[cfg(feature = "extra-traits")]
-pub mod internal {
+#[cfg(feature = "reflection")]
+pub mod reflection {
+    pub trait Enum: 'static + std::str::FromStr {
+        const MEMBERS: &'static [&'static str];
+        const VALUES: &'static [Self];
+    }
+
+    pub trait Aggregate {
+        const FIELDS: &'static [&'static str];
+    }
+
     #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
     pub struct ParseEnumError { _priv: () }
 
