@@ -97,6 +97,12 @@ macro_rules! impl_enum {
                 &[$(stringify!($member),)*];
             const VALUES: &'static [Self] = &[$($name::$member,)*];
         }
+        impl From<$type> for $name {
+            fn from(val: $type) -> Self { $name(val) }
+        }
+        impl From<$name> for $type {
+            fn from(val: $name) -> Self { val.0 }
+        }
     };
     (enum $name:ident {$($member:ident = $value:expr,)*}) => {
         impl_enum!(@inner $name[i32] {$($member = $value,)*});
