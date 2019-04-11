@@ -1,4 +1,5 @@
 #![feature(extern_types)]
+#![feature(trait_alias)]
 #![allow(non_upper_case_globals)]
 
 use std::os::raw::*;
@@ -69,7 +70,6 @@ macro_rules! bitmask_impls {
             pub fn contains(self, other: Self) -> bool
                 { self.bitand(other).0 == other.0 }
         }
-        impl crate::traits::Bitmask for $name {}
     }
 }
 
@@ -107,7 +107,6 @@ macro_rules! impl_enum {
     };
     (enum $name:ident {$($member:ident = $value:expr,)*}) => {
         impl_enum!(@inner $name[i32] {$($member = $value,)*});
-        impl crate::traits::Enum for $name {}
     };
     (bitmask $name:ident {$($member:ident = $value:expr,)*}) => {
         impl_enum!(@inner $name[u32] {$($member = $value,)*});
@@ -333,13 +332,12 @@ pub mod traits {
         fn is_null(self) -> bool { self == Self::null() }
     }
 
-    pub trait Enum: Sized + Copy + Default + Debug + Eq + From<i32> + Into<i32>
-    {}
+    pub trait Enum = Sized + Copy + Default + Debug + Eq + From<i32> +
+        Into<i32>;
 
-    pub trait Bitmask: Sized + Copy + Default + Debug + Eq + From<u32> +
+    pub trait Bitmask = Sized + Copy + Default + Debug + Eq + From<u32> +
         Into<u32> + Not + BitAnd + BitAndAssign + BitOr + BitOrAssign +
-        BitXor + BitXorAssign
-    {}
+        BitXor + BitXorAssign;
 }
 
 /// Returns a null-valued handle.
