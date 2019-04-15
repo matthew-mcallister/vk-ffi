@@ -76,7 +76,9 @@ macro_rules! bitmask_impls {
 macro_rules! impl_enum {
     (@inner $name:ident[$type:ty] {$($member:ident = $value:expr,)*}) => {
         #[repr(transparent)]
-        #[derive(Clone, Copy, Debug, Default, Eq, Hash, PartialEq)]
+        #[derive(
+            Clone, Copy, Debug, Default, Eq, Hash, Ord, PartialEq, PartialOrd,
+        )]
         pub struct $name(pub $type);
         impl $name {
             $(pub const $member: $name = $name($value);)*
