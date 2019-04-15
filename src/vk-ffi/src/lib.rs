@@ -190,6 +190,11 @@ macro_rules! impl_aggregate {
         #[repr(C)]
         #[derive(Clone, Copy)]
         pub struct $name { $(pub $member: $type,)* }
+        impl std::fmt::Debug for $name {
+            fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+                write!(f, concat!(stringify!($name), " {{ ... }}"))
+            }
+        }
         #[cfg(feature = "reflection")]
         impl crate::reflection::AggregateInfo for $name {
             const FIELDS: &'static [&'static str] =
