@@ -149,7 +149,7 @@ macro_rules! impl_extensions {
 macro_rules! impl_handle {
     ($name:ident { dispatchable: true }) => {
         #[repr(transparent)]
-        #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+        #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
         pub struct $name(pub *const std::ffi::c_void);
         impl crate::traits::HandleType for $name {
             #[inline]
@@ -164,7 +164,7 @@ macro_rules! impl_handle {
     };
     ($name:ident { dispatchable: false }) => {
         #[repr(transparent)]
-        #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
+        #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
         pub struct $name(pub u64);
         impl crate::traits::HandleType for $name {
             #[inline]
