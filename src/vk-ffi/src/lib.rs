@@ -191,7 +191,7 @@ macro_rules! impl_aggregate {
     (@inner $kw:tt $name:ident { $($member:ident: $type:ty,)* }) => {
         #[repr(C)]
         #[derive(Clone, Copy)]
-        pub struct $name { $(pub $member: $type,)* }
+        pub $kw $name { $(pub $member: $type,)* }
         impl std::fmt::Debug for $name {
             fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
                 write!(f, concat!(stringify!($name), " {{ ... }}"))
@@ -220,7 +220,7 @@ macro_rules! impl_aggregate {
         }
     };
     (union $name:ident { $($member:ident: $type:ty,)* }) => {
-        impl_aggregate!(@inner enum $name { $($member: $type,)* });
+        impl_aggregate!(@inner union $name { $($member: $type,)* });
         impl Default for $name {
             #[inline]
             fn default() -> Self { unsafe { std::mem::zeroed() } }
