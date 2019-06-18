@@ -62,6 +62,8 @@ macro_rules! bitmask_impls {
             #[inline]
             pub fn empty() -> Self { $name(0) }
             #[inline]
+            pub fn all() -> Self { $name(!0) }
+            #[inline]
             pub fn is_empty(self) -> bool { self.0 == 0 }
             #[inline]
             pub fn intersects(self, other: Self) -> bool
