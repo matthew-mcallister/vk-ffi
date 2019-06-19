@@ -62,8 +62,6 @@ macro_rules! bitmask_impls {
             #[inline]
             pub fn empty() -> Self { $name(0) }
             #[inline]
-            pub fn all() -> Self { $name(!0) }
-            #[inline]
             pub fn is_empty(self) -> bool { self.0 == 0 }
             #[inline]
             pub fn intersects(self, other: Self) -> bool
@@ -355,18 +353,40 @@ pub fn null<T: crate::traits::HandleType>() -> T {
 }
 
 impl Result {
+    /// Converts `VK_ERROR_*` to `Err(res)` and any other `VkResult` to
+    /// `Ok(res)`.
     #[inline]
     pub fn check(self) -> std::result::Result<Self, Self> {
-        crate::check!(self)
+        if self.is_error() { Err(self) } else { Ok(self) }
+    }
+
+    /// Converts `VK_SUCCESS` to `Ok(())` and any other `VkResult` to
+    /// `Err(res)`.
+    #[inline]
+    pub fn check_success(self) -> std::result::Result<(), Self> {
+        if self.is_success() { Ok(()) } else { Err(self) }
+    }
+
+    /// Converts `VK_SUCCESS` and `VK_ERROR_*` to `None` and any other
+    /// status code to `Some(res)`.
+    #[inline]
+    pub fn check_status(self) -> std::option::Option<Self> {
+        if self.is_status() { Some(self) } else { None }
+    }
+
+    #[inline]
+    pub fn is_error(self) -> bool {
+        self.0 < 0
     }
 
     #[inline]
     pub fn is_success(self) -> bool {
-        self.0 >= 0
+        self == Self::SUCCESS
     }
+
     #[inline]
-    pub fn is_error(self) -> bool {
-        self.0 < 0
+    pub fn is_status(self) -> bool {
+        self.0 > 0
     }
 }
 

@@ -20,13 +20,6 @@ macro_rules! version_patch {
     ($version:expr) => { $version & 0xfff }
 }
 
-/// Converts a `VkResult` to a `Result<VkResult, VkResult>`, branching
-/// on whether the code signifies an error.
-#[macro_export]
-macro_rules! check {
-    ($res:expr) => { if $res.is_success() { Ok($res) } else { Err($res) } }
-}
-
 /// Handles the boilerplate of making two calls to `VkEnumerate*`: one
 /// to get the number of elements, and another to fill the array. This
 /// macro yields `Result<Vec<_>, VkResult>`, and never returns
