@@ -157,10 +157,7 @@ macro_rules! impl_handle {
             #[inline]
             fn is_null(self) -> bool { self.0 as usize == 0 }
         }
-        impl std::default::Default for $name {
-            #[inline]
-            fn default() -> Self { crate::null() }
-        }
+        impl_handle!(@common, $name);
     };
     ($name:ident { dispatchable: false }) => {
         #[repr(transparent)]
@@ -172,11 +169,19 @@ macro_rules! impl_handle {
             #[inline]
             fn is_null(self) -> bool { self.0 == 0 }
         }
+        impl_handle!(@common, $name);
+    };
+    (@common, $name:ident) => {
         impl std::default::Default for $name {
             #[inline]
             fn default() -> Self { crate::null() }
         }
-    }
+        impl From<$name> for u64 {
+            fn from(val: $name) -> Self {
+                val.0 as _
+            }
+        }
+    };
 }
 
 macro_rules! impl_handles {
@@ -331,7 +336,7 @@ pub mod traits {
     use std::fmt::Debug;
     use std::ops::*;
 
-    pub trait HandleType: Eq + Sized {
+    pub trait HandleType: Eq + Sized + Into<u64> {
         #[inline]
         fn null() -> Self;
 
