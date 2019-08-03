@@ -32,3 +32,7 @@ bitmasks. See the `reflection` module.
 
 Some Rust macros are exported, including translations of C macros
 defined by the standard as well as Rust-specific convenience macros.
+
+## TODO
+
+I think this should be renamed to `vulkan-headers`

@@ -358,25 +358,40 @@ pub fn null<T: crate::traits::HandleType>() -> T {
 }
 
 impl Result {
-    /// Converts `VK_ERROR_*` to `Err(res)` and any other `VkResult` to
-    /// `Ok(res)`.
+    /// Checks if the result was a success.
+    ///
+    /// # Implementation
+    ///
+    /// ```ignore
+    /// if res.is_success() { Ok(()) } else { Err(res) }
+    /// ```
     #[inline]
-    pub fn check(self) -> std::result::Result<Self, Self> {
-        if self.is_error() { Err(self) } else { Ok(self) }
-    }
-
-    /// Converts `VK_SUCCESS` to `Ok(())` and any other `VkResult` to
-    /// `Err(res)`.
-    #[inline]
-    pub fn check_success(self) -> std::result::Result<(), Self> {
+    pub fn check(self) -> std::result::Result<(), Self> {
         if self.is_success() { Ok(()) } else { Err(self) }
     }
 
-    /// Converts `VK_SUCCESS` and `VK_ERROR_*` to `None` and any other
-    /// status code to `Some(res)`.
+    /// Checks for errors and status codes.
+    ///
+    /// # Implementation
+    ///
+    /// ```ignore
+    /// if self.is_success() {
+    ///     Ok(None)
+    /// } else if self.is_error() {
+    ///     Err(self)
+    /// } else {
+    ///     Ok(Some(self))
+    /// }
+    /// ```
     #[inline]
-    pub fn check_status(self) -> std::option::Option<Self> {
-        if self.is_status() { Some(self) } else { None }
+    pub fn check_status(self) -> std::result::Result<Option<Self>, Self> {
+        if self.is_success() {
+            Ok(None)
+        } else if self.is_error() {
+            Err(self)
+        } else {
+            Ok(Some(self))
+        }
     }
 
     #[inline]
