@@ -172,6 +172,7 @@ macro_rules! impl_table {
         }
         impl $name {
             $(
+                #[inline(always)]
                 pub unsafe fn $method(&self, $($arg: $type,)*) $(-> $ret)* {
                     call_cmd! {
                         fn: std::mem::transmute::<_, pfn::$pfn>(self.$member),

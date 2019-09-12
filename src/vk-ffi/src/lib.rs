@@ -181,6 +181,8 @@ macro_rules! impl_handle {
                 val.0 as _
             }
         }
+        unsafe impl std::marker::Send for $name {}
+        unsafe impl std::marker::Sync for $name {}
     };
 }
 
@@ -207,6 +209,8 @@ macro_rules! impl_aggregate {
             const FIELDS: &'static [&'static str] =
                 &[$(stringify!($member),)*];
         }
+        unsafe impl std::marker::Send for $name {}
+        unsafe impl std::marker::Sync for $name {}
     };
     (
         struct $name:ident {

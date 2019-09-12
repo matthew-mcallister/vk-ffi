@@ -43,16 +43,10 @@ macro_rules! version_patch {
 /// ```
 #[macro_export]
 macro_rules! enumerate {
-    ($command:expr $(, $param:expr)*) => {
+    ($command:expr $(, $param:expr)*$(,)*) => {
         $crate::enumerate_impl!(($command) ($($param,)*))
     };
-    ($command:expr $(, $param:expr)*,) => {
-        $crate::enumerate_impl!(($command) ($($param,)*))
-    };
-    (@void $command:expr $(, $param:expr)*) => {
-        $crate::enumerate_impl!(@void ($command) ($($param,)*))
-    };
-    (@void $command:expr $(, $param:expr)*,) => {
+    (@void $command:expr $(, $param:expr)*$(,)*) => {
         $crate::enumerate_impl!(@void ($command) ($($param,)*))
     };
 }
@@ -72,16 +66,10 @@ macro_rules! enumerate {
 /// ```
 #[macro_export]
 macro_rules! enumerate2 {
-    ($object:expr, $method:ident $(, $param:expr)*) => {
+    ($object:expr, $method:ident $(, $param:expr)*$(,)*) => {
         $crate::enumerate_impl!(($object.$method) ($($param,)*))
     };
-    ($object:expr, $method:ident $(, $param:expr)*,) => {
-        $crate::enumerate_impl!(($object.$method) ($($param,)*))
-    };
-    (@void $object:expr, $method:ident $(, $param:expr)*,) => {
-        $crate::enumerate_impl!(@void ($object.$method) ($($param,)*))
-    };
-    (@void $object:expr, $method:ident $(, $param:expr)*,) => {
+    (@void $object:expr, $method:ident $(, $param:expr)*$(,)*) => {
         $crate::enumerate_impl!(@void ($object.$method) ($($param,)*))
     };
 }

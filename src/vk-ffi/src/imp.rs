@@ -36,7 +36,7 @@ impl std::fmt::Display for Result {
                 "invalid DRM format modifier plane layout",
             Result::ERROR_FRAGMENTATION_EXT => "memory fragmentation",
             Result::ERROR_NOT_PERMITTED_EXT => "operation not permitted",
-            _ => "unrecognized status code",
+            _ => "unidentified status code",
         })
     }
 }
