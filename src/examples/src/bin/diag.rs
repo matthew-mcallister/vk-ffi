@@ -30,13 +30,13 @@ unsafe fn unsafe_main() {
     println!("layers:");
     for layer in layers.into_iter() {
         println!("  - name: {:?}",
-            ffi::CStr::from_ptr(&layer.layer_name as *const _));
+            ffi::CStr::from_ptr(&layer.layer_name as _));
         println!("    spec_version: {}",
             Version::from(layer.spec_version));
         println!("    impl_version: {}",
             Version::from(layer.implementation_version));
         println!("    desc: {:?}",
-            ffi::CStr::from_ptr(&layer.description as *const _));
+            ffi::CStr::from_ptr(&layer.description as _));
     }
 
     let exts = vk::enumerate2!(
@@ -47,7 +47,7 @@ unsafe fn unsafe_main() {
     println!("extensions:");
     for ext in exts.into_iter() {
         println!("  - name: {:?}",
-            ffi::CStr::from_ptr(&ext.extension_name as *const _));
+            ffi::CStr::from_ptr(&ext.extension_name as _));
         println!("    spec_version: {}",
             Version::from(ext.spec_version));
     }
@@ -61,7 +61,7 @@ unsafe fn unsafe_main() {
         ..Default::default()
     };
     let create_info = vk::InstanceCreateInfo {
-        p_application_info: &app_info as *const _,
+        p_application_info: &app_info,
         enabled_layer_count: 0,
         pp_enabled_layer_names: ptr::null(),
         enabled_extension_count: 0,
@@ -69,8 +69,7 @@ unsafe fn unsafe_main() {
         ..Default::default()
     };
     let mut instance = vk::null();
-    entry.create_instance
-        (&create_info as *const _, ptr::null(), &mut instance as *mut _)
+    entry.create_instance(&create_info, ptr::null(), &mut instance)
         .check().unwrap();
 
     let instance_table =
@@ -80,12 +79,11 @@ unsafe fn unsafe_main() {
         vk::enumerate2!(instance_table, enumerate_physical_devices).unwrap();
     println!("physical_devices:");
     for &pdev in physical_devices.iter() {
-        let mut props: vk::PhysicalDeviceProperties =
-            std::mem::uninitialized();
+        let mut props: vk::PhysicalDeviceProperties = Default::default();
         instance_table.get_physical_device_properties
-            (pdev, &mut props as *mut _);
+            (pdev, &mut props);
         println!("  - name: {:?}",
-            ffi::CStr::from_ptr(&props.device_name as *const _));
+            ffi::CStr::from_ptr(&props.device_name as _));
         println!("    device_type: {}", match props.device_type {
             vk::PhysicalDeviceType::OTHER => "other",
             vk::PhysicalDeviceType::INTEGRATED_GPU => "integrated_gpu",
@@ -132,9 +130,9 @@ unsafe fn unsafe_main() {
         }
 
         let mut mem_props: vk::PhysicalDeviceMemoryProperties =
-            std::mem::uninitialized();
+            Default::default();
         instance_table.get_physical_device_memory_properties
-            (pdev, &mut mem_props as *mut _);
+            (pdev, &mut mem_props);
 
         let mem_types =
             &mem_props.memory_types[..mem_props.memory_type_count as usize];
@@ -179,7 +177,7 @@ unsafe fn unsafe_main() {
         println!("    extensions:");
         for ext in exts.into_iter() {
             println!("      - name: {:?}",
-                ffi::CStr::from_ptr(&ext.extension_name as *const _));
+                ffi::CStr::from_ptr(&ext.extension_name as _));
             println!("        spec_version: {}",
                 Version::from(ext.spec_version));
         }

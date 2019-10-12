@@ -71,8 +71,7 @@ unsafe fn unsafe_main() {
         ..Default::default()
     };
     let mut shader_mod = vk::null();
-    sys.device.create_shader_module
-        (&create_info as *const _, ptr::null(), &mut shader_mod as *mut _)
+    sys.device.create_shader_module(&create_info, ptr::null(), &mut shader_mod)
         .check().unwrap();
 
     let binding = vk::DescriptorSetLayoutBinding {
@@ -84,22 +83,22 @@ unsafe fn unsafe_main() {
     };
     let create_info = vk::DescriptorSetLayoutCreateInfo {
         binding_count: 1,
-        p_bindings: &binding as *const _,
+        p_bindings: &binding,
         ..Default::default()
     };
     let mut set_layout = vk::null();
     sys.device.create_descriptor_set_layout
-        (&create_info as *const _, ptr::null(), &mut set_layout as *mut _)
+        (&create_info, ptr::null(), &mut set_layout)
         .check().unwrap();
 
     let create_info = vk::PipelineLayoutCreateInfo {
         set_layout_count: 1,
-        p_set_layouts: &set_layout as *const _,
+        p_set_layouts: &set_layout,
         ..Default::default()
     };
     let mut layout = vk::null();
     sys.device.create_pipeline_layout
-        (&create_info as *const _, ptr::null(), &mut layout as *mut _)
+        (&create_info, ptr::null(), &mut layout)
         .check().unwrap();
 
     let stage_create_info = vk::PipelineShaderStageCreateInfo {
@@ -118,7 +117,7 @@ unsafe fn unsafe_main() {
     sys.device.create_compute_pipelines(
         vk::null(),
         1,
-        &create_info as *const _,
+        &create_info,
         ptr::null(),
         &mut pipeline,
     ).check().unwrap();
@@ -126,7 +125,7 @@ unsafe fn unsafe_main() {
     // Create and bind storage buffer
     let mut props: vk::PhysicalDeviceMemoryProperties = Default::default();
     sys.instance.get_physical_device_memory_properties
-        (sys.physical_device, &mut props as *mut _);
+        (sys.physical_device, &mut props);
     let mem_type = props.memory_types[..props.memory_type_count as usize]
         .iter()
         .position(|ty| ty.property_flags.intersects(
@@ -144,7 +143,7 @@ unsafe fn unsafe_main() {
     };
     let mut buf_mem = vk::null();
     sys.device.allocate_memory
-        (&allocate_info as *const _, ptr::null(), &mut buf_mem as *mut _)
+        (&allocate_info, ptr::null(), &mut buf_mem)
         .check().unwrap();
 
     let create_info = vk::BufferCreateInfo {
@@ -155,7 +154,7 @@ unsafe fn unsafe_main() {
     };
     let mut buffer = vk::null();
     sys.device.create_buffer
-        (&create_info as *const _, ptr::null(), &mut buffer as *mut _)
+        (&create_info, ptr::null(), &mut buffer)
         .check().unwrap();
 
     sys.device.bind_buffer_memory(buffer, buf_mem, 0).check().unwrap();
@@ -168,23 +167,23 @@ unsafe fn unsafe_main() {
     let create_info = vk::DescriptorPoolCreateInfo {
         max_sets: 1,
         pool_size_count: 1,
-        p_pool_sizes: &pool_size as *const _,
+        p_pool_sizes: &pool_size,
         ..Default::default()
     };
     let mut desc_pool = vk::null();
     sys.device.create_descriptor_pool
-        (&create_info as *const _, ptr::null(), &mut desc_pool as *mut _)
+        (&create_info, ptr::null(), &mut desc_pool)
         .check().unwrap();
 
     let allocate_info = vk::DescriptorSetAllocateInfo {
         descriptor_pool: desc_pool,
         descriptor_set_count: 1,
-        p_set_layouts: &set_layout as *const _,
+        p_set_layouts: &set_layout,
         ..Default::default()
     };
     let mut desc_set = vk::null();
     sys.device.allocate_descriptor_sets
-        (&allocate_info as *const _, &mut desc_set as *mut _)
+        (&allocate_info, &mut desc_set)
         .check().unwrap();
 
     let desc_buf_info = vk::DescriptorBufferInfo {
@@ -198,17 +197,17 @@ unsafe fn unsafe_main() {
         dst_array_element: 0,
         descriptor_count: 1,
         descriptor_type: vk::DescriptorType::STORAGE_BUFFER,
-        p_buffer_info: &desc_buf_info as *const _,
+        p_buffer_info: &desc_buf_info,
         ..Default::default()
     };
     sys.device.update_descriptor_sets
-        (1, &desc_write as *const _, 0, ptr::null());
+        (1, &desc_write, 0, ptr::null());
 
     // Create and record to command buffer
     let create_info = Default::default();
     let mut command_pool = vk::null();
     sys.device.create_command_pool
-        (&create_info as *const _, ptr::null(), &mut command_pool as *mut _)
+        (&create_info, ptr::null(), &mut command_pool)
         .check().unwrap();
 
     let allocate_info = vk::CommandBufferAllocateInfo {
@@ -219,14 +218,14 @@ unsafe fn unsafe_main() {
     };
     let mut cmd_buf = vk::null();
     sys.device.allocate_command_buffers
-        (&allocate_info as *const _, &mut cmd_buf as *mut _)
+        (&allocate_info, &mut cmd_buf)
         .check().unwrap();
 
     let begin_info = vk::CommandBufferBeginInfo {
         flags: vk::CommandBufferUsageFlags::ONE_TIME_SUBMIT_BIT,
         ..Default::default()
     };
-    sys.device.begin_command_buffer(cmd_buf, &begin_info as *const _)
+    sys.device.begin_command_buffer(cmd_buf, &begin_info)
         .check().unwrap();
     sys.device.cmd_bind_pipeline
         (cmd_buf, vk::PipelineBindPoint::COMPUTE, pipeline);
@@ -236,7 +235,7 @@ unsafe fn unsafe_main() {
         layout,
         0,
         1,
-        &desc_set as *const _,
+        &desc_set,
         0,
         ptr::null(),
     );
@@ -246,10 +245,10 @@ unsafe fn unsafe_main() {
     // Submit
     let submit_info = vk::SubmitInfo {
         command_buffer_count: 1,
-        p_command_buffers: &cmd_buf as *const _,
+        p_command_buffers: &cmd_buf,
         ..Default::default()
     };
-    sys.device.queue_submit(sys.queue, 1, &submit_info as *const _, vk::null())
+    sys.device.queue_submit(sys.queue, 1, &submit_info, vk::null())
         .check().unwrap();
 
     sys.device.device_wait_idle().check().unwrap();
@@ -261,10 +260,10 @@ unsafe fn unsafe_main() {
         0,
         vk::WHOLE_SIZE as u64,
         Default::default(),
-        &mut data as *mut _,
+        &mut data,
     ).check().unwrap();
     let data: &'static [[f32; 2]] =
-        std::slice::from_raw_parts(data as *const _, num_elems);
+        std::slice::from_raw_parts(data as _, num_elems);
 
     let out_path = output_file!("gamma.tga");
     let file = std::fs::OpenOptions::new()
