@@ -12,10 +12,10 @@ macro_rules! c_str {
 }
 
 #[cfg(unix)]
-const VULKAN_LOADER_PATH: &'static str = "libvulkan.so";
+pub const VULKAN_LOADER_PATH: &'static str = "libvulkan.so";
 
-const VALIDATION_LAYER: &'static [u8] =
-    b"VK_LAYER_LUNARG_standard_validation\0";
+// TODO: fall back on LUNARG if KHRONOS unavailable
+pub const VALIDATION_LAYER: &'static [u8] = b"VK_LAYER_KHRONOS_validation\0";
 
 #[derive(Debug)]
 pub struct Loader {
@@ -141,7 +141,7 @@ impl VulkanSys {
             ..Default::default()
         };
         let create_info = vk::InstanceCreateInfo {
-            p_application_info: &app_info as *const _,
+            p_application_info: &app_info,
             enabled_layer_count: enabled_layers.len() as _,
             pp_enabled_layer_names: enabled_layers.as_ptr(),
             enabled_extension_count: 0,
@@ -149,8 +149,7 @@ impl VulkanSys {
             ..Default::default()
         };
         let mut vk_instance = vk::null();
-        entry.create_instance
-            (&create_info as *const _, ptr::null(), &mut vk_instance as *mut _)
+        entry.create_instance(&create_info, ptr::null(), &mut vk_instance)
             .check().unwrap();
 
         let instance = vkl::InstanceTable::load
@@ -167,33 +166,33 @@ impl VulkanSys {
             // Someone should tell the validation layer authors.
             queue_family_index: 0,
             queue_count: 1,
-            p_queue_priorities: &1.0f32 as *const _,
+            p_queue_priorities: &1.0f32,
             ..Default::default()
         };
         let features: vk::PhysicalDeviceFeatures = Default::default();
         let create_info = vk::DeviceCreateInfo {
             queue_create_info_count: 1,
-            p_queue_create_infos: &queue_create_info as *const _,
+            p_queue_create_infos: &queue_create_info,
             enabled_layer_count: 0,
             pp_enabled_layer_names: ptr::null(),
             enabled_extension_count: 0,
             pp_enabled_extension_names: ptr::null(),
-            p_enabled_features: &features as *const _,
+            p_enabled_features: &features,
             ..Default::default()
         };
         let mut vk_device = vk::null();
         instance.create_device(
             physical_device,
-            &create_info as *const _,
+            &create_info,
             ptr::null(),
-            &mut vk_device as *mut _,
+            &mut vk_device,
         ).check().unwrap();
 
         let device =
             vkl::DeviceTable::load(vk_device, loader.get_device_proc_addr);
 
         let mut queue = vk::null();
-        device.get_device_queue(0, 0, &mut queue as *mut _);
+        device.get_device_queue(0, 0, &mut queue);
 
         VulkanSys {
             loader,
