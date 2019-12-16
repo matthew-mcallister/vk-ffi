@@ -194,6 +194,15 @@ macro_rules! impl_handles {
 
 // Structs and unions
 
+fn as_bytes<T>(val: &T) -> &[u8] {
+    unsafe {
+        std::slice::from_raw_parts(
+            val as *const T as *const u8,
+            std::mem::size_of::<T>(),
+        )
+    }
+}
+
 macro_rules! impl_aggregate {
     (@inner $kw:tt $name:ident { $($member:ident: $type:ty,)* }) => {
         #[repr(C)]
@@ -214,7 +223,7 @@ macro_rules! impl_aggregate {
     };
     (
         struct $name:ident {
-            $($member:ident: $type:ty $(= $default:expr)*,)*
+            $($member:ident: $type:ty $(= $default:expr)?,)*
         }
     ) => {
         impl_aggregate!(@inner struct $name { $($member: $type,)* });
@@ -225,6 +234,21 @@ macro_rules! impl_aggregate {
                     $($($member: $default,)*)*
                     ..unsafe { std::mem::zeroed() }
                 }
+            }
+        }
+        impl PartialEq for $name {
+            fn eq(&self, other: &Self) -> bool {
+                // Not the prettiest solution, but this can't currently
+                // be derived correctly due to technical limitations
+                // TODO: Does this read padding bytes?
+                crate::as_bytes(self) == crate::as_bytes(other)
+            }
+        }
+        impl Eq for $name {}
+        impl std::hash::Hash for $name {
+            fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+                // Similarly ugly
+                crate::as_bytes(self).hash(state)
             }
         }
     };
@@ -341,7 +365,6 @@ pub mod traits {
     use std::ops::*;
 
     pub trait HandleType: Eq + Sized + Into<u64> {
-        #[inline]
         fn null() -> Self;
 
         #[inline]
@@ -436,16 +459,6 @@ macro_rules! impl_tuple_like {
                 $name { $($field,)* }
             }
         }
-
-        impl PartialEq for $name {
-            #[inline]
-            fn eq(&self, other: &Self) -> bool {
-                true
-                    $(&& self.$field == other.$field)*
-            }
-        }
-
-        impl Eq for $name {}
     }
 }
 

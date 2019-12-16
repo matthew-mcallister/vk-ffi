@@ -161,9 +161,6 @@ impl VulkanSys {
         let physical_device = physical_devices[0];
 
         let queue_create_info = vk::DeviceQueueCreateInfo {
-            // This causes a validation warning but is actually legal
-            // because the spec requires at least one queue family.
-            // Someone should tell the validation layer authors.
             queue_family_index: 0,
             queue_count: 1,
             p_queue_priorities: &1.0f32,
