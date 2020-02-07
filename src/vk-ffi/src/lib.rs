@@ -49,6 +49,18 @@ macro_rules! impl_bin_op_assign {
     }
 }
 
+macro_rules! impl_hex_debug {
+    ($name:ident) => {
+        impl std::fmt::Debug for $name {
+            fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+                f.debug_tuple(stringify!($name))
+                    .field(&format_args!("0x{:x}", self.0))
+                    .finish()
+            }
+        }
+    }
+}
+
 macro_rules! bitmask_impls {
     ($name:ident) => {
         impl_unary_op!(Not, not; $name);
@@ -70,15 +82,18 @@ macro_rules! bitmask_impls {
             pub fn contains(self, other: Self) -> bool
                 { self.bitand(other).0 == other.0 }
         }
+        impl_hex_debug!($name);
     }
 }
 
 macro_rules! impl_enum {
-    (@inner $name:ident[$type:ty] {$($member:ident = $value:expr,)*}) => {
+    (@inner
+        $(#[$($meta:meta)*])*
+        $name:ident[$type:ty] {$($member:ident = $value:expr,)*}
+    ) => {
+        $(#[$($meta)*])*
         #[repr(transparent)]
-        #[derive(
-            Clone, Copy, Debug, Default, Eq, Hash, Ord, PartialEq, PartialOrd,
-        )]
+        #[derive(Clone, Copy, Default, Eq, Hash, Ord, PartialEq, PartialOrd)]
         pub struct $name(pub $type);
         impl $name {
             $(pub const $member: $name = $name($value);)*
@@ -108,7 +123,10 @@ macro_rules! impl_enum {
         }
     };
     (enum $name:ident {$($member:ident = $value:expr,)*}) => {
-        impl_enum!(@inner $name[i32] {$($member = $value,)*});
+        impl_enum!(@inner
+            #[derive(Debug)]
+            $name[i32] { $($member = $value,)* }
+        );
     };
     (bitmask $name:ident {$($member:ident = $value:expr,)*}) => {
         impl_enum!(@inner $name[u32] {$($member = $value,)*});
@@ -161,8 +179,9 @@ macro_rules! impl_handle {
     };
     ($name:ident { dispatchable: false }) => {
         #[repr(transparent)]
-        #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
+        #[derive(Clone, Copy, Eq, Hash, Ord, PartialEq, PartialOrd)]
         pub struct $name(pub u64);
+        impl_hex_debug!($name);
         impl crate::traits::HandleType for $name {
             #[inline]
             fn null() -> Self { $name(0) }
