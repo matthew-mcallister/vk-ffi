@@ -1,5 +1,5 @@
 [package]
-name = "vk-ffi"
+name = "vulkan-headers"
 description = "Comprehensive bindings to the Vulkan API"
 version = "0.1.0"
 authors = ["Matthew McAllister <matthew.mcallister.0@gmail.com>"]

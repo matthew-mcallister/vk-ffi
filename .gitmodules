@@ -1,9 +1,6 @@
 [submodule "vendor/Vulkan-Docs"]
 	path = vendor/Vulkan-Docs
 	url = https://github.com/KhronosGroup/Vulkan-Docs.git
-[submodule "vk-ffi-gensrcs"]
-	path = generated
-	url = https://gitlab.com/matthew-mcallister/vk-ffi-gensrcs
 [submodule "vendor/vk-reg-json"]
 	path = vendor/vkreg-py
 	url = https://gitlab.com/matthew-mcallister/vk-reg-json

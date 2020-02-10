@@ -8,5 +8,5 @@ publish = false
 
 [dependencies]
 lib = { version = "0.5", package = "libloading" }
-vk = { path = "../vk-ffi", package = "vk-ffi" }
-vkl = { path = "../vk-ffi-loader", package = "vk-ffi-loader" }
+vk = { path = "../vulkan-headers", package = "vulkan-headers" }
+vkl = { path = "../vulkan-loader", package = "vulkan-loader" }

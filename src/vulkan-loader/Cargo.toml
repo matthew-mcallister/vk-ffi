@@ -1,5 +1,5 @@
 [package]
-name = "vk-ffi-loader"
+name = "vulkan-loader"
 description = "Loader for core Vulkan commands and extensions"
 version = "0.1.0"
 authors = ["Matthew McAllister <matthew.mcallister.0@gmail.com>"]
@@ -9,4 +9,4 @@ keywords = ["graphics", "vulkan"]
 edition = "2018"
 
 [dependencies]
-vk-ffi = { path = "../vk-ffi" }
+vk = { path = "../vulkan-headers", package = "vulkan-headers" }

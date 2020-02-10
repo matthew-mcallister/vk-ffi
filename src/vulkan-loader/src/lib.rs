@@ -4,7 +4,7 @@ use std::fmt::Debug;
 use std::ffi::c_void;
 use std::os::raw::*;
 
-use vk_ffi::*;
+use vk::*;
 
 macro_rules! vk_symbol {
     ($cmd:ident) => {

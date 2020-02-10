@@ -1,6 +1,6 @@
 [workspace]
 members = [
     "src/examples",
-    "src/vk-ffi",
-    "src/vk-ffi-loader",
+    "src/vulkan-headers",
+    "src/vulkan-loader",
 ]

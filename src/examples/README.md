@@ -1,3 +1,3 @@
 # examples
 
-Examples for the `vk-ffi` and `vk-ffi-loader` crates.
+Examples for the `vulkan-headers` and `vulkan-loader` crates.
