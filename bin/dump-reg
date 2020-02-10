@@ -1,0 +1,48 @@
+#!/usr/bin/env python3
+"""This script parses the Vulkan XML registry and produces JSON output
+suitable for use by code generators.
+"""
+import argparse
+import dataclasses
+import json
+import xml.etree.ElementTree as etree
+import sys
+
+from registry import Registry
+
+
+class Encoder(json.JSONEncoder):
+    def default(self, o):
+        if dataclasses.is_dataclass(o):
+            return dataclasses.asdict(o)
+        else:
+            return super().default(o)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('-i', '--input',
+        help='Path to vk.xml. If not specified, use stdin.')
+    parser.add_argument('-o', '--output',
+        help='Path to file to create. If not specified, use stdout.')
+    args = parser.parse_args()
+
+    if args.input:
+        root = etree.parse(args.input).getroot()
+    else:
+        root = etree.fromstring(sys.stdin.read())
+
+    registry = Registry()
+    registry.parse_registry(root)
+
+    if args.output:
+        out = open(args.output, 'w')
+    else:
+        out = sys.stdout
+
+    tree = registry.tree()
+    json.dump(tree, out, cls=Encoder)
+
+
+if __name__ == '__main__':
+    main()
