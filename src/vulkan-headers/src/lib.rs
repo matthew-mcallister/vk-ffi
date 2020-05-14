@@ -229,6 +229,7 @@ macro_rules! impl_aggregate {
         pub $kw $name { $(pub $member: $type,)* }
         impl std::fmt::Debug for $name {
             fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+                // FIXME: Use a custom display trait to print fields
                 write!(f, concat!(stringify!($name), " {{ ... }}"))
             }
         }
@@ -381,9 +382,12 @@ pub mod reflection {
 
 pub mod traits {
     use std::fmt::Debug;
+    use std::hash::Hash;
     use std::ops::*;
 
-    pub trait HandleType: Eq + Sized + Into<u64> {
+    pub trait HandleType: Copy + Debug + Default + Eq + Hash + Ord + Sized +
+        Into<u64>
+    {
         fn null() -> Self;
 
         #[inline]
