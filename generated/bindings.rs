@@ -3,8 +3,6 @@ impl_enums! {
     };
     bitmask PipelineLayoutCreateFlags {
     };
-    bitmask PipelineCacheCreateFlags {
-    };
     bitmask PipelineDepthStencilStateCreateFlags {
     };
     bitmask PipelineDynamicStateCreateFlags {
@@ -55,6 +53,8 @@ impl_enums! {
     };
     bitmask XcbSurfaceCreateFlagsKHR {
     };
+    bitmask DirectFBSurfaceCreateFlagsEXT {
+    };
     bitmask IOSSurfaceCreateFlagsMVK {
     };
     bitmask MacOSSurfaceCreateFlagsMVK {
@@ -99,6 +99,7 @@ impl_enums! {
     enum AttachmentStoreOp {
         STORE = 0,
         DONT_CARE = 1,
+        NONE_QCOM = 1000301000,
     };
     enum BlendFactor {
         ZERO = 0,
@@ -181,6 +182,8 @@ impl_enums! {
         INT_OPAQUE_BLACK = 3,
         FLOAT_OPAQUE_WHITE = 4,
         INT_OPAQUE_WHITE = 5,
+        FLOAT_CUSTOM_EXT = 1000287003,
+        INT_CUSTOM_EXT = 1000287004,
     };
     bitmask FramebufferCreateFlagBits {
         IMAGELESS_BIT = 1,
@@ -190,7 +193,7 @@ impl_enums! {
     };
     bitmask RenderPassCreateFlagBits {
         RESERVED_0_BIT_KHR = 1,
-        RENDER_PASS_RESERVED_BIT_1_QCOM = 2,
+        TRANSFORM_BIT_QCOM = 2,
     };
     bitmask SamplerCreateFlagBits {
         SUBSAMPLED_BIT_EXT = 1,
@@ -199,27 +202,8 @@ impl_enums! {
     enum PipelineCacheHeaderVersion {
         ONE = 1,
     };
-    enum PipelineLayoutCreateFlagBits {
-    };
-    enum PipelineCacheCreateFlagBits {
-    };
-    enum PipelineDepthStencilStateCreateFlagBits {
-    };
-    enum PipelineDynamicStateCreateFlagBits {
-    };
-    enum PipelineColorBlendStateCreateFlagBits {
-    };
-    enum PipelineMultisampleStateCreateFlagBits {
-    };
-    enum PipelineRasterizationStateCreateFlagBits {
-    };
-    enum PipelineViewportStateCreateFlagBits {
-    };
-    enum PipelineTessellationStateCreateFlagBits {
-    };
-    enum PipelineInputAssemblyStateCreateFlagBits {
-    };
-    enum PipelineVertexInputStateCreateFlagBits {
+    bitmask PipelineCacheCreateFlagBits {
+        EXTERNALLY_SYNCHRONIZED_BIT_EXT = 1,
     };
     bitmask PipelineShaderStageCreateFlagBits {
         RESERVED_2_BIT_NV = 4,
@@ -231,8 +215,6 @@ impl_enums! {
         UPDATE_AFTER_BIND_POOL_BIT = 2,
         PUSH_DESCRIPTOR_BIT_KHR = 1,
         UPDATE_AFTER_BIND_POOL_BIT_EXT = 2,
-    };
-    enum BufferViewCreateFlagBits {
     };
     enum InstanceCreateFlagBits {
     };
@@ -266,8 +248,9 @@ impl_enums! {
         TRANSFORM_FEEDBACK_BUFFER_BIT_EXT = 2048,
         TRANSFORM_FEEDBACK_COUNTER_BUFFER_BIT_EXT = 4096,
         CONDITIONAL_RENDERING_BIT_EXT = 512,
-        RAY_TRACING_BIT_NV = 1024,
+        RAY_TRACING_BIT_KHR = 1024,
         RESERVED_18_BIT_QCOM = 262144,
+        RAY_TRACING_BIT_NV = 1024,
         SHADER_DEVICE_ADDRESS_BIT_EXT = 131072,
         SHADER_DEVICE_ADDRESS_BIT_KHR = 131072,
     };
@@ -335,6 +318,7 @@ impl_enums! {
         STORAGE_BUFFER_DYNAMIC = 9,
         INPUT_ATTACHMENT = 10,
         INLINE_UNIFORM_BLOCK_EXT = 1000138000,
+        ACCELERATION_STRUCTURE_KHR = 1000165000,
         ACCELERATION_STRUCTURE_NV = 1000165000,
     };
     enum DeviceCreateFlagBits {
@@ -356,6 +340,18 @@ impl_enums! {
         VIEWPORT_COARSE_SAMPLE_ORDER_NV = 1000164006,
         EXCLUSIVE_SCISSOR_NV = 1000205001,
         LINE_STIPPLE_EXT = 1000259000,
+        CULL_MODE_EXT = 1000267000,
+        FRONT_FACE_EXT = 1000267001,
+        PRIMITIVE_TOPOLOGY_EXT = 1000267002,
+        VIEWPORT_WITH_COUNT_EXT = 1000267003,
+        SCISSOR_WITH_COUNT_EXT = 1000267004,
+        VERTEX_INPUT_BINDING_STRIDE_EXT = 1000267005,
+        DEPTH_TEST_ENABLE_EXT = 1000267006,
+        DEPTH_WRITE_ENABLE_EXT = 1000267007,
+        DEPTH_COMPARE_OP_EXT = 1000267008,
+        DEPTH_BOUNDS_TEST_ENABLE_EXT = 1000267009,
+        STENCIL_TEST_ENABLE_EXT = 1000267010,
+        STENCIL_OP_EXT = 1000267011,
     };
     bitmask FenceCreateFlagBits {
         SIGNALED_BIT = 1,
@@ -608,6 +604,36 @@ impl_enums! {
         ASTC_10x10_SFLOAT_BLOCK_EXT = 1000066011,
         ASTC_12x10_SFLOAT_BLOCK_EXT = 1000066012,
         ASTC_12x12_SFLOAT_BLOCK_EXT = 1000066013,
+        ASTC_3x3x3_UNORM_BLOCK_EXT = 1000288000,
+        ASTC_3x3x3_SRGB_BLOCK_EXT = 1000288001,
+        ASTC_3x3x3_SFLOAT_BLOCK_EXT = 1000288002,
+        ASTC_4x3x3_UNORM_BLOCK_EXT = 1000288003,
+        ASTC_4x3x3_SRGB_BLOCK_EXT = 1000288004,
+        ASTC_4x3x3_SFLOAT_BLOCK_EXT = 1000288005,
+        ASTC_4x4x3_UNORM_BLOCK_EXT = 1000288006,
+        ASTC_4x4x3_SRGB_BLOCK_EXT = 1000288007,
+        ASTC_4x4x3_SFLOAT_BLOCK_EXT = 1000288008,
+        ASTC_4x4x4_UNORM_BLOCK_EXT = 1000288009,
+        ASTC_4x4x4_SRGB_BLOCK_EXT = 1000288010,
+        ASTC_4x4x4_SFLOAT_BLOCK_EXT = 1000288011,
+        ASTC_5x4x4_UNORM_BLOCK_EXT = 1000288012,
+        ASTC_5x4x4_SRGB_BLOCK_EXT = 1000288013,
+        ASTC_5x4x4_SFLOAT_BLOCK_EXT = 1000288014,
+        ASTC_5x5x4_UNORM_BLOCK_EXT = 1000288015,
+        ASTC_5x5x4_SRGB_BLOCK_EXT = 1000288016,
+        ASTC_5x5x4_SFLOAT_BLOCK_EXT = 1000288017,
+        ASTC_5x5x5_UNORM_BLOCK_EXT = 1000288018,
+        ASTC_5x5x5_SRGB_BLOCK_EXT = 1000288019,
+        ASTC_5x5x5_SFLOAT_BLOCK_EXT = 1000288020,
+        ASTC_6x5x5_UNORM_BLOCK_EXT = 1000288021,
+        ASTC_6x5x5_SRGB_BLOCK_EXT = 1000288022,
+        ASTC_6x5x5_SFLOAT_BLOCK_EXT = 1000288023,
+        ASTC_6x6x5_UNORM_BLOCK_EXT = 1000288024,
+        ASTC_6x6x5_SRGB_BLOCK_EXT = 1000288025,
+        ASTC_6x6x5_SFLOAT_BLOCK_EXT = 1000288026,
+        ASTC_6x6x6_UNORM_BLOCK_EXT = 1000288027,
+        ASTC_6x6x6_SRGB_BLOCK_EXT = 1000288028,
+        ASTC_6x6x6_SFLOAT_BLOCK_EXT = 1000288029,
         G8B8G8R8_422_UNORM_KHR = 1000156000,
         B8G8R8G8_422_UNORM_KHR = 1000156001,
         G8_B8_R8_3PLANE_420_UNORM_KHR = 1000156002,
@@ -672,8 +698,9 @@ impl_enums! {
         RESERVED_28_BIT_KHR = 268435456,
         RESERVED_25_BIT_KHR = 33554432,
         RESERVED_26_BIT_KHR = 67108864,
-        RESERVED_29_BIT_NV = 536870912,
+        ACCELERATION_STRUCTURE_VERTEX_BUFFER_BIT_KHR = 536870912,
         FRAGMENT_DENSITY_MAP_BIT_EXT = 16777216,
+        AMD_RESERVED_30_BIT = 1073741824,
         TRANSFER_SRC_BIT_KHR = 16384,
         TRANSFER_DST_BIT_KHR = 32768,
         SAMPLED_IMAGE_FILTER_MINMAX_BIT_EXT = 65536,
@@ -788,6 +815,7 @@ impl_enums! {
     };
     bitmask ImageViewCreateFlagBits {
         FRAGMENT_DENSITY_MAP_DYNAMIC_BIT_EXT = 1,
+        RESERVED_1_BIT_EXT = 2,
     };
     enum ImageViewType {
         _1D = 0,
@@ -805,8 +833,9 @@ impl_enums! {
     enum IndexType {
         UINT16 = 0,
         UINT32 = 1,
-        NONE_NV = 1000165000,
+        NONE_KHR = 1000165000,
         UINT8_EXT = 1000265000,
+        NONE_NV = 1000165000,
     };
     enum LogicOp {
         CLEAR = 0,
@@ -851,20 +880,21 @@ impl_enums! {
         MEMORY_READ_BIT = 32768,
         MEMORY_WRITE_BIT = 65536,
         RESERVED_30_BIT_KHR = 1073741824,
-        RESERVED_31_BIT_KHR = 2147483648,
         RESERVED_28_BIT_KHR = 268435456,
         RESERVED_29_BIT_KHR = 536870912,
         TRANSFORM_FEEDBACK_WRITE_BIT_EXT = 33554432,
         TRANSFORM_FEEDBACK_COUNTER_READ_BIT_EXT = 67108864,
         TRANSFORM_FEEDBACK_COUNTER_WRITE_BIT_EXT = 134217728,
         CONDITIONAL_RENDERING_READ_BIT_EXT = 1048576,
-        COMMAND_PROCESS_READ_BIT_NVX = 131072,
-        COMMAND_PROCESS_WRITE_BIT_NVX = 262144,
         COLOR_ATTACHMENT_READ_NONCOHERENT_BIT_EXT = 524288,
+        ACCELERATION_STRUCTURE_READ_BIT_KHR = 2097152,
+        ACCELERATION_STRUCTURE_WRITE_BIT_KHR = 4194304,
         SHADING_RATE_IMAGE_READ_BIT_NV = 8388608,
+        FRAGMENT_DENSITY_MAP_READ_BIT_EXT = 16777216,
+        COMMAND_PREPROCESS_READ_BIT_NV = 131072,
+        COMMAND_PREPROCESS_WRITE_BIT_NV = 262144,
         ACCELERATION_STRUCTURE_READ_BIT_NV = 2097152,
         ACCELERATION_STRUCTURE_WRITE_BIT_NV = 4194304,
-        FRAGMENT_DENSITY_MAP_READ_BIT_EXT = 16777216,
     };
     bitmask MemoryPropertyFlagBits {
         DEVICE_LOCAL_BIT = 1,
@@ -886,6 +916,7 @@ impl_enums! {
     enum PipelineBindPoint {
         GRAPHICS = 0,
         COMPUTE = 1,
+        RAY_TRACING_KHR = 1000165000,
         RAY_TRACING_NV = 1000165000,
     };
     bitmask PipelineCreateFlagBits {
@@ -894,19 +925,20 @@ impl_enums! {
         DERIVATIVE_BIT = 4,
         VIEW_INDEX_FROM_DEVICE_INDEX_BIT = 8,
         DISPATCH_BASE_BIT = 16,
-        EXTENSION_151_BIT0_NV = 2048,
-        EXTENSION_151_BIT1_NV = 16384,
-        EXTENSION_151_BIT2_NV = 32768,
-        EXTENSION_151_BIT3_NV = 65536,
-        EXTENSION_151_BIT4_NV = 131072,
+        RAY_TRACING_NO_NULL_ANY_HIT_SHADERS_BIT_KHR = 16384,
+        RAY_TRACING_NO_NULL_CLOSEST_HIT_SHADERS_BIT_KHR = 32768,
+        RAY_TRACING_NO_NULL_MISS_SHADERS_BIT_KHR = 65536,
+        RAY_TRACING_NO_NULL_INTERSECTION_SHADERS_BIT_KHR = 131072,
+        RAY_TRACING_SKIP_TRIANGLES_BIT_KHR = 4096,
+        RAY_TRACING_SKIP_AABBS_BIT_KHR = 8192,
         DEFER_COMPILE_BIT_NV = 32,
+        RESERVED_19_BIT_KHR = 524288,
         CAPTURE_STATISTICS_BIT_KHR = 64,
         CAPTURE_INTERNAL_REPRESENTATIONS_BIT_KHR = 128,
-        EXTENSION_291_BIT0_NV = 4096,
-        EXTENSION_291_BIT1_NV = 8192,
-        RESERVED_8_BIT_EXT = 256,
-        RESERVED_9_BIT_EXT = 512,
-        RESERVED_10_BIT_EXT = 1024,
+        INDIRECT_BINDABLE_BIT_NV = 262144,
+        LIBRARY_BIT_KHR = 2048,
+        FAIL_ON_PIPELINE_COMPILE_REQUIRED_BIT_EXT = 256,
+        EARLY_RETURN_ON_FAILURE_BIT_EXT = 512,
         DISPATCH_BASE = 16,
         VIEW_INDEX_FROM_DEVICE_INDEX_BIT_KHR = 8,
         DISPATCH_BASE_KHR = 16,
@@ -954,8 +986,10 @@ impl_enums! {
         RESERVED_4 = 1000024004,
         TRANSFORM_FEEDBACK_STREAM_EXT = 1000028004,
         PERFORMANCE_QUERY_KHR = 1000116000,
-        ACCELERATION_STRUCTURE_COMPACTED_SIZE_NV = 1000165000,
+        ACCELERATION_STRUCTURE_COMPACTED_SIZE_KHR = 1000165000,
+        ACCELERATION_STRUCTURE_SERIALIZATION_SIZE_KHR = 1000150000,
         PERFORMANCE_QUERY_INTEL = 1000210000,
+        ACCELERATION_STRUCTURE_COMPACTED_SIZE_NV = 1000165000,
     };
     bitmask QueueFlagBits {
         GRAPHICS_BIT = 1,
@@ -1001,15 +1035,21 @@ impl_enums! {
         ERROR_INCOMPATIBLE_DISPLAY_KHR = -1000003001,
         ERROR_VALIDATION_FAILED_EXT = -1000011001,
         ERROR_INVALID_SHADER_NV = -1000012000,
+        ERROR_INCOMPATIBLE_VERSION_KHR = -1000150000,
         ERROR_INVALID_DRM_FORMAT_MODIFIER_PLANE_LAYOUT_EXT = -1000158000,
         ERROR_NOT_PERMITTED_EXT = -1000174001,
         ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT = -1000255000,
-        EXT_298_RESERVED_VALUE_0_EXT = 1000297000,
+        THREAD_IDLE_KHR = 1000268000,
+        THREAD_DONE_KHR = 1000268001,
+        OPERATION_DEFERRED_KHR = 1000268002,
+        OPERATION_NOT_DEFERRED_KHR = 1000268003,
+        PIPELINE_COMPILE_REQUIRED_EXT = 1000297000,
         ERROR_OUT_OF_POOL_MEMORY_KHR = -1000069000,
         ERROR_INVALID_EXTERNAL_HANDLE_KHR = -1000072003,
         ERROR_FRAGMENTATION_EXT = -1000161000,
         ERROR_INVALID_DEVICE_ADDRESS_EXT = -1000257000,
         ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS_KHR = -1000257000,
+        ERROR_PIPELINE_COMPILE_REQUIRED_EXT = 1000297000,
     };
     bitmask ShaderStageFlagBits {
         VERTEX_BIT = 1,
@@ -1020,14 +1060,20 @@ impl_enums! {
         COMPUTE_BIT = 32,
         ALL_GRAPHICS = 31,
         ALL = 2147483647,
+        RAYGEN_BIT_KHR = 256,
+        ANY_HIT_BIT_KHR = 512,
+        CLOSEST_HIT_BIT_KHR = 1024,
+        MISS_BIT_KHR = 2048,
+        INTERSECTION_BIT_KHR = 4096,
+        CALLABLE_BIT_KHR = 8192,
+        TASK_BIT_NV = 64,
+        MESH_BIT_NV = 128,
         RAYGEN_BIT_NV = 256,
         ANY_HIT_BIT_NV = 512,
         CLOSEST_HIT_BIT_NV = 1024,
         MISS_BIT_NV = 2048,
         INTERSECTION_BIT_NV = 4096,
         CALLABLE_BIT_NV = 8192,
-        TASK_BIT_NV = 64,
-        MESH_BIT_NV = 128,
     };
     bitmask SparseMemoryBindFlagBits {
         METADATA_BIT = 1,
@@ -1244,6 +1290,7 @@ impl_enums! {
         PHYSICAL_DEVICE_TRANSFORM_FEEDBACK_PROPERTIES_EXT = 1000028001,
         PIPELINE_RASTERIZATION_STATE_STREAM_CREATE_INFO_EXT = 1000028002,
         IMAGE_VIEW_HANDLE_INFO_NVX = 1000030000,
+        IMAGE_VIEW_ADDRESS_PROPERTIES_NVX = 1000030001,
         TEXTURE_LOD_GATHER_FORMAT_PROPERTIES_AMD = 1000041000,
         STREAM_DESCRIPTOR_SURFACE_CREATE_INFO_GGP = 1000049000,
         PHYSICAL_DEVICE_CORNER_SAMPLED_IMAGE_FEATURES_NV = 1000050000,
@@ -1276,12 +1323,6 @@ impl_enums! {
         PHYSICAL_DEVICE_CONDITIONAL_RENDERING_FEATURES_EXT = 1000081001,
         CONDITIONAL_RENDERING_BEGIN_INFO_EXT = 1000081002,
         PRESENT_REGIONS_KHR = 1000084000,
-        OBJECT_TABLE_CREATE_INFO_NVX = 1000086000,
-        INDIRECT_COMMANDS_LAYOUT_CREATE_INFO_NVX = 1000086001,
-        CMD_PROCESS_COMMANDS_INFO_NVX = 1000086002,
-        CMD_RESERVE_SPACE_FOR_COMMANDS_INFO_NVX = 1000086003,
-        DEVICE_GENERATED_COMMANDS_LIMITS_NVX = 1000086004,
-        DEVICE_GENERATED_COMMANDS_FEATURES_NVX = 1000086005,
         PIPELINE_VIEWPORT_W_SCALING_STATE_CREATE_INFO_NV = 1000087000,
         SURFACE_CAPABILITIES_2_EXT = 1000090000,
         DISPLAY_POWER_INFO_EXT = 1000091000,
@@ -1345,6 +1386,26 @@ impl_enums! {
         PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_PROPERTIES_EXT = 1000148001,
         PIPELINE_COLOR_BLEND_ADVANCED_STATE_CREATE_INFO_EXT = 1000148002,
         PIPELINE_COVERAGE_TO_COLOR_STATE_CREATE_INFO_NV = 1000149000,
+        BIND_ACCELERATION_STRUCTURE_MEMORY_INFO_KHR = 1000165006,
+        WRITE_DESCRIPTOR_SET_ACCELERATION_STRUCTURE_KHR = 1000165007,
+        ACCELERATION_STRUCTURE_BUILD_GEOMETRY_INFO_KHR = 1000150000,
+        ACCELERATION_STRUCTURE_CREATE_GEOMETRY_TYPE_INFO_KHR = 1000150001,
+        ACCELERATION_STRUCTURE_DEVICE_ADDRESS_INFO_KHR = 1000150002,
+        ACCELERATION_STRUCTURE_GEOMETRY_AABBS_DATA_KHR = 1000150003,
+        ACCELERATION_STRUCTURE_GEOMETRY_INSTANCES_DATA_KHR = 1000150004,
+        ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR = 1000150005,
+        ACCELERATION_STRUCTURE_GEOMETRY_KHR = 1000150006,
+        ACCELERATION_STRUCTURE_MEMORY_REQUIREMENTS_INFO_KHR = 1000150008,
+        ACCELERATION_STRUCTURE_VERSION_KHR = 1000150009,
+        COPY_ACCELERATION_STRUCTURE_INFO_KHR = 1000150010,
+        COPY_ACCELERATION_STRUCTURE_TO_MEMORY_INFO_KHR = 1000150011,
+        COPY_MEMORY_TO_ACCELERATION_STRUCTURE_INFO_KHR = 1000150012,
+        PHYSICAL_DEVICE_RAY_TRACING_FEATURES_KHR = 1000150013,
+        PHYSICAL_DEVICE_RAY_TRACING_PROPERTIES_KHR = 1000150014,
+        RAY_TRACING_PIPELINE_CREATE_INFO_KHR = 1000150015,
+        RAY_TRACING_SHADER_GROUP_CREATE_INFO_KHR = 1000150016,
+        ACCELERATION_STRUCTURE_CREATE_INFO_KHR = 1000150017,
+        RAY_TRACING_PIPELINE_INTERFACE_CREATE_INFO_KHR = 1000150018,
         PIPELINE_COVERAGE_MODULATION_STATE_CREATE_INFO_NV = 1000152000,
         PHYSICAL_DEVICE_SHADER_SM_BUILTINS_FEATURES_NV = 1000154000,
         PHYSICAL_DEVICE_SHADER_SM_BUILTINS_PROPERTIES_NV = 1000154001,
@@ -1365,8 +1426,6 @@ impl_enums! {
         GEOMETRY_NV = 1000165003,
         GEOMETRY_TRIANGLES_NV = 1000165004,
         GEOMETRY_AABB_NV = 1000165005,
-        BIND_ACCELERATION_STRUCTURE_MEMORY_INFO_NV = 1000165006,
-        WRITE_DESCRIPTOR_SET_ACCELERATION_STRUCTURE_NV = 1000165007,
         ACCELERATION_STRUCTURE_MEMORY_REQUIREMENTS_INFO_NV = 1000165008,
         PHYSICAL_DEVICE_RAY_TRACING_PROPERTIES_NV = 1000165009,
         RAY_TRACING_SHADER_GROUP_CREATE_INFO_NV = 1000165011,
@@ -1399,7 +1458,7 @@ impl_enums! {
         CHECKPOINT_DATA_NV = 1000206000,
         QUEUE_FAMILY_CHECKPOINT_PROPERTIES_NV = 1000206001,
         PHYSICAL_DEVICE_SHADER_INTEGER_FUNCTIONS_2_FEATURES_INTEL = 1000209000,
-        QUERY_POOL_CREATE_INFO_INTEL = 1000210000,
+        QUERY_POOL_PERFORMANCE_QUERY_CREATE_INFO_INTEL = 1000210000,
         INITIALIZE_PERFORMANCE_API_INFO_INTEL = 1000210001,
         PERFORMANCE_MARKER_INFO_INTEL = 1000210002,
         PERFORMANCE_STREAM_MARKER_INFO_INTEL = 1000210003,
@@ -1443,6 +1502,8 @@ impl_enums! {
         PIPELINE_RASTERIZATION_LINE_STATE_CREATE_INFO_EXT = 1000259001,
         PHYSICAL_DEVICE_LINE_RASTERIZATION_PROPERTIES_EXT = 1000259002,
         PHYSICAL_DEVICE_INDEX_TYPE_UINT8_FEATURES_EXT = 1000265000,
+        PHYSICAL_DEVICE_EXTENDED_DYNAMIC_STATE_FEATURES_EXT = 1000267000,
+        DEFERRED_OPERATION_INFO_KHR = 1000268000,
         PHYSICAL_DEVICE_PIPELINE_EXECUTABLE_PROPERTIES_FEATURES_KHR = 1000269000,
         PIPELINE_INFO_KHR = 1000269001,
         PIPELINE_EXECUTABLE_PROPERTIES_KHR = 1000269002,
@@ -1450,8 +1511,32 @@ impl_enums! {
         PIPELINE_EXECUTABLE_STATISTIC_KHR = 1000269004,
         PIPELINE_EXECUTABLE_INTERNAL_REPRESENTATION_KHR = 1000269005,
         PHYSICAL_DEVICE_SHADER_DEMOTE_TO_HELPER_INVOCATION_FEATURES_EXT = 1000276000,
+        PHYSICAL_DEVICE_DEVICE_GENERATED_COMMANDS_PROPERTIES_NV = 1000277000,
+        GRAPHICS_SHADER_GROUP_CREATE_INFO_NV = 1000277001,
+        GRAPHICS_PIPELINE_SHADER_GROUPS_CREATE_INFO_NV = 1000277002,
+        INDIRECT_COMMANDS_LAYOUT_TOKEN_NV = 1000277003,
+        INDIRECT_COMMANDS_LAYOUT_CREATE_INFO_NV = 1000277004,
+        GENERATED_COMMANDS_INFO_NV = 1000277005,
+        GENERATED_COMMANDS_MEMORY_REQUIREMENTS_INFO_NV = 1000277006,
+        PHYSICAL_DEVICE_DEVICE_GENERATED_COMMANDS_FEATURES_NV = 1000277007,
         PHYSICAL_DEVICE_TEXEL_BUFFER_ALIGNMENT_FEATURES_EXT = 1000281000,
         PHYSICAL_DEVICE_TEXEL_BUFFER_ALIGNMENT_PROPERTIES_EXT = 1000281001,
+        COMMAND_BUFFER_INHERITANCE_RENDER_PASS_TRANSFORM_INFO_QCOM = 1000282000,
+        RENDER_PASS_TRANSFORM_BEGIN_INFO_QCOM = 1000282001,
+        PHYSICAL_DEVICE_ROBUSTNESS_2_FEATURES_EXT = 1000286000,
+        PHYSICAL_DEVICE_ROBUSTNESS_2_PROPERTIES_EXT = 1000286001,
+        SAMPLER_CUSTOM_BORDER_COLOR_CREATE_INFO_EXT = 1000287000,
+        PHYSICAL_DEVICE_CUSTOM_BORDER_COLOR_PROPERTIES_EXT = 1000287001,
+        PHYSICAL_DEVICE_CUSTOM_BORDER_COLOR_FEATURES_EXT = 1000287002,
+        PIPELINE_LIBRARY_CREATE_INFO_KHR = 1000290000,
+        PHYSICAL_DEVICE_PRIVATE_DATA_FEATURES_EXT = 1000295000,
+        DEVICE_PRIVATE_DATA_CREATE_INFO_EXT = 1000295001,
+        PRIVATE_DATA_SLOT_CREATE_INFO_EXT = 1000295002,
+        PHYSICAL_DEVICE_PIPELINE_CREATION_CACHE_CONTROL_FEATURES_EXT = 1000297000,
+        PHYSICAL_DEVICE_DIAGNOSTICS_CONFIG_FEATURES_NV = 1000300000,
+        DEVICE_DIAGNOSTICS_CONFIG_CREATE_INFO_NV = 1000300001,
+        RESERVED_QCOM = 1000309000,
+        DIRECTFB_SURFACE_CREATE_INFO_EXT = 1000346000,
         PHYSICAL_DEVICE_VARIABLE_POINTER_FEATURES = 1000120000,
         PHYSICAL_DEVICE_SHADER_DRAW_PARAMETER_FEATURES = 1000063000,
         DEBUG_REPORT_CREATE_INFO_EXT = 1000011000,
@@ -1510,8 +1595,8 @@ impl_enums! {
         RENDER_PASS_INPUT_ATTACHMENT_ASPECT_CREATE_INFO_KHR = 1000117001,
         IMAGE_VIEW_USAGE_CREATE_INFO_KHR = 1000117002,
         PIPELINE_TESSELLATION_DOMAIN_ORIGIN_STATE_CREATE_INFO_KHR = 1000117003,
-        PHYSICAL_DEVICE_VARIABLE_POINTER_FEATURES_KHR = 1000120000,
         PHYSICAL_DEVICE_VARIABLE_POINTERS_FEATURES_KHR = 1000120000,
+        PHYSICAL_DEVICE_VARIABLE_POINTER_FEATURES_KHR = 1000120000,
         MEMORY_DEDICATED_REQUIREMENTS_KHR = 1000127000,
         MEMORY_DEDICATED_ALLOCATE_INFO_KHR = 1000127001,
         PHYSICAL_DEVICE_SAMPLER_FILTER_MINMAX_PROPERTIES_EXT = 1000130000,
@@ -1535,6 +1620,8 @@ impl_enums! {
         PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_PROPERTIES_EXT = 1000161002,
         DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_ALLOCATE_INFO_EXT = 1000161003,
         DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_LAYOUT_SUPPORT_EXT = 1000161004,
+        BIND_ACCELERATION_STRUCTURE_MEMORY_INFO_NV = 1000165006,
+        WRITE_DESCRIPTOR_SET_ACCELERATION_STRUCTURE_NV = 1000165007,
         PHYSICAL_DEVICE_MAINTENANCE_3_PROPERTIES_KHR = 1000168000,
         DESCRIPTOR_SET_LAYOUT_SUPPORT_KHR = 1000168001,
         PHYSICAL_DEVICE_SHADER_SUBGROUP_EXTENDED_TYPES_FEATURES_KHR = 1000175000,
@@ -1550,6 +1637,7 @@ impl_enums! {
         TIMELINE_SEMAPHORE_SUBMIT_INFO_KHR = 1000207003,
         SEMAPHORE_WAIT_INFO_KHR = 1000207004,
         SEMAPHORE_SIGNAL_INFO_KHR = 1000207005,
+        QUERY_POOL_CREATE_INFO_INTEL = 1000210000,
         PHYSICAL_DEVICE_VULKAN_MEMORY_MODEL_FEATURES_KHR = 1000211000,
         PHYSICAL_DEVICE_SCALAR_BLOCK_LAYOUT_FEATURES_EXT = 1000221000,
         PHYSICAL_DEVICE_SEPARATE_DEPTH_STENCIL_LAYOUTS_FEATURES_KHR = 1000241000,
@@ -1620,13 +1708,15 @@ impl_enums! {
         RESERVED_26_BIT_KHR = 67108864,
         TRANSFORM_FEEDBACK_BIT_EXT = 16777216,
         CONDITIONAL_RENDERING_BIT_EXT = 262144,
-        COMMAND_PROCESS_BIT_NVX = 131072,
+        RAY_TRACING_SHADER_BIT_KHR = 2097152,
+        ACCELERATION_STRUCTURE_BUILD_BIT_KHR = 33554432,
         SHADING_RATE_IMAGE_BIT_NV = 4194304,
-        RAY_TRACING_SHADER_BIT_NV = 2097152,
-        ACCELERATION_STRUCTURE_BUILD_BIT_NV = 33554432,
         TASK_SHADER_BIT_NV = 524288,
         MESH_SHADER_BIT_NV = 1048576,
         FRAGMENT_DENSITY_PROCESS_BIT_EXT = 8388608,
+        COMMAND_PREPROCESS_BIT_NV = 131072,
+        RAY_TRACING_SHADER_BIT_NV = 2097152,
+        ACCELERATION_STRUCTURE_BUILD_BIT_NV = 33554432,
     };
     bitmask SparseImageFormatFlagBits {
         SINGLE_MIPTAIL_BIT = 1,
@@ -1691,41 +1781,36 @@ impl_enums! {
         DISPLAY_KHR = 1000002000,
         DISPLAY_MODE_KHR = 1000002001,
         DEBUG_REPORT_CALLBACK_EXT = 1000011000,
-        OBJECT_TABLE_NVX = 1000086000,
-        INDIRECT_COMMANDS_LAYOUT_NVX = 1000086001,
         DEBUG_UTILS_MESSENGER_EXT = 1000128000,
+        ACCELERATION_STRUCTURE_KHR = 1000165000,
         VALIDATION_CACHE_EXT = 1000160000,
-        ACCELERATION_STRUCTURE_NV = 1000165000,
         PERFORMANCE_CONFIGURATION_INTEL = 1000210000,
+        DEFERRED_OPERATION_KHR = 1000268000,
+        INDIRECT_COMMANDS_LAYOUT_NV = 1000277000,
+        PRIVATE_DATA_SLOT_EXT = 1000295000,
         DESCRIPTOR_UPDATE_TEMPLATE_KHR = 1000085000,
         SAMPLER_YCBCR_CONVERSION_KHR = 1000156000,
+        ACCELERATION_STRUCTURE_NV = 1000165000,
     };
-    bitmask IndirectCommandsLayoutUsageFlagBitsNVX {
-        UNORDERED_SEQUENCES_BIT_NVX = 1,
-        SPARSE_SEQUENCES_BIT_NVX = 2,
-        EMPTY_EXECUTIONS_BIT_NVX = 4,
-        INDEXED_SEQUENCES_BIT_NVX = 8,
+    bitmask IndirectCommandsLayoutUsageFlagBitsNV {
+        EXPLICIT_PREPROCESS_BIT_NV = 1,
+        INDEXED_SEQUENCES_BIT_NV = 2,
+        UNORDERED_SEQUENCES_BIT_NV = 4,
     };
-    enum IndirectCommandsTokenTypeNVX {
-        PIPELINE_NVX = 0,
-        DESCRIPTOR_SET_NVX = 1,
-        INDEX_BUFFER_NVX = 2,
-        VERTEX_BUFFER_NVX = 3,
-        PUSH_CONSTANT_NVX = 4,
-        DRAW_INDEXED_NVX = 5,
-        DRAW_NVX = 6,
-        DISPATCH_NVX = 7,
+    enum IndirectCommandsTokenTypeNV {
+        SHADER_GROUP_NV = 0,
+        STATE_FLAGS_NV = 1,
+        INDEX_BUFFER_NV = 2,
+        VERTEX_BUFFER_NV = 3,
+        PUSH_CONSTANT_NV = 4,
+        DRAW_INDEXED_NV = 5,
+        DRAW_NV = 6,
+        DRAW_TASKS_NV = 7,
     };
-    bitmask ObjectEntryUsageFlagBitsNVX {
-        GRAPHICS_BIT_NVX = 1,
-        COMPUTE_BIT_NVX = 2,
+    bitmask IndirectStateFlagBitsNV {
+        FLAG_FRONTFACE_BIT_NV = 1,
     };
-    enum ObjectEntryTypeNVX {
-        DESCRIPTOR_SET_NVX = 0,
-        PIPELINE_NVX = 1,
-        INDEX_BUFFER_NVX = 2,
-        VERTEX_BUFFER_NVX = 3,
-        PUSH_CONSTANT_NVX = 4,
+    bitmask PrivateDataSlotCreateFlagBitsEXT {
     };
     enum DescriptorUpdateTemplateType {
         DESCRIPTOR_SET = 0,
@@ -1749,8 +1834,8 @@ impl_enums! {
     bitmask SubpassDescriptionFlagBits {
         PER_VIEW_ATTRIBUTES_BIT_NVX = 1,
         PER_VIEW_POSITION_X_ONLY_BIT_NVX = 2,
-        RESERVED_2_BIT_QCOM = 4,
-        RESERVED_3_BIT_QCOM = 8,
+        FRAGMENT_REGION_BIT_QCOM = 4,
+        SHADER_RESOLVE_BIT_QCOM = 8,
     };
     enum PointClippingBehavior {
         ALL_CLIP_PLANES = 0,
@@ -1824,44 +1909,75 @@ impl_enums! {
         BINARY_KHR = 0,
         TIMELINE_KHR = 1,
     };
-    bitmask GeometryFlagBitsNV {
+    bitmask GeometryFlagBitsKHR {
+        OPAQUE_BIT_KHR = 1,
+        NO_DUPLICATE_ANY_HIT_INVOCATION_BIT_KHR = 2,
         OPAQUE_BIT_NV = 1,
         NO_DUPLICATE_ANY_HIT_INVOCATION_BIT_NV = 2,
     };
-    bitmask GeometryInstanceFlagBitsNV {
+    bitmask GeometryInstanceFlagBitsKHR {
+        TRIANGLE_FACING_CULL_DISABLE_BIT_KHR = 1,
+        TRIANGLE_FRONT_COUNTERCLOCKWISE_BIT_KHR = 2,
+        FORCE_OPAQUE_BIT_KHR = 4,
+        FORCE_NO_OPAQUE_BIT_KHR = 8,
         TRIANGLE_CULL_DISABLE_BIT_NV = 1,
         TRIANGLE_FRONT_COUNTERCLOCKWISE_BIT_NV = 2,
         FORCE_OPAQUE_BIT_NV = 4,
         FORCE_NO_OPAQUE_BIT_NV = 8,
     };
-    bitmask BuildAccelerationStructureFlagBitsNV {
+    bitmask BuildAccelerationStructureFlagBitsKHR {
+        ALLOW_UPDATE_BIT_KHR = 1,
+        ALLOW_COMPACTION_BIT_KHR = 2,
+        PREFER_FAST_TRACE_BIT_KHR = 4,
+        PREFER_FAST_BUILD_BIT_KHR = 8,
+        LOW_MEMORY_BIT_KHR = 16,
         ALLOW_UPDATE_BIT_NV = 1,
         ALLOW_COMPACTION_BIT_NV = 2,
         PREFER_FAST_TRACE_BIT_NV = 4,
         PREFER_FAST_BUILD_BIT_NV = 8,
         LOW_MEMORY_BIT_NV = 16,
     };
-    enum CopyAccelerationStructureModeNV {
+    enum CopyAccelerationStructureModeKHR {
+        CLONE_KHR = 0,
+        COMPACT_KHR = 1,
+        SERIALIZE_KHR = 2,
+        DESERIALIZE_KHR = 3,
         CLONE_NV = 0,
         COMPACT_NV = 1,
     };
-    enum AccelerationStructureTypeNV {
+    enum AccelerationStructureTypeKHR {
+        TOP_LEVEL_KHR = 0,
+        BOTTOM_LEVEL_KHR = 1,
         TOP_LEVEL_NV = 0,
         BOTTOM_LEVEL_NV = 1,
     };
-    enum GeometryTypeNV {
+    enum GeometryTypeKHR {
+        TRIANGLES_KHR = 0,
+        AABBS_KHR = 1,
+        INSTANCES_KHR = 1000150000,
         TRIANGLES_NV = 0,
         AABBS_NV = 1,
     };
-    enum RayTracingShaderGroupTypeNV {
+    enum RayTracingShaderGroupTypeKHR {
+        GENERAL_KHR = 0,
+        TRIANGLES_HIT_GROUP_KHR = 1,
+        PROCEDURAL_HIT_GROUP_KHR = 2,
         GENERAL_NV = 0,
         TRIANGLES_HIT_GROUP_NV = 1,
         PROCEDURAL_HIT_GROUP_NV = 2,
     };
-    enum AccelerationStructureMemoryRequirementsTypeNV {
+    enum AccelerationStructureMemoryRequirementsTypeKHR {
+        OBJECT_KHR = 0,
+        BUILD_SCRATCH_KHR = 1,
+        UPDATE_SCRATCH_KHR = 2,
         OBJECT_NV = 0,
         BUILD_SCRATCH_NV = 1,
         UPDATE_SCRATCH_NV = 2,
+    };
+    enum AccelerationStructureBuildTypeKHR {
+        HOST_KHR = 0,
+        DEVICE_KHR = 1,
+        HOST_OR_DEVICE_KHR = 2,
     };
     enum MemoryOverallocationBehaviorAMD {
         DEFAULT_AMD = 0,
@@ -1886,6 +2002,11 @@ impl_enums! {
         UINT16_NV = 8,
         UINT32_NV = 9,
         UINT64_NV = 10,
+    };
+    bitmask DeviceDiagnosticsConfigFlagBitsNV {
+        ENABLE_SHADER_DEBUG_INFO_BIT_NV = 1,
+        ENABLE_RESOURCE_TRACKING_BIT_NV = 2,
+        ENABLE_AUTOMATIC_CHECKPOINTS_BIT_NV = 4,
     };
     bitmask PipelineCreationFeedbackFlagBitsEXT {
         VALID_BIT_EXT = 1,
@@ -2064,16 +2185,15 @@ impl_enums! {
         DEBUG_REPORT_CALLBACK_EXT_EXT = 28,
         DISPLAY_KHR_EXT = 29,
         DISPLAY_MODE_KHR_EXT = 30,
-        OBJECT_TABLE_NVX_EXT = 31,
-        INDIRECT_COMMANDS_LAYOUT_NVX_EXT = 32,
         VALIDATION_CACHE_EXT_EXT = 33,
         SAMPLER_YCBCR_CONVERSION_EXT = 1000156000,
         DESCRIPTOR_UPDATE_TEMPLATE_EXT = 1000085000,
-        ACCELERATION_STRUCTURE_NV_EXT = 1000165000,
+        ACCELERATION_STRUCTURE_KHR_EXT = 1000165000,
         DEBUG_REPORT_EXT = 28,
         VALIDATION_CACHE_EXT = 33,
         DESCRIPTOR_UPDATE_TEMPLATE_KHR_EXT = 1000085000,
         SAMPLER_YCBCR_CONVERSION_KHR_EXT = 1000156000,
+        ACCELERATION_STRUCTURE_NV_EXT = 1000165000,
     };
     enum RasterizationOrderAMD {
         STRICT_AMD = 0,
@@ -2098,6 +2218,7 @@ impl_enums! {
         GPU_ASSISTED_EXT = 0,
         GPU_ASSISTED_RESERVE_BINDING_SLOT_EXT = 1,
         BEST_PRACTICES_EXT = 2,
+        DEBUG_PRINTF_EXT = 3,
     };
     enum ValidationFeatureDisableEXT {
         ALL_EXT = 0,
@@ -2308,6 +2429,7 @@ impl_enums! {
         VSI = 65538,
         KAZAN = 65539,
         CODEPLAY = 65540,
+        MESA = 65541,
     };
     enum DriverId {
         AMD_PROPRIETARY = 1,
@@ -2322,6 +2444,7 @@ impl_enums! {
         GOOGLE_SWIFTSHADER = 10,
         GGP_PROPRIETARY = 11,
         BROADCOM_PROPRIETARY = 12,
+        MESA_LLVMPIPE = 13,
         AMD_PROPRIETARY_KHR = 1,
         AMD_OPEN_SOURCE_KHR = 2,
         MESA_RADV_KHR = 3,
@@ -2374,6 +2497,7 @@ impl_aliases! {
     FramebufferCreateFlags = crate::data::FramebufferCreateFlagBits;
     RenderPassCreateFlags = crate::data::RenderPassCreateFlagBits;
     SamplerCreateFlags = crate::data::SamplerCreateFlagBits;
+    PipelineCacheCreateFlags = crate::data::PipelineCacheCreateFlagBits;
     PipelineShaderStageCreateFlags = crate::data::PipelineShaderStageCreateFlagBits;
     DescriptorSetLayoutCreateFlags = crate::data::DescriptorSetLayoutCreateFlagBits;
     DeviceQueueCreateFlags = crate::data::DeviceQueueCreateFlagBits;
@@ -2411,11 +2535,15 @@ impl_aliases! {
     DescriptorPoolCreateFlags = crate::data::DescriptorPoolCreateFlagBits;
     DependencyFlags = crate::data::DependencyFlagBits;
     SubgroupFeatureFlags = crate::data::SubgroupFeatureFlagBits;
-    IndirectCommandsLayoutUsageFlagsNVX = crate::data::IndirectCommandsLayoutUsageFlagBitsNVX;
-    ObjectEntryUsageFlagsNVX = crate::data::ObjectEntryUsageFlagBitsNVX;
-    GeometryFlagsNV = crate::data::GeometryFlagBitsNV;
-    GeometryInstanceFlagsNV = crate::data::GeometryInstanceFlagBitsNV;
-    BuildAccelerationStructureFlagsNV = crate::data::BuildAccelerationStructureFlagBitsNV;
+    IndirectCommandsLayoutUsageFlagsNV = crate::data::IndirectCommandsLayoutUsageFlagBitsNV;
+    IndirectStateFlagsNV = crate::data::IndirectStateFlagBitsNV;
+    GeometryFlagsKHR = crate::data::GeometryFlagBitsKHR;
+    GeometryFlagsNV = crate::data::GeometryFlagsKHR;
+    GeometryInstanceFlagsKHR = crate::data::GeometryInstanceFlagBitsKHR;
+    GeometryInstanceFlagsNV = crate::data::GeometryInstanceFlagsKHR;
+    BuildAccelerationStructureFlagsKHR = crate::data::BuildAccelerationStructureFlagBitsKHR;
+    BuildAccelerationStructureFlagsNV = crate::data::BuildAccelerationStructureFlagsKHR;
+    PrivateDataSlotCreateFlagsEXT = crate::data::PrivateDataSlotCreateFlagBitsEXT;
     DescriptorUpdateTemplateCreateFlagsKHR = crate::data::DescriptorUpdateTemplateCreateFlags;
     PipelineCreationFeedbackFlagsEXT = crate::data::PipelineCreationFeedbackFlagBitsEXT;
     PerformanceCounterDescriptionFlagsKHR = crate::data::PerformanceCounterDescriptionFlagBitsKHR;
@@ -2424,6 +2552,7 @@ impl_aliases! {
     SemaphoreWaitFlagsKHR = crate::data::SemaphoreWaitFlags;
     PipelineCompilerControlFlagsAMD = crate::data::PipelineCompilerControlFlagBitsAMD;
     ShaderCorePropertiesFlagsAMD = crate::data::ShaderCorePropertiesFlagBitsAMD;
+    DeviceDiagnosticsConfigFlagsNV = crate::data::DeviceDiagnosticsConfigFlagBitsNV;
     CompositeAlphaFlagsKHR = crate::data::CompositeAlphaFlagBitsKHR;
     DisplayPlaneAlphaFlagsKHR = crate::data::DisplayPlaneAlphaFlagBitsKHR;
     SurfaceTransformFlagsKHR = crate::data::SurfaceTransformFlagBitsKHR;
@@ -2465,11 +2594,20 @@ impl_aliases! {
     ToolPurposeFlagsEXT = crate::data::ToolPurposeFlagBitsEXT;
     DescriptorUpdateTemplateKHR = crate::data::DescriptorUpdateTemplate;
     SamplerYcbcrConversionKHR = crate::data::SamplerYcbcrConversion;
+    AccelerationStructureNV = crate::data::AccelerationStructureKHR;
     DescriptorUpdateTemplateTypeKHR = crate::data::DescriptorUpdateTemplateType;
     PointClippingBehaviorKHR = crate::data::PointClippingBehavior;
     ResolveModeFlagBitsKHR = crate::data::ResolveModeFlagBits;
     DescriptorBindingFlagBitsEXT = crate::data::DescriptorBindingFlagBits;
     SemaphoreTypeKHR = crate::data::SemaphoreType;
+    GeometryFlagBitsNV = crate::data::GeometryFlagBitsKHR;
+    GeometryInstanceFlagBitsNV = crate::data::GeometryInstanceFlagBitsKHR;
+    BuildAccelerationStructureFlagBitsNV = crate::data::BuildAccelerationStructureFlagBitsKHR;
+    CopyAccelerationStructureModeNV = crate::data::CopyAccelerationStructureModeKHR;
+    AccelerationStructureTypeNV = crate::data::AccelerationStructureTypeKHR;
+    GeometryTypeNV = crate::data::GeometryTypeKHR;
+    RayTracingShaderGroupTypeNV = crate::data::RayTracingShaderGroupTypeKHR;
+    AccelerationStructureMemoryRequirementsTypeNV = crate::data::AccelerationStructureMemoryRequirementsTypeKHR;
     SemaphoreWaitFlagBitsKHR = crate::data::SemaphoreWaitFlagBits;
     ExternalMemoryHandleTypeFlagBitsKHR = crate::data::ExternalMemoryHandleTypeFlagBits;
     ExternalMemoryFeatureFlagBitsKHR = crate::data::ExternalMemoryFeatureFlagBits;
@@ -2586,6 +2724,8 @@ impl_aliases! {
     PhysicalDeviceShaderAtomicInt64FeaturesKHR = crate::data::PhysicalDeviceShaderAtomicInt64Features;
     PhysicalDeviceDepthStencilResolvePropertiesKHR = crate::data::PhysicalDeviceDepthStencilResolveProperties;
     SubpassDescriptionDepthStencilResolveKHR = crate::data::SubpassDescriptionDepthStencilResolve;
+    BindAccelerationStructureMemoryInfoNV = crate::data::BindAccelerationStructureMemoryInfoKHR;
+    WriteDescriptorSetAccelerationStructureNV = crate::data::WriteDescriptorSetAccelerationStructureKHR;
     ImageStencilUsageCreateInfoEXT = crate::data::ImageStencilUsageCreateInfo;
     PhysicalDeviceScalarBlockLayoutFeaturesEXT = crate::data::PhysicalDeviceScalarBlockLayoutFeatures;
     PhysicalDeviceUniformBufferStandardLayoutFeaturesKHR = crate::data::PhysicalDeviceUniformBufferStandardLayoutFeatures;
@@ -2598,11 +2738,15 @@ impl_aliases! {
     FramebufferAttachmentsCreateInfoKHR = crate::data::FramebufferAttachmentsCreateInfo;
     FramebufferAttachmentImageInfoKHR = crate::data::FramebufferAttachmentImageInfo;
     RenderPassAttachmentBeginInfoKHR = crate::data::RenderPassAttachmentBeginInfo;
+    QueryPoolCreateInfoINTEL = crate::data::QueryPoolPerformanceQueryCreateInfoINTEL;
     PhysicalDeviceSeparateDepthStencilLayoutsFeaturesKHR = crate::data::PhysicalDeviceSeparateDepthStencilLayoutsFeatures;
     AttachmentReferenceStencilLayoutKHR = crate::data::AttachmentReferenceStencilLayout;
     AttachmentDescriptionStencilLayoutKHR = crate::data::AttachmentDescriptionStencilLayout;
     MemoryOpaqueCaptureAddressAllocateInfoKHR = crate::data::MemoryOpaqueCaptureAddressAllocateInfo;
     DeviceMemoryOpaqueCaptureAddressInfoKHR = crate::data::DeviceMemoryOpaqueCaptureAddressInfo;
+    AabbPositionsNV = crate::data::AabbPositionsKHR;
+    TransformMatrixNV = crate::data::TransformMatrixKHR;
+    AccelerationStructureInstanceNV = crate::data::AccelerationStructureInstanceKHR;
 }
 
 impl_handles! {
@@ -2631,13 +2775,14 @@ impl_handles! {
     Framebuffer { dispatchable: false };
     RenderPass { dispatchable: false };
     PipelineCache { dispatchable: false };
-    ObjectTableNVX { dispatchable: false };
-    IndirectCommandsLayoutNVX { dispatchable: false };
+    IndirectCommandsLayoutNV { dispatchable: false };
     DescriptorUpdateTemplate { dispatchable: false };
     SamplerYcbcrConversion { dispatchable: false };
     ValidationCacheEXT { dispatchable: false };
-    AccelerationStructureNV { dispatchable: false };
+    AccelerationStructureKHR { dispatchable: false };
     PerformanceConfigurationINTEL { dispatchable: false };
+    DeferredOperationKHR { dispatchable: false };
+    PrivateDataSlotEXT { dispatchable: false };
     DisplayKHR { dispatchable: false };
     DisplayModeKHR { dispatchable: false };
     SurfaceKHR { dispatchable: false };
@@ -3873,104 +4018,126 @@ impl_aggregates! {
         p_release_syncs: *const crate::data::DeviceMemory,
         p_release_keys: *const u64,
     };
-    struct DeviceGeneratedCommandsFeaturesNVX {
-        s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_GENERATED_COMMANDS_FEATURES_NVX,
-        p_next: *const c_void,
-        compute_binding_point_support: crate::data::Bool32,
+    struct PhysicalDeviceDeviceGeneratedCommandsFeaturesNV {
+        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_DEVICE_GENERATED_COMMANDS_FEATURES_NV,
+        p_next: *mut c_void,
+        device_generated_commands: crate::data::Bool32,
     };
-    struct DeviceGeneratedCommandsLimitsNVX {
-        s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_GENERATED_COMMANDS_LIMITS_NVX,
+    struct DevicePrivateDataCreateInfoEXT {
+        s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_PRIVATE_DATA_CREATE_INFO_EXT,
         p_next: *const c_void,
-        max_indirect_commands_layout_token_count: u32,
-        max_object_entry_counts: u32,
-        min_sequence_count_buffer_offset_alignment: u32,
-        min_sequence_index_buffer_offset_alignment: u32,
-        min_commands_token_buffer_offset_alignment: u32,
+        private_data_slot_request_count: u32,
     };
-    struct IndirectCommandsTokenNVX {
-        token_type: crate::data::IndirectCommandsTokenTypeNVX,
+    struct PrivateDataSlotCreateInfoEXT {
+        s_type: crate::data::StructureType = crate::data::StructureType::PRIVATE_DATA_SLOT_CREATE_INFO_EXT,
+        p_next: *const c_void,
+        flags: crate::data::PrivateDataSlotCreateFlagsEXT,
+    };
+    struct PhysicalDevicePrivateDataFeaturesEXT {
+        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PRIVATE_DATA_FEATURES_EXT,
+        p_next: *mut c_void,
+        private_data: crate::data::Bool32,
+    };
+    struct PhysicalDeviceDeviceGeneratedCommandsPropertiesNV {
+        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_DEVICE_GENERATED_COMMANDS_PROPERTIES_NV,
+        p_next: *mut c_void,
+        max_graphics_shader_group_count: u32,
+        max_indirect_sequence_count: u32,
+        max_indirect_commands_token_count: u32,
+        max_indirect_commands_stream_count: u32,
+        max_indirect_commands_token_offset: u32,
+        max_indirect_commands_stream_stride: u32,
+        min_sequences_count_buffer_offset_alignment: u32,
+        min_sequences_index_buffer_offset_alignment: u32,
+        min_indirect_commands_buffer_offset_alignment: u32,
+    };
+    struct GraphicsShaderGroupCreateInfoNV {
+        s_type: crate::data::StructureType = crate::data::StructureType::GRAPHICS_SHADER_GROUP_CREATE_INFO_NV,
+        p_next: *const c_void,
+        stage_count: u32,
+        p_stages: *const crate::data::PipelineShaderStageCreateInfo,
+        p_vertex_input_state: *const crate::data::PipelineVertexInputStateCreateInfo,
+        p_tessellation_state: *const crate::data::PipelineTessellationStateCreateInfo,
+    };
+    struct GraphicsPipelineShaderGroupsCreateInfoNV {
+        s_type: crate::data::StructureType = crate::data::StructureType::GRAPHICS_PIPELINE_SHADER_GROUPS_CREATE_INFO_NV,
+        p_next: *const c_void,
+        group_count: u32,
+        p_groups: *const crate::data::GraphicsShaderGroupCreateInfoNV,
+        pipeline_count: u32,
+        p_pipelines: *const crate::data::Pipeline,
+    };
+    struct BindShaderGroupIndirectCommandNV {
+        group_index: u32,
+    };
+    struct BindIndexBufferIndirectCommandNV {
+        buffer_address: crate::data::DeviceAddress,
+        size: u32,
+        index_type: crate::data::IndexType,
+    };
+    struct BindVertexBufferIndirectCommandNV {
+        buffer_address: crate::data::DeviceAddress,
+        size: u32,
+        stride: u32,
+    };
+    struct SetStateFlagsIndirectCommandNV {
+        data: u32,
+    };
+    struct IndirectCommandsStreamNV {
         buffer: crate::data::Buffer,
         offset: crate::data::DeviceSize,
     };
-    struct IndirectCommandsLayoutTokenNVX {
-        token_type: crate::data::IndirectCommandsTokenTypeNVX,
-        binding_unit: u32,
-        dynamic_count: u32,
-        divisor: u32,
+    struct IndirectCommandsLayoutTokenNV {
+        s_type: crate::data::StructureType = crate::data::StructureType::INDIRECT_COMMANDS_LAYOUT_TOKEN_NV,
+        p_next: *const c_void,
+        token_type: crate::data::IndirectCommandsTokenTypeNV,
+        stream: u32,
+        offset: u32,
+        vertex_binding_unit: u32,
+        vertex_dynamic_stride: crate::data::Bool32,
+        pushconstant_pipeline_layout: crate::data::PipelineLayout,
+        pushconstant_shader_stage_flags: crate::data::ShaderStageFlags,
+        pushconstant_offset: u32,
+        pushconstant_size: u32,
+        indirect_state_flags: crate::data::IndirectStateFlagsNV,
+        index_type_count: u32,
+        p_index_types: *const crate::data::IndexType,
+        p_index_type_values: *const u32,
     };
-    struct IndirectCommandsLayoutCreateInfoNVX {
-        s_type: crate::data::StructureType = crate::data::StructureType::INDIRECT_COMMANDS_LAYOUT_CREATE_INFO_NVX,
+    struct IndirectCommandsLayoutCreateInfoNV {
+        s_type: crate::data::StructureType = crate::data::StructureType::INDIRECT_COMMANDS_LAYOUT_CREATE_INFO_NV,
+        p_next: *const c_void,
+        flags: crate::data::IndirectCommandsLayoutUsageFlagsNV,
+        pipeline_bind_point: crate::data::PipelineBindPoint,
+        token_count: u32,
+        p_tokens: *const crate::data::IndirectCommandsLayoutTokenNV,
+        stream_count: u32,
+        p_stream_strides: *const u32,
+    };
+    struct GeneratedCommandsInfoNV {
+        s_type: crate::data::StructureType = crate::data::StructureType::GENERATED_COMMANDS_INFO_NV,
         p_next: *const c_void,
         pipeline_bind_point: crate::data::PipelineBindPoint,
-        flags: crate::data::IndirectCommandsLayoutUsageFlagsNVX,
-        token_count: u32,
-        p_tokens: *const crate::data::IndirectCommandsLayoutTokenNVX,
-    };
-    struct CmdProcessCommandsInfoNVX {
-        s_type: crate::data::StructureType = crate::data::StructureType::CMD_PROCESS_COMMANDS_INFO_NVX,
-        p_next: *const c_void,
-        object_table: crate::data::ObjectTableNVX,
-        indirect_commands_layout: crate::data::IndirectCommandsLayoutNVX,
-        indirect_commands_token_count: u32,
-        p_indirect_commands_tokens: *const crate::data::IndirectCommandsTokenNVX,
-        max_sequences_count: u32,
-        target_command_buffer: crate::data::CommandBuffer,
+        pipeline: crate::data::Pipeline,
+        indirect_commands_layout: crate::data::IndirectCommandsLayoutNV,
+        stream_count: u32,
+        p_streams: *const crate::data::IndirectCommandsStreamNV,
+        sequences_count: u32,
+        preprocess_buffer: crate::data::Buffer,
+        preprocess_offset: crate::data::DeviceSize,
+        preprocess_size: crate::data::DeviceSize,
         sequences_count_buffer: crate::data::Buffer,
         sequences_count_offset: crate::data::DeviceSize,
         sequences_index_buffer: crate::data::Buffer,
         sequences_index_offset: crate::data::DeviceSize,
     };
-    struct CmdReserveSpaceForCommandsInfoNVX {
-        s_type: crate::data::StructureType = crate::data::StructureType::CMD_RESERVE_SPACE_FOR_COMMANDS_INFO_NVX,
+    struct GeneratedCommandsMemoryRequirementsInfoNV {
+        s_type: crate::data::StructureType = crate::data::StructureType::GENERATED_COMMANDS_MEMORY_REQUIREMENTS_INFO_NV,
         p_next: *const c_void,
-        object_table: crate::data::ObjectTableNVX,
-        indirect_commands_layout: crate::data::IndirectCommandsLayoutNVX,
-        max_sequences_count: u32,
-    };
-    struct ObjectTableCreateInfoNVX {
-        s_type: crate::data::StructureType = crate::data::StructureType::OBJECT_TABLE_CREATE_INFO_NVX,
-        p_next: *const c_void,
-        object_count: u32,
-        p_object_entry_types: *const crate::data::ObjectEntryTypeNVX,
-        p_object_entry_counts: *const u32,
-        p_object_entry_usage_flags: *const crate::data::ObjectEntryUsageFlagsNVX,
-        max_uniform_buffers_per_descriptor: u32,
-        max_storage_buffers_per_descriptor: u32,
-        max_storage_images_per_descriptor: u32,
-        max_sampled_images_per_descriptor: u32,
-        max_pipeline_layouts: u32,
-    };
-    struct ObjectTableEntryNVX {
-        ty: crate::data::ObjectEntryTypeNVX,
-        flags: crate::data::ObjectEntryUsageFlagsNVX,
-    };
-    struct ObjectTablePipelineEntryNVX {
-        ty: crate::data::ObjectEntryTypeNVX,
-        flags: crate::data::ObjectEntryUsageFlagsNVX,
+        pipeline_bind_point: crate::data::PipelineBindPoint,
         pipeline: crate::data::Pipeline,
-    };
-    struct ObjectTableDescriptorSetEntryNVX {
-        ty: crate::data::ObjectEntryTypeNVX,
-        flags: crate::data::ObjectEntryUsageFlagsNVX,
-        pipeline_layout: crate::data::PipelineLayout,
-        descriptor_set: crate::data::DescriptorSet,
-    };
-    struct ObjectTableVertexBufferEntryNVX {
-        ty: crate::data::ObjectEntryTypeNVX,
-        flags: crate::data::ObjectEntryUsageFlagsNVX,
-        buffer: crate::data::Buffer,
-    };
-    struct ObjectTableIndexBufferEntryNVX {
-        ty: crate::data::ObjectEntryTypeNVX,
-        flags: crate::data::ObjectEntryUsageFlagsNVX,
-        buffer: crate::data::Buffer,
-        index_type: crate::data::IndexType,
-    };
-    struct ObjectTablePushConstantEntryNVX {
-        ty: crate::data::ObjectEntryTypeNVX,
-        flags: crate::data::ObjectEntryUsageFlagsNVX,
-        pipeline_layout: crate::data::PipelineLayout,
-        stage_flags: crate::data::ShaderStageFlags,
+        indirect_commands_layout: crate::data::IndirectCommandsLayoutNV,
+        max_sequences_count: u32,
     };
     struct PhysicalDeviceFeatures2 {
         s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_FEATURES_2,
@@ -5521,11 +5688,21 @@ impl_aggregates! {
     struct RayTracingShaderGroupCreateInfoNV {
         s_type: crate::data::StructureType = crate::data::StructureType::RAY_TRACING_SHADER_GROUP_CREATE_INFO_NV,
         p_next: *const c_void,
-        ty: crate::data::RayTracingShaderGroupTypeNV,
+        ty: crate::data::RayTracingShaderGroupTypeKHR,
         general_shader: u32,
         closest_hit_shader: u32,
         any_hit_shader: u32,
         intersection_shader: u32,
+    };
+    struct RayTracingShaderGroupCreateInfoKHR {
+        s_type: crate::data::StructureType = crate::data::StructureType::RAY_TRACING_SHADER_GROUP_CREATE_INFO_KHR,
+        p_next: *const c_void,
+        ty: crate::data::RayTracingShaderGroupTypeKHR,
+        general_shader: u32,
+        closest_hit_shader: u32,
+        any_hit_shader: u32,
+        intersection_shader: u32,
+        p_shader_group_capture_replay_handle: *const c_void,
     };
     struct RayTracingPipelineCreateInfoNV {
         s_type: crate::data::StructureType = crate::data::StructureType::RAY_TRACING_PIPELINE_CREATE_INFO_NV,
@@ -5536,6 +5713,21 @@ impl_aggregates! {
         group_count: u32,
         p_groups: *const crate::data::RayTracingShaderGroupCreateInfoNV,
         max_recursion_depth: u32,
+        layout: crate::data::PipelineLayout,
+        base_pipeline_handle: crate::data::Pipeline,
+        base_pipeline_index: i32,
+    };
+    struct RayTracingPipelineCreateInfoKHR {
+        s_type: crate::data::StructureType = crate::data::StructureType::RAY_TRACING_PIPELINE_CREATE_INFO_KHR,
+        p_next: *const c_void,
+        flags: crate::data::PipelineCreateFlags,
+        stage_count: u32,
+        p_stages: *const crate::data::PipelineShaderStageCreateInfo,
+        group_count: u32,
+        p_groups: *const crate::data::RayTracingShaderGroupCreateInfoKHR,
+        max_recursion_depth: u32,
+        libraries: crate::data::PipelineLibraryCreateInfoKHR,
+        p_library_interface: *const crate::data::RayTracingPipelineInterfaceCreateInfoKHR,
         layout: crate::data::PipelineLayout,
         base_pipeline_handle: crate::data::Pipeline,
         base_pipeline_index: i32,
@@ -5570,9 +5762,9 @@ impl_aggregates! {
     struct GeometryNV {
         s_type: crate::data::StructureType = crate::data::StructureType::GEOMETRY_NV,
         p_next: *const c_void,
-        geometry_type: crate::data::GeometryTypeNV,
+        geometry_type: crate::data::GeometryTypeKHR,
         geometry: crate::data::GeometryDataNV,
-        flags: crate::data::GeometryFlagsNV,
+        flags: crate::data::GeometryFlagsKHR,
     };
     struct AccelerationStructureInfoNV {
         s_type: crate::data::StructureType = crate::data::StructureType::ACCELERATION_STRUCTURE_INFO_NV,
@@ -5589,26 +5781,59 @@ impl_aggregates! {
         compacted_size: crate::data::DeviceSize,
         info: crate::data::AccelerationStructureInfoNV,
     };
-    struct BindAccelerationStructureMemoryInfoNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::BIND_ACCELERATION_STRUCTURE_MEMORY_INFO_NV,
+    struct BindAccelerationStructureMemoryInfoKHR {
+        s_type: crate::data::StructureType = crate::data::StructureType::BIND_ACCELERATION_STRUCTURE_MEMORY_INFO_KHR,
         p_next: *const c_void,
-        acceleration_structure: crate::data::AccelerationStructureNV,
+        acceleration_structure: crate::data::AccelerationStructureKHR,
         memory: crate::data::DeviceMemory,
         memory_offset: crate::data::DeviceSize,
         device_index_count: u32,
         p_device_indices: *const u32,
     };
-    struct WriteDescriptorSetAccelerationStructureNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::WRITE_DESCRIPTOR_SET_ACCELERATION_STRUCTURE_NV,
+    struct WriteDescriptorSetAccelerationStructureKHR {
+        s_type: crate::data::StructureType = crate::data::StructureType::WRITE_DESCRIPTOR_SET_ACCELERATION_STRUCTURE_KHR,
         p_next: *const c_void,
         acceleration_structure_count: u32,
-        p_acceleration_structures: *const crate::data::AccelerationStructureNV,
+        p_acceleration_structures: *const crate::data::AccelerationStructureKHR,
+    };
+    struct AccelerationStructureMemoryRequirementsInfoKHR {
+        s_type: crate::data::StructureType = crate::data::StructureType::ACCELERATION_STRUCTURE_MEMORY_REQUIREMENTS_INFO_KHR,
+        p_next: *const c_void,
+        ty: crate::data::AccelerationStructureMemoryRequirementsTypeKHR,
+        build_type: crate::data::AccelerationStructureBuildTypeKHR,
+        acceleration_structure: crate::data::AccelerationStructureKHR,
     };
     struct AccelerationStructureMemoryRequirementsInfoNV {
         s_type: crate::data::StructureType = crate::data::StructureType::ACCELERATION_STRUCTURE_MEMORY_REQUIREMENTS_INFO_NV,
         p_next: *const c_void,
         ty: crate::data::AccelerationStructureMemoryRequirementsTypeNV,
         acceleration_structure: crate::data::AccelerationStructureNV,
+    };
+    struct PhysicalDeviceRayTracingFeaturesKHR {
+        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_RAY_TRACING_FEATURES_KHR,
+        p_next: *mut c_void,
+        ray_tracing: crate::data::Bool32,
+        ray_tracing_shader_group_handle_capture_replay: crate::data::Bool32,
+        ray_tracing_shader_group_handle_capture_replay_mixed: crate::data::Bool32,
+        ray_tracing_acceleration_structure_capture_replay: crate::data::Bool32,
+        ray_tracing_indirect_trace_rays: crate::data::Bool32,
+        ray_tracing_indirect_acceleration_structure_build: crate::data::Bool32,
+        ray_tracing_host_acceleration_structure_commands: crate::data::Bool32,
+        ray_query: crate::data::Bool32,
+        ray_tracing_primitive_culling: crate::data::Bool32,
+    };
+    struct PhysicalDeviceRayTracingPropertiesKHR {
+        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_RAY_TRACING_PROPERTIES_KHR,
+        p_next: *mut c_void,
+        shader_group_handle_size: u32,
+        max_recursion_depth: u32,
+        max_shader_group_stride: u32,
+        shader_group_base_alignment: u32,
+        max_geometry_count: u64,
+        max_instance_count: u64,
+        max_primitive_count: u64,
+        max_descriptor_set_acceleration_structures: u32,
+        shader_group_handle_capture_replay_size: u32,
     };
     struct PhysicalDeviceRayTracingPropertiesNV {
         s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_RAY_TRACING_PROPERTIES_NV,
@@ -5621,6 +5846,17 @@ impl_aggregates! {
         max_instance_count: u64,
         max_triangle_count: u64,
         max_descriptor_set_acceleration_structures: u32,
+    };
+    struct StridedBufferRegionKHR {
+        buffer: crate::data::Buffer,
+        offset: crate::data::DeviceSize,
+        stride: crate::data::DeviceSize,
+        size: crate::data::DeviceSize,
+    };
+    struct TraceRaysIndirectCommandKHR {
+        width: u32,
+        height: u32,
+        depth: u32,
     };
     struct DrmFormatModifierPropertiesListEXT {
         s_type: crate::data::StructureType = crate::data::StructureType::DRM_FORMAT_MODIFIER_PROPERTIES_LIST_EXT,
@@ -5838,6 +6074,12 @@ impl_aggregates! {
         descriptor_type: crate::data::DescriptorType,
         sampler: crate::data::Sampler,
     };
+    struct ImageViewAddressPropertiesNVX {
+        s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_VIEW_ADDRESS_PROPERTIES_NVX,
+        p_next: *mut c_void,
+        device_address: crate::data::DeviceAddress,
+        size: crate::data::DeviceSize,
+    };
     struct PipelineCreationFeedbackEXT {
         flags: crate::data::PipelineCreationFeedbackFlagsEXT,
         duration: u64,
@@ -5957,8 +6199,8 @@ impl_aggregates! {
         p_next: *const c_void,
         p_user_data: *mut c_void,
     };
-    struct QueryPoolCreateInfoINTEL {
-        s_type: crate::data::StructureType = crate::data::StructureType::QUERY_POOL_CREATE_INFO_INTEL,
+    struct QueryPoolPerformanceQueryCreateInfoINTEL {
+        s_type: crate::data::StructureType = crate::data::StructureType::QUERY_POOL_PERFORMANCE_QUERY_CREATE_INFO_INTEL,
         p_next: *const c_void,
         performance_counters_sampling: crate::data::QueryPoolSamplingModeINTEL,
     };
@@ -6146,6 +6388,11 @@ impl_aggregates! {
         line_stipple_factor: u32,
         line_stipple_pattern: u16,
     };
+    struct PhysicalDevicePipelineCreationCacheControlFeaturesEXT {
+        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PIPELINE_CREATION_CACHE_CONTROL_FEATURES_EXT,
+        p_next: *mut c_void,
+        pipeline_creation_cache_control: crate::data::Bool32,
+    };
     struct PhysicalDeviceVulkan11Features {
         s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_VULKAN_1_1_FEATURES,
         p_next: *mut c_void,
@@ -6306,6 +6553,211 @@ impl_aggregates! {
         purposes: crate::data::ToolPurposeFlagsEXT,
         description: [c_char; 256],
         layer: [c_char; 256],
+    };
+    struct SamplerCustomBorderColorCreateInfoEXT {
+        s_type: crate::data::StructureType = crate::data::StructureType::SAMPLER_CUSTOM_BORDER_COLOR_CREATE_INFO_EXT,
+        p_next: *const c_void,
+        custom_border_color: crate::data::ClearColorValue,
+        format: crate::data::Format,
+    };
+    struct PhysicalDeviceCustomBorderColorPropertiesEXT {
+        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_CUSTOM_BORDER_COLOR_PROPERTIES_EXT,
+        p_next: *mut c_void,
+        max_custom_border_color_samplers: u32,
+    };
+    struct PhysicalDeviceCustomBorderColorFeaturesEXT {
+        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_CUSTOM_BORDER_COLOR_FEATURES_EXT,
+        p_next: *mut c_void,
+        custom_border_colors: crate::data::Bool32,
+        custom_border_color_without_format: crate::data::Bool32,
+    };
+    union DeviceOrHostAddressKHR {
+        device_address: crate::data::DeviceAddress,
+        host_address: *mut c_void,
+    };
+    union DeviceOrHostAddressConstKHR {
+        device_address: crate::data::DeviceAddress,
+        host_address: *const c_void,
+    };
+    struct AccelerationStructureGeometryTrianglesDataKHR {
+        s_type: crate::data::StructureType = crate::data::StructureType::ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR,
+        p_next: *const c_void,
+        vertex_format: crate::data::Format,
+        vertex_data: crate::data::DeviceOrHostAddressConstKHR,
+        vertex_stride: crate::data::DeviceSize,
+        index_type: crate::data::IndexType,
+        index_data: crate::data::DeviceOrHostAddressConstKHR,
+        transform_data: crate::data::DeviceOrHostAddressConstKHR,
+    };
+    struct AccelerationStructureGeometryAabbsDataKHR {
+        s_type: crate::data::StructureType = crate::data::StructureType::ACCELERATION_STRUCTURE_GEOMETRY_AABBS_DATA_KHR,
+        p_next: *const c_void,
+        data: crate::data::DeviceOrHostAddressConstKHR,
+        stride: crate::data::DeviceSize,
+    };
+    struct AccelerationStructureGeometryInstancesDataKHR {
+        s_type: crate::data::StructureType = crate::data::StructureType::ACCELERATION_STRUCTURE_GEOMETRY_INSTANCES_DATA_KHR,
+        p_next: *const c_void,
+        array_of_pointers: crate::data::Bool32,
+        data: crate::data::DeviceOrHostAddressConstKHR,
+    };
+    union AccelerationStructureGeometryDataKHR {
+        triangles: crate::data::AccelerationStructureGeometryTrianglesDataKHR,
+        aabbs: crate::data::AccelerationStructureGeometryAabbsDataKHR,
+        instances: crate::data::AccelerationStructureGeometryInstancesDataKHR,
+    };
+    struct AccelerationStructureGeometryKHR {
+        s_type: crate::data::StructureType = crate::data::StructureType::ACCELERATION_STRUCTURE_GEOMETRY_KHR,
+        p_next: *const c_void,
+        geometry_type: crate::data::GeometryTypeKHR,
+        geometry: crate::data::AccelerationStructureGeometryDataKHR,
+        flags: crate::data::GeometryFlagsKHR,
+    };
+    struct AccelerationStructureBuildGeometryInfoKHR {
+        s_type: crate::data::StructureType = crate::data::StructureType::ACCELERATION_STRUCTURE_BUILD_GEOMETRY_INFO_KHR,
+        p_next: *const c_void,
+        ty: crate::data::AccelerationStructureTypeKHR,
+        flags: crate::data::BuildAccelerationStructureFlagsKHR,
+        update: crate::data::Bool32,
+        src_acceleration_structure: crate::data::AccelerationStructureKHR,
+        dst_acceleration_structure: crate::data::AccelerationStructureKHR,
+        geometry_array_of_pointers: crate::data::Bool32,
+        geometry_count: u32,
+        pp_geometries: *const *const crate::data::AccelerationStructureGeometryKHR,
+        scratch_data: crate::data::DeviceOrHostAddressKHR,
+    };
+    struct AccelerationStructureBuildOffsetInfoKHR {
+        primitive_count: u32,
+        primitive_offset: u32,
+        first_vertex: u32,
+        transform_offset: u32,
+    };
+    struct AccelerationStructureCreateGeometryTypeInfoKHR {
+        s_type: crate::data::StructureType = crate::data::StructureType::ACCELERATION_STRUCTURE_CREATE_GEOMETRY_TYPE_INFO_KHR,
+        p_next: *const c_void,
+        geometry_type: crate::data::GeometryTypeKHR,
+        max_primitive_count: u32,
+        index_type: crate::data::IndexType,
+        max_vertex_count: u32,
+        vertex_format: crate::data::Format,
+        allows_transforms: crate::data::Bool32,
+    };
+    struct AccelerationStructureCreateInfoKHR {
+        s_type: crate::data::StructureType = crate::data::StructureType::ACCELERATION_STRUCTURE_CREATE_INFO_KHR,
+        p_next: *const c_void,
+        compacted_size: crate::data::DeviceSize,
+        ty: crate::data::AccelerationStructureTypeKHR,
+        flags: crate::data::BuildAccelerationStructureFlagsKHR,
+        max_geometry_count: u32,
+        p_geometry_infos: *const crate::data::AccelerationStructureCreateGeometryTypeInfoKHR,
+        device_address: crate::data::DeviceAddress,
+    };
+    struct AabbPositionsKHR {
+        min_x: c_float,
+        min_y: c_float,
+        min_z: c_float,
+        max_x: c_float,
+        max_y: c_float,
+        max_z: c_float,
+    };
+    struct TransformMatrixKHR {
+        matrix: [c_float; 3],
+    };
+    struct AccelerationStructureInstanceKHR {
+        transform: crate::data::TransformMatrixKHR,
+        instance_custom_index: u32,
+        mask: u32,
+        instance_shader_binding_table_record_offset: u32,
+        flags: crate::data::GeometryInstanceFlagsKHR,
+        acceleration_structure_reference: u64,
+    };
+    struct AccelerationStructureDeviceAddressInfoKHR {
+        s_type: crate::data::StructureType = crate::data::StructureType::ACCELERATION_STRUCTURE_DEVICE_ADDRESS_INFO_KHR,
+        p_next: *const c_void,
+        acceleration_structure: crate::data::AccelerationStructureKHR,
+    };
+    struct AccelerationStructureVersionKHR {
+        s_type: crate::data::StructureType = crate::data::StructureType::ACCELERATION_STRUCTURE_VERSION_KHR,
+        p_next: *const c_void,
+        version_data: *const u8,
+    };
+    struct CopyAccelerationStructureInfoKHR {
+        s_type: crate::data::StructureType = crate::data::StructureType::COPY_ACCELERATION_STRUCTURE_INFO_KHR,
+        p_next: *const c_void,
+        src: crate::data::AccelerationStructureKHR,
+        dst: crate::data::AccelerationStructureKHR,
+        mode: crate::data::CopyAccelerationStructureModeKHR,
+    };
+    struct CopyAccelerationStructureToMemoryInfoKHR {
+        s_type: crate::data::StructureType = crate::data::StructureType::COPY_ACCELERATION_STRUCTURE_TO_MEMORY_INFO_KHR,
+        p_next: *const c_void,
+        src: crate::data::AccelerationStructureKHR,
+        dst: crate::data::DeviceOrHostAddressKHR,
+        mode: crate::data::CopyAccelerationStructureModeKHR,
+    };
+    struct CopyMemoryToAccelerationStructureInfoKHR {
+        s_type: crate::data::StructureType = crate::data::StructureType::COPY_MEMORY_TO_ACCELERATION_STRUCTURE_INFO_KHR,
+        p_next: *const c_void,
+        src: crate::data::DeviceOrHostAddressConstKHR,
+        dst: crate::data::AccelerationStructureKHR,
+        mode: crate::data::CopyAccelerationStructureModeKHR,
+    };
+    struct RayTracingPipelineInterfaceCreateInfoKHR {
+        s_type: crate::data::StructureType = crate::data::StructureType::RAY_TRACING_PIPELINE_INTERFACE_CREATE_INFO_KHR,
+        p_next: *const c_void,
+        max_payload_size: u32,
+        max_attribute_size: u32,
+        max_callable_size: u32,
+    };
+    struct DeferredOperationInfoKHR {
+        s_type: crate::data::StructureType = crate::data::StructureType::DEFERRED_OPERATION_INFO_KHR,
+        p_next: *const c_void,
+        operation_handle: crate::data::DeferredOperationKHR,
+    };
+    struct PipelineLibraryCreateInfoKHR {
+        s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_LIBRARY_CREATE_INFO_KHR,
+        p_next: *const c_void,
+        library_count: u32,
+        p_libraries: *const crate::data::Pipeline,
+    };
+    struct PhysicalDeviceExtendedDynamicStateFeaturesEXT {
+        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_EXTENDED_DYNAMIC_STATE_FEATURES_EXT,
+        p_next: *mut c_void,
+        extended_dynamic_state: crate::data::Bool32,
+    };
+    struct RenderPassTransformBeginInfoQCOM {
+        s_type: crate::data::StructureType = crate::data::StructureType::RENDER_PASS_TRANSFORM_BEGIN_INFO_QCOM,
+        p_next: *mut c_void,
+        transform: crate::data::SurfaceTransformFlagBitsKHR,
+    };
+    struct CommandBufferInheritanceRenderPassTransformInfoQCOM {
+        s_type: crate::data::StructureType = crate::data::StructureType::COMMAND_BUFFER_INHERITANCE_RENDER_PASS_TRANSFORM_INFO_QCOM,
+        p_next: *mut c_void,
+        transform: crate::data::SurfaceTransformFlagBitsKHR,
+        render_area: crate::data::Rect2D,
+    };
+    struct PhysicalDeviceDiagnosticsConfigFeaturesNV {
+        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_DIAGNOSTICS_CONFIG_FEATURES_NV,
+        p_next: *mut c_void,
+        diagnostics_config: crate::data::Bool32,
+    };
+    struct DeviceDiagnosticsConfigCreateInfoNV {
+        s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_DIAGNOSTICS_CONFIG_CREATE_INFO_NV,
+        p_next: *const c_void,
+        flags: crate::data::DeviceDiagnosticsConfigFlagsNV,
+    };
+    struct PhysicalDeviceRobustness2FeaturesEXT {
+        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_ROBUSTNESS_2_FEATURES_EXT,
+        p_next: *mut c_void,
+        robust_buffer_access_2: crate::data::Bool32,
+        robust_image_access_2: crate::data::Bool32,
+        null_descriptor: crate::data::Bool32,
+    };
+    struct PhysicalDeviceRobustness2PropertiesEXT {
+        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_ROBUSTNESS_2_PROPERTIES_EXT,
+        p_next: *mut c_void,
+        robust_storage_buffer_access_size_alignment: crate::data::DeviceSize,
+        robust_uniform_buffer_access_size_alignment: crate::data::DeviceSize,
     };
 }
 
@@ -7288,54 +7740,36 @@ impl_commands! {
         external_handle_type: crate::data::ExternalMemoryHandleTypeFlagsNV,
         p_external_image_format_properties: *mut crate::data::ExternalImageFormatPropertiesNV,
     ) -> crate::data::Result;
-    CmdProcessCommandsNVX(
+    CmdExecuteGeneratedCommandsNV(
         command_buffer: crate::data::CommandBuffer,
-        p_process_commands_info: *const crate::data::CmdProcessCommandsInfoNVX,
+        is_preprocessed: crate::data::Bool32,
+        p_generated_commands_info: *const crate::data::GeneratedCommandsInfoNV,
     );
-    CmdReserveSpaceForCommandsNVX(
+    CmdPreprocessGeneratedCommandsNV(
         command_buffer: crate::data::CommandBuffer,
-        p_reserve_space_info: *const crate::data::CmdReserveSpaceForCommandsInfoNVX,
+        p_generated_commands_info: *const crate::data::GeneratedCommandsInfoNV,
     );
-    CreateIndirectCommandsLayoutNVX(
-        device: crate::data::Device,
-        p_create_info: *const crate::data::IndirectCommandsLayoutCreateInfoNVX,
-        p_allocator: *const crate::data::AllocationCallbacks,
-        p_indirect_commands_layout: *mut crate::data::IndirectCommandsLayoutNVX,
-    ) -> crate::data::Result;
-    DestroyIndirectCommandsLayoutNVX(
-        device: crate::data::Device,
-        indirect_commands_layout: crate::data::IndirectCommandsLayoutNVX,
-        p_allocator: *const crate::data::AllocationCallbacks,
+    CmdBindPipelineShaderGroupNV(
+        command_buffer: crate::data::CommandBuffer,
+        pipeline_bind_point: crate::data::PipelineBindPoint,
+        pipeline: crate::data::Pipeline,
+        group_index: u32,
     );
-    CreateObjectTableNVX(
+    GetGeneratedCommandsMemoryRequirementsNV(
         device: crate::data::Device,
-        p_create_info: *const crate::data::ObjectTableCreateInfoNVX,
-        p_allocator: *const crate::data::AllocationCallbacks,
-        p_object_table: *mut crate::data::ObjectTableNVX,
-    ) -> crate::data::Result;
-    DestroyObjectTableNVX(
-        device: crate::data::Device,
-        object_table: crate::data::ObjectTableNVX,
-        p_allocator: *const crate::data::AllocationCallbacks,
+        p_info: *const crate::data::GeneratedCommandsMemoryRequirementsInfoNV,
+        p_memory_requirements: *mut crate::data::MemoryRequirements2,
     );
-    RegisterObjectsNVX(
+    CreateIndirectCommandsLayoutNV(
         device: crate::data::Device,
-        object_table: crate::data::ObjectTableNVX,
-        object_count: u32,
-        pp_object_table_entries: *const *const crate::data::ObjectTableEntryNVX,
-        p_object_indices: *const u32,
+        p_create_info: *const crate::data::IndirectCommandsLayoutCreateInfoNV,
+        p_allocator: *const crate::data::AllocationCallbacks,
+        p_indirect_commands_layout: *mut crate::data::IndirectCommandsLayoutNV,
     ) -> crate::data::Result;
-    UnregisterObjectsNVX(
+    DestroyIndirectCommandsLayoutNV(
         device: crate::data::Device,
-        object_table: crate::data::ObjectTableNVX,
-        object_count: u32,
-        p_object_entry_types: *const crate::data::ObjectEntryTypeNVX,
-        p_object_indices: *const u32,
-    ) -> crate::data::Result;
-    GetPhysicalDeviceGeneratedCommandsPropertiesNVX(
-        physical_device: crate::data::PhysicalDevice,
-        p_features: *mut crate::data::DeviceGeneratedCommandsFeaturesNVX,
-        p_limits: *mut crate::data::DeviceGeneratedCommandsLimitsNVX,
+        indirect_commands_layout: crate::data::IndirectCommandsLayoutNV,
+        p_allocator: *const crate::data::AllocationCallbacks,
     );
     GetPhysicalDeviceFeatures2(
         physical_device: crate::data::PhysicalDevice,
@@ -7958,31 +8392,60 @@ impl_commands! {
         p_allocator: *const crate::data::AllocationCallbacks,
         p_acceleration_structure: *mut crate::data::AccelerationStructureNV,
     ) -> crate::data::Result;
-    DestroyAccelerationStructureNV(
+    DestroyAccelerationStructureKHR(
         device: crate::data::Device,
-        acceleration_structure: crate::data::AccelerationStructureNV,
+        acceleration_structure: crate::data::AccelerationStructureKHR,
         p_allocator: *const crate::data::AllocationCallbacks,
+    );
+    GetAccelerationStructureMemoryRequirementsKHR(
+        device: crate::data::Device,
+        p_info: *const crate::data::AccelerationStructureMemoryRequirementsInfoKHR,
+        p_memory_requirements: *mut crate::data::MemoryRequirements2,
     );
     GetAccelerationStructureMemoryRequirementsNV(
         device: crate::data::Device,
         p_info: *const crate::data::AccelerationStructureMemoryRequirementsInfoNV,
         p_memory_requirements: *mut crate::data::MemoryRequirements2KHR,
     );
-    BindAccelerationStructureMemoryNV(
+    BindAccelerationStructureMemoryKHR(
         device: crate::data::Device,
         bind_info_count: u32,
-        p_bind_infos: *const crate::data::BindAccelerationStructureMemoryInfoNV,
+        p_bind_infos: *const crate::data::BindAccelerationStructureMemoryInfoKHR,
     ) -> crate::data::Result;
     CmdCopyAccelerationStructureNV(
         command_buffer: crate::data::CommandBuffer,
-        dst: crate::data::AccelerationStructureNV,
-        src: crate::data::AccelerationStructureNV,
-        mode: crate::data::CopyAccelerationStructureModeNV,
+        dst: crate::data::AccelerationStructureKHR,
+        src: crate::data::AccelerationStructureKHR,
+        mode: crate::data::CopyAccelerationStructureModeKHR,
     );
-    CmdWriteAccelerationStructuresPropertiesNV(
+    CmdCopyAccelerationStructureKHR(
+        command_buffer: crate::data::CommandBuffer,
+        p_info: *const crate::data::CopyAccelerationStructureInfoKHR,
+    );
+    CopyAccelerationStructureKHR(
+        device: crate::data::Device,
+        p_info: *const crate::data::CopyAccelerationStructureInfoKHR,
+    ) -> crate::data::Result;
+    CmdCopyAccelerationStructureToMemoryKHR(
+        command_buffer: crate::data::CommandBuffer,
+        p_info: *const crate::data::CopyAccelerationStructureToMemoryInfoKHR,
+    );
+    CopyAccelerationStructureToMemoryKHR(
+        device: crate::data::Device,
+        p_info: *const crate::data::CopyAccelerationStructureToMemoryInfoKHR,
+    ) -> crate::data::Result;
+    CmdCopyMemoryToAccelerationStructureKHR(
+        command_buffer: crate::data::CommandBuffer,
+        p_info: *const crate::data::CopyMemoryToAccelerationStructureInfoKHR,
+    );
+    CopyMemoryToAccelerationStructureKHR(
+        device: crate::data::Device,
+        p_info: *const crate::data::CopyMemoryToAccelerationStructureInfoKHR,
+    ) -> crate::data::Result;
+    CmdWriteAccelerationStructuresPropertiesKHR(
         command_buffer: crate::data::CommandBuffer,
         acceleration_structure_count: u32,
-        p_acceleration_structures: *const crate::data::AccelerationStructureNV,
+        p_acceleration_structures: *const crate::data::AccelerationStructureKHR,
         query_type: crate::data::QueryType,
         query_pool: crate::data::QueryPool,
         first_query: u32,
@@ -7993,10 +8456,29 @@ impl_commands! {
         instance_data: crate::data::Buffer,
         instance_offset: crate::data::DeviceSize,
         update: crate::data::Bool32,
-        dst: crate::data::AccelerationStructureNV,
-        src: crate::data::AccelerationStructureNV,
+        dst: crate::data::AccelerationStructureKHR,
+        src: crate::data::AccelerationStructureKHR,
         scratch: crate::data::Buffer,
         scratch_offset: crate::data::DeviceSize,
+    );
+    WriteAccelerationStructuresPropertiesKHR(
+        device: crate::data::Device,
+        acceleration_structure_count: u32,
+        p_acceleration_structures: *const crate::data::AccelerationStructureKHR,
+        query_type: crate::data::QueryType,
+        data_size: usize,
+        p_data: *mut c_void,
+        stride: usize,
+    ) -> crate::data::Result;
+    CmdTraceRaysKHR(
+        command_buffer: crate::data::CommandBuffer,
+        p_raygen_shader_binding_table: *const crate::data::StridedBufferRegionKHR,
+        p_miss_shader_binding_table: *const crate::data::StridedBufferRegionKHR,
+        p_hit_shader_binding_table: *const crate::data::StridedBufferRegionKHR,
+        p_callable_shader_binding_table: *const crate::data::StridedBufferRegionKHR,
+        width: u32,
+        height: u32,
+        depth: u32,
     );
     CmdTraceRaysNV(
         command_buffer: crate::data::CommandBuffer,
@@ -8015,7 +8497,15 @@ impl_commands! {
         height: u32,
         depth: u32,
     );
-    GetRayTracingShaderGroupHandlesNV(
+    GetRayTracingShaderGroupHandlesKHR(
+        device: crate::data::Device,
+        pipeline: crate::data::Pipeline,
+        first_group: u32,
+        group_count: u32,
+        data_size: usize,
+        p_data: *mut c_void,
+    ) -> crate::data::Result;
+    GetRayTracingCaptureReplayShaderGroupHandlesKHR(
         device: crate::data::Device,
         pipeline: crate::data::Pipeline,
         first_group: u32,
@@ -8025,7 +8515,7 @@ impl_commands! {
     ) -> crate::data::Result;
     GetAccelerationStructureHandleNV(
         device: crate::data::Device,
-        acceleration_structure: crate::data::AccelerationStructureNV,
+        acceleration_structure: crate::data::AccelerationStructureKHR,
         data_size: usize,
         p_data: *mut c_void,
     ) -> crate::data::Result;
@@ -8037,15 +8527,41 @@ impl_commands! {
         p_allocator: *const crate::data::AllocationCallbacks,
         p_pipelines: *mut crate::data::Pipeline,
     ) -> crate::data::Result;
+    CreateRayTracingPipelinesKHR(
+        device: crate::data::Device,
+        pipeline_cache: crate::data::PipelineCache,
+        create_info_count: u32,
+        p_create_infos: *const crate::data::RayTracingPipelineCreateInfoKHR,
+        p_allocator: *const crate::data::AllocationCallbacks,
+        p_pipelines: *mut crate::data::Pipeline,
+    ) -> crate::data::Result;
     GetPhysicalDeviceCooperativeMatrixPropertiesNV(
         physical_device: crate::data::PhysicalDevice,
         p_property_count: *mut u32,
         p_properties: *mut crate::data::CooperativeMatrixPropertiesNV,
     ) -> crate::data::Result;
+    CmdTraceRaysIndirectKHR(
+        command_buffer: crate::data::CommandBuffer,
+        p_raygen_shader_binding_table: *const crate::data::StridedBufferRegionKHR,
+        p_miss_shader_binding_table: *const crate::data::StridedBufferRegionKHR,
+        p_hit_shader_binding_table: *const crate::data::StridedBufferRegionKHR,
+        p_callable_shader_binding_table: *const crate::data::StridedBufferRegionKHR,
+        buffer: crate::data::Buffer,
+        offset: crate::data::DeviceSize,
+    );
+    GetDeviceAccelerationStructureCompatibilityKHR(
+        device: crate::data::Device,
+        version: *const crate::data::AccelerationStructureVersionKHR,
+    ) -> crate::data::Result;
     GetImageViewHandleNVX(
         device: crate::data::Device,
         p_info: *const crate::data::ImageViewHandleInfoNVX,
     ) -> u32;
+    GetImageViewAddressNVX(
+        device: crate::data::Device,
+        image_view: crate::data::ImageView,
+        p_properties: *mut crate::data::ImageViewAddressPropertiesNVX,
+    ) -> crate::data::Result;
     GetPhysicalDeviceSurfacePresentModes2EXT(
         physical_device: crate::data::PhysicalDevice,
         p_surface_info: *const crate::data::PhysicalDeviceSurfaceInfo2KHR,
@@ -8177,6 +8693,141 @@ impl_commands! {
         p_tool_count: *mut u32,
         p_tool_properties: *mut crate::data::PhysicalDeviceToolPropertiesEXT,
     ) -> crate::data::Result;
+    CreateAccelerationStructureKHR(
+        device: crate::data::Device,
+        p_create_info: *const crate::data::AccelerationStructureCreateInfoKHR,
+        p_allocator: *const crate::data::AllocationCallbacks,
+        p_acceleration_structure: *mut crate::data::AccelerationStructureKHR,
+    ) -> crate::data::Result;
+    CmdBuildAccelerationStructureKHR(
+        command_buffer: crate::data::CommandBuffer,
+        info_count: u32,
+        p_infos: *const crate::data::AccelerationStructureBuildGeometryInfoKHR,
+        pp_offset_infos: *const *const crate::data::AccelerationStructureBuildOffsetInfoKHR,
+    );
+    CmdBuildAccelerationStructureIndirectKHR(
+        command_buffer: crate::data::CommandBuffer,
+        p_info: *const crate::data::AccelerationStructureBuildGeometryInfoKHR,
+        indirect_buffer: crate::data::Buffer,
+        indirect_offset: crate::data::DeviceSize,
+        indirect_stride: u32,
+    );
+    BuildAccelerationStructureKHR(
+        device: crate::data::Device,
+        info_count: u32,
+        p_infos: *const crate::data::AccelerationStructureBuildGeometryInfoKHR,
+        pp_offset_infos: *const *const crate::data::AccelerationStructureBuildOffsetInfoKHR,
+    ) -> crate::data::Result;
+    GetAccelerationStructureDeviceAddressKHR(
+        device: crate::data::Device,
+        p_info: *const crate::data::AccelerationStructureDeviceAddressInfoKHR,
+    ) -> crate::data::DeviceAddress;
+    CreateDeferredOperationKHR(
+        device: crate::data::Device,
+        p_allocator: *const crate::data::AllocationCallbacks,
+        p_deferred_operation: *mut crate::data::DeferredOperationKHR,
+    ) -> crate::data::Result;
+    DestroyDeferredOperationKHR(
+        device: crate::data::Device,
+        operation: crate::data::DeferredOperationKHR,
+        p_allocator: *const crate::data::AllocationCallbacks,
+    );
+    GetDeferredOperationMaxConcurrencyKHR(
+        device: crate::data::Device,
+        operation: crate::data::DeferredOperationKHR,
+    ) -> u32;
+    GetDeferredOperationResultKHR(
+        device: crate::data::Device,
+        operation: crate::data::DeferredOperationKHR,
+    ) -> crate::data::Result;
+    DeferredOperationJoinKHR(
+        device: crate::data::Device,
+        operation: crate::data::DeferredOperationKHR,
+    ) -> crate::data::Result;
+    CmdSetCullModeEXT(
+        command_buffer: crate::data::CommandBuffer,
+        cull_mode: crate::data::CullModeFlags,
+    );
+    CmdSetFrontFaceEXT(
+        command_buffer: crate::data::CommandBuffer,
+        front_face: crate::data::FrontFace,
+    );
+    CmdSetPrimitiveTopologyEXT(
+        command_buffer: crate::data::CommandBuffer,
+        primitive_topology: crate::data::PrimitiveTopology,
+    );
+    CmdSetViewportWithCountEXT(
+        command_buffer: crate::data::CommandBuffer,
+        viewport_count: u32,
+        p_viewports: *const crate::data::Viewport,
+    );
+    CmdSetScissorWithCountEXT(
+        command_buffer: crate::data::CommandBuffer,
+        scissor_count: u32,
+        p_scissors: *const crate::data::Rect2D,
+    );
+    CmdBindVertexBuffers2EXT(
+        command_buffer: crate::data::CommandBuffer,
+        first_binding: u32,
+        binding_count: u32,
+        p_buffers: *const crate::data::Buffer,
+        p_offsets: *const crate::data::DeviceSize,
+        p_sizes: *const crate::data::DeviceSize,
+        p_strides: *const crate::data::DeviceSize,
+    );
+    CmdSetDepthTestEnableEXT(
+        command_buffer: crate::data::CommandBuffer,
+        depth_test_enable: crate::data::Bool32,
+    );
+    CmdSetDepthWriteEnableEXT(
+        command_buffer: crate::data::CommandBuffer,
+        depth_write_enable: crate::data::Bool32,
+    );
+    CmdSetDepthCompareOpEXT(
+        command_buffer: crate::data::CommandBuffer,
+        depth_compare_op: crate::data::CompareOp,
+    );
+    CmdSetDepthBoundsTestEnableEXT(
+        command_buffer: crate::data::CommandBuffer,
+        depth_bounds_test_enable: crate::data::Bool32,
+    );
+    CmdSetStencilTestEnableEXT(
+        command_buffer: crate::data::CommandBuffer,
+        stencil_test_enable: crate::data::Bool32,
+    );
+    CmdSetStencilOpEXT(
+        command_buffer: crate::data::CommandBuffer,
+        face_mask: crate::data::StencilFaceFlags,
+        fail_op: crate::data::StencilOp,
+        pass_op: crate::data::StencilOp,
+        depth_fail_op: crate::data::StencilOp,
+        compare_op: crate::data::CompareOp,
+    );
+    CreatePrivateDataSlotEXT(
+        device: crate::data::Device,
+        p_create_info: *const crate::data::PrivateDataSlotCreateInfoEXT,
+        p_allocator: *const crate::data::AllocationCallbacks,
+        p_private_data_slot: *mut crate::data::PrivateDataSlotEXT,
+    ) -> crate::data::Result;
+    DestroyPrivateDataSlotEXT(
+        device: crate::data::Device,
+        private_data_slot: crate::data::PrivateDataSlotEXT,
+        p_allocator: *const crate::data::AllocationCallbacks,
+    );
+    SetPrivateDataEXT(
+        device: crate::data::Device,
+        object_type: crate::data::ObjectType,
+        object_handle: u64,
+        private_data_slot: crate::data::PrivateDataSlotEXT,
+        data: u64,
+    ) -> crate::data::Result;
+    GetPrivateDataEXT(
+        device: crate::data::Device,
+        object_type: crate::data::ObjectType,
+        object_handle: u64,
+        private_data_slot: crate::data::PrivateDataSlotEXT,
+        p_data: *mut u64,
+    );
 }
 
 impl_extensions! {
@@ -8243,7 +8894,6 @@ impl_extensions! {
     KHR_16BIT_STORAGE_EXTENSION_NAME = VK_KHR_16bit_storage;
     KHR_INCREMENTAL_PRESENT_EXTENSION_NAME = VK_KHR_incremental_present;
     KHR_DESCRIPTOR_UPDATE_TEMPLATE_EXTENSION_NAME = VK_KHR_descriptor_update_template;
-    NVX_DEVICE_GENERATED_COMMANDS_EXTENSION_NAME = VK_NVX_device_generated_commands;
     NV_CLIP_SPACE_W_SCALING_EXTENSION_NAME = VK_NV_clip_space_w_scaling;
     EXT_DIRECT_MODE_DISPLAY_EXTENSION_NAME = VK_EXT_direct_mode_display;
     EXT_ACQUIRE_XLIB_DISPLAY_EXTENSION_NAME = VK_EXT_acquire_xlib_display;
@@ -8292,6 +8942,7 @@ impl_extensions! {
     KHR_IMAGE_FORMAT_LIST_EXTENSION_NAME = VK_KHR_image_format_list;
     EXT_BLEND_OPERATION_ADVANCED_EXTENSION_NAME = VK_EXT_blend_operation_advanced;
     NV_FRAGMENT_COVERAGE_TO_COLOR_EXTENSION_NAME = VK_NV_fragment_coverage_to_color;
+    KHR_RAY_TRACING_EXTENSION_NAME = VK_KHR_ray_tracing;
     NV_FRAMEBUFFER_MIXED_SAMPLES_EXTENSION_NAME = VK_NV_framebuffer_mixed_samples;
     NV_FILL_RECTANGLE_EXTENSION_NAME = VK_NV_fill_rectangle;
     NV_SHADER_SM_BUILTINS_EXTENSION_NAME = VK_NV_shader_sm_builtins;
@@ -8308,6 +8959,7 @@ impl_extensions! {
     KHR_MAINTENANCE3_EXTENSION_NAME = VK_KHR_maintenance3;
     KHR_DRAW_INDIRECT_COUNT_EXTENSION_NAME = VK_KHR_draw_indirect_count;
     EXT_FILTER_CUBIC_EXTENSION_NAME = VK_EXT_filter_cubic;
+    QCOM_RENDER_PASS_SHADER_RESOLVE_EXTENSION_NAME = VK_QCOM_render_pass_shader_resolve;
     EXT_GLOBAL_PRIORITY_EXTENSION_NAME = VK_EXT_global_priority;
     KHR_SHADER_SUBGROUP_EXTENDED_TYPES_EXTENSION_NAME = VK_KHR_shader_subgroup_extended_types;
     KHR_8BIT_STORAGE_EXTENSION_NAME = VK_KHR_8bit_storage;
@@ -8369,8 +9021,21 @@ impl_extensions! {
     EXT_LINE_RASTERIZATION_EXTENSION_NAME = VK_EXT_line_rasterization;
     EXT_HOST_QUERY_RESET_EXTENSION_NAME = VK_EXT_host_query_reset;
     EXT_INDEX_TYPE_UINT8_EXTENSION_NAME = VK_EXT_index_type_uint8;
+    EXT_EXTENDED_DYNAMIC_STATE_EXTENSION_NAME = VK_EXT_extended_dynamic_state;
+    KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME = VK_KHR_deferred_host_operations;
     KHR_PIPELINE_EXECUTABLE_PROPERTIES_EXTENSION_NAME = VK_KHR_pipeline_executable_properties;
     EXT_SHADER_DEMOTE_TO_HELPER_INVOCATION_EXTENSION_NAME = VK_EXT_shader_demote_to_helper_invocation;
+    NV_DEVICE_GENERATED_COMMANDS_EXTENSION_NAME = VK_NV_device_generated_commands;
     EXT_TEXEL_BUFFER_ALIGNMENT_EXTENSION_NAME = VK_EXT_texel_buffer_alignment;
+    QCOM_RENDER_PASS_TRANSFORM_EXTENSION_NAME = VK_QCOM_render_pass_transform;
+    EXT_ROBUSTNESS2_EXTENSION_NAME = VK_EXT_robustness2;
+    EXT_CUSTOM_BORDER_COLOR_EXTENSION_NAME = VK_EXT_custom_border_color;
     GOOGLE_USER_TYPE_EXTENSION_NAME = VK_GOOGLE_user_type;
+    KHR_PIPELINE_LIBRARY_EXTENSION_NAME = VK_KHR_pipeline_library;
+    KHR_SHADER_NON_SEMANTIC_INFO_EXTENSION_NAME = VK_KHR_shader_non_semantic_info;
+    EXT_PRIVATE_DATA_EXTENSION_NAME = VK_EXT_private_data;
+    EXT_PIPELINE_CREATION_CACHE_CONTROL_EXTENSION_NAME = VK_EXT_pipeline_creation_cache_control;
+    NV_DEVICE_DIAGNOSTICS_CONFIG_EXTENSION_NAME = VK_NV_device_diagnostics_config;
+    QCOM_RENDER_PASS_STORE_OPS_EXTENSION_NAME = VK_QCOM_render_pass_store_ops;
+    EXT_DIRECTFB_SURFACE_EXTENSION_NAME = VK_EXT_directfb_surface;
 }

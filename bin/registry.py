@@ -188,7 +188,7 @@ def title_to_all_caps(title):
     return TITLE_WORDS_REGEX.sub(lambda s: '_' + s.group(0), title).upper()
 
 
-@dataclass
+@dataclass(frozen=True)
 class Name:
     namespace: str
     base: str
@@ -491,8 +491,11 @@ class Registry:
 
         if category == 'basetype':
             name = Name.from_ident(elem.find('name').text)
-            target = Name.from_ident(elem.find('type').text)
-            self.types.append(TypeAlias(name, target))
+            if (ty := elem.find('type')) is not None:
+                target = Name.from_ident(ty.text)
+                self.types.append(TypeAlias(name, target))
+            else:
+                self.externs.append(Extern(name, header=None))
         elif category == 'enum':
             self.parse_enum(elem)
         elif category == 'bitmask':
