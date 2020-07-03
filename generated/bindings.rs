@@ -3891,13 +3891,20 @@ impl_aggregates! {
         s_type: crate::data::StructureType = crate::data::StructureType::ANDROID_SURFACE_CREATE_INFO_KHR,
         p_next: *const c_void,
         flags: crate::data::AndroidSurfaceCreateFlagsKHR,
-        window: *mut crate::data::ANativeWindow,
+        window: *mut ANativeWindow,
     };
     struct ViSurfaceCreateInfoNN {
         s_type: crate::data::StructureType = crate::data::StructureType::VI_SURFACE_CREATE_INFO_NN,
         p_next: *const c_void,
         flags: crate::data::ViSurfaceCreateFlagsNN,
         window: *mut c_void,
+    };
+    struct XlibSurfaceCreateInfoKHR {
+        s_type: crate::data::StructureType = crate::data::StructureType::XLIB_SURFACE_CREATE_INFO_KHR,
+        p_next: *const c_void,
+        flags: crate::data::XlibSurfaceCreateFlagsKHR,
+        dpy: *mut Display,
+        window: Window,
     };
     struct SurfaceFormatKHR {
         format: crate::data::Format,
@@ -4663,7 +4670,7 @@ impl_aggregates! {
         s_type: crate::data::StructureType = crate::data::StructureType::METAL_SURFACE_CREATE_INFO_EXT,
         p_next: *const c_void,
         flags: crate::data::MetalSurfaceCreateFlagsEXT,
-        p_layer: *const crate::data::CAMetalLayer,
+        p_layer: *const CAMetalLayer,
     };
     struct ViewportWScalingNV {
         xcoeff: c_float,
@@ -5452,7 +5459,7 @@ impl_aggregates! {
     struct ImportAndroidHardwareBufferInfoANDROID {
         s_type: crate::data::StructureType = crate::data::StructureType::IMPORT_ANDROID_HARDWARE_BUFFER_INFO_ANDROID,
         p_next: *const c_void,
-        buffer: *mut crate::data::AHardwareBuffer,
+        buffer: *mut AHardwareBuffer,
     };
     struct AndroidHardwareBufferUsageANDROID {
         s_type: crate::data::StructureType = crate::data::StructureType::ANDROID_HARDWARE_BUFFER_USAGE_ANDROID,
@@ -7713,6 +7720,18 @@ impl_commands! {
         physical_device: crate::data::PhysicalDevice,
         queue_family_index: u32,
     ) -> crate::data::Bool32;
+    CreateXlibSurfaceKHR(
+        instance: crate::data::Instance,
+        p_create_info: *const crate::data::XlibSurfaceCreateInfoKHR,
+        p_allocator: *const crate::data::AllocationCallbacks,
+        p_surface: *mut crate::data::SurfaceKHR,
+    ) -> crate::data::Result;
+    GetPhysicalDeviceXlibPresentationSupportKHR(
+        physical_device: crate::data::PhysicalDevice,
+        queue_family_index: u32,
+        dpy: *mut Display,
+        visual_id: VisualID,
+    ) -> crate::data::Bool32;
     CreateDebugReportCallbackEXT(
         instance: crate::data::Instance,
         p_create_info: *const crate::data::DebugReportCallbackCreateInfoEXT,
@@ -7887,6 +7906,17 @@ impl_commands! {
     ReleaseDisplayEXT(
         physical_device: crate::data::PhysicalDevice,
         display: crate::data::DisplayKHR,
+    ) -> crate::data::Result;
+    AcquireXlibDisplayEXT(
+        physical_device: crate::data::PhysicalDevice,
+        dpy: *mut Display,
+        display: crate::data::DisplayKHR,
+    ) -> crate::data::Result;
+    GetRandROutputDisplayEXT(
+        physical_device: crate::data::PhysicalDevice,
+        dpy: *mut Display,
+        rr_output: RROutput,
+        p_display: *mut crate::data::DisplayKHR,
     ) -> crate::data::Result;
     DisplayPowerControlEXT(
         device: crate::data::Device,
@@ -8297,13 +8327,13 @@ impl_commands! {
     ) -> crate::data::Result;
     GetAndroidHardwareBufferPropertiesANDROID(
         device: crate::data::Device,
-        buffer: *const crate::data::AHardwareBuffer,
+        buffer: *const AHardwareBuffer,
         p_properties: *mut crate::data::AndroidHardwareBufferPropertiesANDROID,
     ) -> crate::data::Result;
     GetMemoryAndroidHardwareBufferANDROID(
         device: crate::data::Device,
         p_info: *const crate::data::MemoryGetAndroidHardwareBufferInfoANDROID,
-        p_buffer: *mut *mut crate::data::AHardwareBuffer,
+        p_buffer: *mut *mut AHardwareBuffer,
     ) -> crate::data::Result;
     CmdDrawIndirectCount(
         command_buffer: crate::data::CommandBuffer,

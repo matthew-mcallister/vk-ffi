@@ -196,11 +196,10 @@ class Name:
     def __str__(self):
         return self.namespace + self.base
 
-    PREFIX_REGEX = re.compile('^(?:vk|Vk|VK_|PFN_vk|A|CA)')
+    PREFIX_REGEX = re.compile('^(?:vk|Vk|VK_|PFN_vk)')
 
     def from_ident(ident):
-        m = Name.PREFIX_REGEX.match(ident)
-        if m:
+        if m := Name.PREFIX_REGEX.match(ident):
             return Name(namespace=ident[:m.end()], base=ident[m.end():])
         else:
             return Name(namespace='', base=ident)

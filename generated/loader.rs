@@ -324,6 +324,29 @@ impl_table! {
             takes_handle: false,
         },
         {
+            name: pfn_create_xlib_surface_khr,
+            method_name: create_xlib_surface_khr,
+            ptr: CreateXlibSurfaceKHR,
+            signature: (
+                p_create_info: *const XlibSurfaceCreateInfoKHR,
+                p_allocator: *const AllocationCallbacks,
+                p_surface: *mut SurfaceKHR,
+            ) -> Result,
+            takes_handle: true,
+        },
+        {
+            name: pfn_get_physical_device_xlib_presentation_support_khr,
+            method_name: get_physical_device_xlib_presentation_support_khr,
+            ptr: GetPhysicalDeviceXlibPresentationSupportKHR,
+            signature: (
+                physical_device: PhysicalDevice,
+                queue_family_index: u32,
+                dpy: *mut Display,
+                visual_id: VisualID,
+            ) -> Bool32,
+            takes_handle: false,
+        },
+        {
             name: pfn_create_debug_report_callback_ext,
             method_name: create_debug_report_callback_ext,
             ptr: CreateDebugReportCallbackEXT,
@@ -490,6 +513,29 @@ impl_table! {
             signature: (
                 physical_device: PhysicalDevice,
                 display: DisplayKHR,
+            ) -> Result,
+            takes_handle: false,
+        },
+        {
+            name: pfn_acquire_xlib_display_ext,
+            method_name: acquire_xlib_display_ext,
+            ptr: AcquireXlibDisplayEXT,
+            signature: (
+                physical_device: PhysicalDevice,
+                dpy: *mut Display,
+                display: DisplayKHR,
+            ) -> Result,
+            takes_handle: false,
+        },
+        {
+            name: pfn_get_rand_r_output_display_ext,
+            method_name: get_rand_r_output_display_ext,
+            ptr: GetRandROutputDisplayEXT,
+            signature: (
+                physical_device: PhysicalDevice,
+                dpy: *mut Display,
+                rr_output: RROutput,
+                p_display: *mut DisplayKHR,
             ) -> Result,
             takes_handle: false,
         },

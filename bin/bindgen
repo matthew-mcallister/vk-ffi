@@ -78,8 +78,6 @@ class Renderer:
             return self.render_pfn(name.base)
         elif name.namespace == 'Vk':
             return self.render_data(name.base)
-        elif name.namespace:
-            return self.render_data(str(name))
         else:
             return self.BUILTIN_MAP.get(name.base, name.base)
 
@@ -225,6 +223,12 @@ class BindingsVisitor:
     """)
 
 
+    AVAILABLE_HEADERS = [
+        'X11/Xlib.h',
+        'X11/extensions/Xrandr.h',
+    ]
+
+
     def __init__(self):
         self.enums = []
         self.externs = []
@@ -265,10 +269,10 @@ class BindingsVisitor:
 
 
     def visit_extern(self, extern):
-        if extern.header:
-            self.excised.add(extern.name)
-        else:
+        if not extern.header:
             self.externs.append(extern.name)
+        elif extern.header not in self.AVAILABLE_HEADERS:
+            self.excised.add(extern.name)
 
 
     def visit_extension(self, extension):
@@ -284,13 +288,13 @@ class BindingsVisitor:
                 return f'_{ident}'
             return ident
 
-        members = (
+        members = [
             {
                 'name': ensure_valid(member.name.base),
                 'value': str(member.value),
             }
             for member in enum.members
-        )
+        ]
 
         self.enums.append({
             'name': enum.name.base,

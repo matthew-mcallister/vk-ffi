@@ -285,6 +285,7 @@ macro_rules! impl_aggregates {
     ($($ty:ident $name:ident $body:tt;)*) => {
         mod aggregates {
             use std::os::raw::*;
+            use crate::externs::*;
             $(impl_aggregate!($ty $name $body);)*
         }
     }
@@ -310,6 +311,7 @@ macro_rules! impl_commands {
         mod cmds {
             use std::ffi::c_void;
             use std::os::raw::*;
+            use crate::externs::*;
             $(
                 pub type $name =
                     unsafe extern "C" fn($($arg: $type,)*) $(-> $ret)*;
@@ -324,6 +326,8 @@ macro_rules! impl_externs {
             extern {
                 $(pub type $name;)*
             }
+
+            pub use crate::system_headers::*;
         }
     }
 }
@@ -346,6 +350,18 @@ mod data {
 pub mod pfn {
     pub use crate::fn_ptrs::*;
     pub use crate::cmds::*;
+}
+
+// The following modules define types available in system headers.
+// TODO: None of this is tested; it's basically skeleton code.
+mod system_headers {
+    // X11 stuff
+    extern {
+        pub type Display;
+    }
+    pub type RROutput = usize;
+    pub type VisualID = usize;
+    pub type Window = usize;
 }
 
 pub use data::*;
