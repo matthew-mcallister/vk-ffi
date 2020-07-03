@@ -383,6 +383,7 @@ pub const SUBPASS_EXTERNAL: u32 = !0u32;
 
 pub const API_VERSION_1_0: u32 = crate::make_version!(1, 0, 0);
 pub const API_VERSION_1_1: u32 = crate::make_version!(1, 1, 0);
+pub const API_VERSION_1_2: u32 = crate::make_version!(1, 2, 0);
 
 #[cfg(feature = "reflection")]
 pub mod reflection {
