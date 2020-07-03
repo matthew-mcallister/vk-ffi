@@ -78,6 +78,8 @@ class Renderer:
             return self.render_pfn(name.base)
         elif name.namespace == 'Vk':
             return self.render_data(name.base)
+        elif name.namespace:
+            return self.render_data(str(name))
         else:
             return self.BUILTIN_MAP.get(name.base, name.base)
 
@@ -214,11 +216,18 @@ class BindingsVisitor:
             {{ext['name']}} = {{ext['value']}};
           {% endfor %}
         }
+
+        impl_externs! {
+          {% for extern in bindings.externs %}
+            {{extern}},
+          {% endfor %}
+        }
     """)
 
 
     def __init__(self):
         self.enums = []
+        self.externs = []
         self.aliases = []
         self.handles = []
         self.func_pointers = []
@@ -244,7 +253,7 @@ class BindingsVisitor:
 
     def visit(self, reg):
         for extern in reg.externs:
-            self.excised.add(extern.name)
+            self.visit_extern(extern)
         for enum in reg.enums:
             self.visit_enum(enum)
         for ty in reg.types:
@@ -253,6 +262,13 @@ class BindingsVisitor:
             self.visit_command(command)
         for extension in reg.extensions:
             self.visit_extension(extension)
+
+
+    def visit_extern(self, extern):
+        if extern.header:
+            self.excised.add(extern.name)
+        else:
+            self.externs.append(extern.name)
 
 
     def visit_extension(self, extension):

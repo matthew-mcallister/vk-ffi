@@ -196,14 +196,14 @@ class Name:
     def __str__(self):
         return self.namespace + self.base
 
-    PREFIX_REGEX = re.compile('^(?:vk|Vk|VK_|PFN_vk)')
+    PREFIX_REGEX = re.compile('^(?:vk|Vk|VK_|PFN_vk|A|CA)')
 
     def from_ident(ident):
         m = Name.PREFIX_REGEX.match(ident)
         if m:
             return Name(namespace=ident[:m.end()], base=ident[m.end():])
         else:
-            return Name(namespace=None, base=ident)
+            return Name(namespace='', base=ident)
 
 
 @dataclass
@@ -400,12 +400,7 @@ class Registry:
     def __init__(self, **kwargs):
         self.builtins = []
         self.enums = {}
-        self.externs = [
-            # These are unique definitions in the registry
-            Extern(name='ANativeWindow', header=None),
-            Extern(name='AHardwareBuffer', header=None),
-            Extern(name='CAMetalLayer', header=None),
-        ]
+        self.externs = []
         self.types = []
         self.commands = []
         self.extensions = []
@@ -580,14 +575,10 @@ class Registry:
 
     def parse_opaque_type(self, elem):
         name = elem.attrib['name']
-        try:
-            requires = elem.attrib['requires']
-            if requires != 'vk_platform':
-                self.externs.append(Extern(name, requires))
-                return
-        except KeyError:
-            pass
-        self.builtins.append(name)
+        if (requires := elem.get('requires')) and requires != 'vk_platform':
+            self.externs.append(Extern(name, header=requires))
+        else:
+            self.builtins.append(name)
 
 
     def parse_command(self, elem):

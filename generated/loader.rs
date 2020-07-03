@@ -153,6 +153,17 @@ impl_table! {
             takes_handle: false,
         },
         {
+            name: pfn_create_android_surface_khr,
+            method_name: create_android_surface_khr,
+            ptr: CreateAndroidSurfaceKHR,
+            signature: (
+                p_create_info: *const AndroidSurfaceCreateInfoKHR,
+                p_allocator: *const AllocationCallbacks,
+                p_surface: *mut SurfaceKHR,
+            ) -> Result,
+            takes_handle: true,
+        },
+        {
             name: pfn_get_physical_device_display_properties_khr,
             method_name: get_physical_device_display_properties_khr,
             ptr: GetPhysicalDeviceDisplayPropertiesKHR,
@@ -532,6 +543,17 @@ impl_table! {
             ptr: CreateMacOSSurfaceMVK,
             signature: (
                 p_create_info: *const MacOSSurfaceCreateInfoMVK,
+                p_allocator: *const AllocationCallbacks,
+                p_surface: *mut SurfaceKHR,
+            ) -> Result,
+            takes_handle: true,
+        },
+        {
+            name: pfn_create_metal_surface_ext,
+            method_name: create_metal_surface_ext,
+            ptr: CreateMetalSurfaceEXT,
+            signature: (
+                p_create_info: *const MetalSurfaceCreateInfoEXT,
                 p_allocator: *const AllocationCallbacks,
                 p_surface: *mut SurfaceKHR,
             ) -> Result,
@@ -3026,6 +3048,26 @@ impl_table! {
             ptr: SignalSemaphore,
             signature: (
                 p_signal_info: *const SemaphoreSignalInfo,
+            ) -> Result,
+            takes_handle: true,
+        },
+        {
+            name: pfn_get_android_hardware_buffer_properties_android,
+            method_name: get_android_hardware_buffer_properties_android,
+            ptr: GetAndroidHardwareBufferPropertiesANDROID,
+            signature: (
+                buffer: *const AHardwareBuffer,
+                p_properties: *mut AndroidHardwareBufferPropertiesANDROID,
+            ) -> Result,
+            takes_handle: true,
+        },
+        {
+            name: pfn_get_memory_android_hardware_buffer_android,
+            method_name: get_memory_android_hardware_buffer_android,
+            ptr: GetMemoryAndroidHardwareBufferANDROID,
+            signature: (
+                p_info: *const MemoryGetAndroidHardwareBufferInfoANDROID,
+                p_buffer: *mut *mut AHardwareBuffer,
             ) -> Result,
             takes_handle: true,
         },

@@ -3887,6 +3887,12 @@ impl_aggregates! {
         supported_composite_alpha: crate::data::CompositeAlphaFlagsKHR,
         supported_usage_flags: crate::data::ImageUsageFlags,
     };
+    struct AndroidSurfaceCreateInfoKHR {
+        s_type: crate::data::StructureType = crate::data::StructureType::ANDROID_SURFACE_CREATE_INFO_KHR,
+        p_next: *const c_void,
+        flags: crate::data::AndroidSurfaceCreateFlagsKHR,
+        window: *mut crate::data::ANativeWindow,
+    };
     struct ViSurfaceCreateInfoNN {
         s_type: crate::data::StructureType = crate::data::StructureType::VI_SURFACE_CREATE_INFO_NN,
         p_next: *const c_void,
@@ -4652,6 +4658,12 @@ impl_aggregates! {
         p_next: *const c_void,
         flags: crate::data::MacOSSurfaceCreateFlagsMVK,
         p_view: *const c_void,
+    };
+    struct MetalSurfaceCreateInfoEXT {
+        s_type: crate::data::StructureType = crate::data::StructureType::METAL_SURFACE_CREATE_INFO_EXT,
+        p_next: *const c_void,
+        flags: crate::data::MetalSurfaceCreateFlagsEXT,
+        p_layer: *const crate::data::CAMetalLayer,
     };
     struct ViewportWScalingNV {
         xcoeff: c_float,
@@ -5436,6 +5448,11 @@ impl_aggregates! {
         pci_bus: u32,
         pci_device: u32,
         pci_function: u32,
+    };
+    struct ImportAndroidHardwareBufferInfoANDROID {
+        s_type: crate::data::StructureType = crate::data::StructureType::IMPORT_ANDROID_HARDWARE_BUFFER_INFO_ANDROID,
+        p_next: *const c_void,
+        buffer: *mut crate::data::AHardwareBuffer,
     };
     struct AndroidHardwareBufferUsageANDROID {
         s_type: crate::data::StructureType = crate::data::StructureType::ANDROID_HARDWARE_BUFFER_USAGE_ANDROID,
@@ -7575,6 +7592,12 @@ impl_commands! {
         command_buffer_count: u32,
         p_command_buffers: *const crate::data::CommandBuffer,
     );
+    CreateAndroidSurfaceKHR(
+        instance: crate::data::Instance,
+        p_create_info: *const crate::data::AndroidSurfaceCreateInfoKHR,
+        p_allocator: *const crate::data::AllocationCallbacks,
+        p_surface: *mut crate::data::SurfaceKHR,
+    ) -> crate::data::Result;
     GetPhysicalDeviceDisplayPropertiesKHR(
         physical_device: crate::data::PhysicalDevice,
         p_property_count: *mut u32,
@@ -8006,6 +8029,12 @@ impl_commands! {
         p_allocator: *const crate::data::AllocationCallbacks,
         p_surface: *mut crate::data::SurfaceKHR,
     ) -> crate::data::Result;
+    CreateMetalSurfaceEXT(
+        instance: crate::data::Instance,
+        p_create_info: *const crate::data::MetalSurfaceCreateInfoEXT,
+        p_allocator: *const crate::data::AllocationCallbacks,
+        p_surface: *mut crate::data::SurfaceKHR,
+    ) -> crate::data::Result;
     CmdSetViewportWScalingNV(
         command_buffer: crate::data::CommandBuffer,
         first_viewport: u32,
@@ -8265,6 +8294,16 @@ impl_commands! {
     SignalSemaphore(
         device: crate::data::Device,
         p_signal_info: *const crate::data::SemaphoreSignalInfo,
+    ) -> crate::data::Result;
+    GetAndroidHardwareBufferPropertiesANDROID(
+        device: crate::data::Device,
+        buffer: *const crate::data::AHardwareBuffer,
+        p_properties: *mut crate::data::AndroidHardwareBufferPropertiesANDROID,
+    ) -> crate::data::Result;
+    GetMemoryAndroidHardwareBufferANDROID(
+        device: crate::data::Device,
+        p_info: *const crate::data::MemoryGetAndroidHardwareBufferInfoANDROID,
+        p_buffer: *mut *mut crate::data::AHardwareBuffer,
     ) -> crate::data::Result;
     CmdDrawIndirectCount(
         command_buffer: crate::data::CommandBuffer,
@@ -9038,4 +9077,10 @@ impl_extensions! {
     NV_DEVICE_DIAGNOSTICS_CONFIG_EXTENSION_NAME = VK_NV_device_diagnostics_config;
     QCOM_RENDER_PASS_STORE_OPS_EXTENSION_NAME = VK_QCOM_render_pass_store_ops;
     EXT_DIRECTFB_SURFACE_EXTENSION_NAME = VK_EXT_directfb_surface;
+}
+
+impl_externs! {
+    ANativeWindow,
+    AHardwareBuffer,
+    CAMetalLayer,
 }

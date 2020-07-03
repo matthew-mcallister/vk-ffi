@@ -318,6 +318,16 @@ macro_rules! impl_commands {
     }
 }
 
+macro_rules! impl_externs {
+    ($($name:ident,)*) => {
+        mod externs {
+            extern {
+                $(pub type $name;)*
+            }
+        }
+    }
+}
+
 include!(concat!(env!("CARGO_MANIFEST_DIR"), "/generated/bindings.rs"));
 
 // This convoluted module layout exists solely to work around name
@@ -329,6 +339,7 @@ mod data {
     pub use crate::handles::*;
     pub use crate::enums::*;
     pub use crate::aggregates::*;
+    pub use crate::externs::*;
 }
 
 // This module represents the "PFN_vk*" types
