@@ -222,17 +222,20 @@ fn as_bytes<T>(val: &T) -> &[u8] {
     }
 }
 
+macro_rules! fmt_member {
+    ($expr:expr) => { $expr };
+    // TODO: Maybe consider truncating at 32 elements
+    (@long_array $expr:expr) => { &&$expr[..] };
+    (@pfn $expr:expr) => {
+        &unsafe { std::mem::transmute::<_, *const c_void>($expr) }
+    };
+}
+
 macro_rules! impl_aggregate {
-    (@inner $kw:tt $name:ident { $($member:ident: $type:ty,)* }) => {
+    (@inner $kw:ident $name:ident { $($member:ident: $type:ty,)* }) => {
         #[repr(C)]
         #[derive(Clone, Copy)]
         pub $kw $name { $(pub $member: $type,)* }
-        impl std::fmt::Debug for $name {
-            fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-                // FIXME: Use a custom display trait to print fields
-                write!(f, concat!(stringify!($name), " {{ ... }}"))
-            }
-        }
         #[cfg(feature = "reflection")]
         impl crate::reflection::AggregateInfo for $name {
             const FIELDS: &'static [&'static str] =
@@ -243,15 +246,28 @@ macro_rules! impl_aggregate {
     };
     (
         struct $name:ident {
-            $($member:ident: $type:ty $(= $default:expr)?,)*
+            $(
+                $(#[debug = $debug_spec:ident])?
+                $member:ident: $type:ty $(= $default:expr)?,
+            )*
         }
     ) => {
         impl_aggregate!(@inner struct $name { $($member: $type,)* });
+        impl std::fmt::Debug for $name {
+            fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+                f.debug_struct(stringify!($name))
+                    $(.field(
+                        stringify!($member),
+                        fmt_member!($(@$debug_spec)? &self.$member),
+                    ))*
+                    .finish()
+            }
+        }
         impl Default for $name {
             #[inline]
             fn default() -> Self {
                 $name {
-                    $($($member: $default,)*)*
+                    $($($member: $default,)?)*
                     ..unsafe { std::mem::zeroed() }
                 }
             }
@@ -278,12 +294,18 @@ macro_rules! impl_aggregate {
             #[inline]
             fn default() -> Self { unsafe { std::mem::zeroed() } }
         }
+        impl std::fmt::Debug for $name {
+            fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+                write!(f, concat!(stringify!($name), " {{ (union) }}"))
+            }
+        }
     };
 }
 
 macro_rules! impl_aggregates {
     ($($ty:ident $name:ident $body:tt;)*) => {
         mod aggregates {
+            use std::ffi::c_void;
             use std::os::raw::*;
             use crate::externs::*;
             $(impl_aggregate!($ty $name $body);)*

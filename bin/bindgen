@@ -14,7 +14,7 @@ import xml.etree.ElementTree as etree
 from textwrap import dedent
 
 import jinja2
-from registry import Name, Registry
+from registry import Name, Registry, TypeExpr
 
 
 def strip_prefix(prefix, string):
@@ -32,6 +32,15 @@ TITLE_WORDS_REGEX = re.compile(
 
 def camel_to_snake(ident):
     return TITLE_WORDS_REGEX.sub('_', ident).lower()
+
+
+def debug_mode(ty: TypeExpr) -> str:
+    if ty.len and ty.len > 32:
+        # FIXME: The length restriction will be lifted in 1.46 or 1.47
+        return 'long_array'
+    elif ty.base.namespace == 'PFN_vk':
+        return 'pfn'
+    return 'default'
 
 
 class Renderer:
@@ -148,7 +157,8 @@ class Renderer:
         members = (
             {
                 'decl': self.render_decl(member),
-                'default': default(member)
+                'default': default(member),
+                'debug_mode': debug_mode(member.ty),
             }
             for member in agg.members
         )
@@ -193,6 +203,9 @@ class BindingsVisitor:
           {% for agg in bindings.aggregates %}
             {{agg['ty']}} {{agg['name']}} {
               {% for member in agg['members'] %}
+                {% if member['debug_mode'] != 'default' %}
+                #[debug = {{member['debug_mode']}}]
+                {% endif %}
                 {{member['decl']}}{{member['default']}},
               {% endfor %}
             };
