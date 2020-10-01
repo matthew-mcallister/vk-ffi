@@ -451,6 +451,7 @@ class Api:
         return self.level.lower()
 
     def render(self, out):
+        # TODO: Sort commands by usage frequency
         template = self.env.get_template('loader.rs')
         out.writelines(template.generate(api=self))
 
