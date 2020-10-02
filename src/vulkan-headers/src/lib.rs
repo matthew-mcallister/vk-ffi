@@ -274,17 +274,24 @@ macro_rules! impl_aggregate {
         }
         impl PartialEq for $name {
             fn eq(&self, other: &Self) -> bool {
-                // Not the prettiest solution, but this can't currently
-                // be derived correctly due to technical limitations
-                // TODO: Does this read padding bytes?
-                crate::as_bytes(self) == crate::as_bytes(other)
+                // TODO: This isn't correct for nested structs
+                $(
+                    if crate::as_bytes(&self.$member) !=
+                        crate::as_bytes(&other.$member)
+                    {
+                        return false;
+                    }
+                )*
+                true
             }
         }
         impl Eq for $name {}
         impl std::hash::Hash for $name {
             fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
-                // Similarly ugly
-                crate::as_bytes(self).hash(state)
+                // TODO: Similarly incorrect
+                $(
+                    crate::as_bytes(&self.$member).hash(state);
+                )*
             }
         }
     };

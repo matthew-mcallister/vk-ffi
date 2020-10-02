@@ -1,3 +1,18 @@
+use crate as vk;
+
+#[test]
+fn struct_equality_with_padding() {
+    let a = vk::PipelineColorBlendStateCreateInfo {
+        attachment_count: 1,
+        ..Default::default()
+    };
+    let b = vk::PipelineColorBlendStateCreateInfo {
+        attachment_count: 1,
+        ..Default::default()
+    };
+    assert_eq!(a, b);
+}
+
 #[cfg(feature = "reflection")]
 mod reflection {
     use std::str::FromStr;
