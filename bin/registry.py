@@ -211,8 +211,9 @@ class TypeExpr:
 
     Qualifiers are sorted from innermost to outermost."""
     base: Name
-    qualifiers: ty.List[Name]
-    len: ty.Optional[Name] = field(default=None)
+    qualifiers: ty.List[str]
+    # TODO: Need multiple dimensions for matrices
+    len: ty.Optional[int] = field(default=None)
 
 
 @dataclass

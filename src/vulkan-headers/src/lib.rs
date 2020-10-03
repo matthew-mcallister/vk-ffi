@@ -1,6 +1,9 @@
-#![feature(extern_types)]
-#![feature(trait_alias)]
-#![allow(non_upper_case_globals)]
+#![feature(
+    extern_types,
+    trait_alias,
+    trivial_bounds,
+)]
+#![allow(non_upper_case_globals, trivial_bounds)]
 
 use std::os::raw::*;
 
@@ -222,19 +225,15 @@ fn as_bytes<T>(val: &T) -> &[u8] {
     }
 }
 
-macro_rules! fmt_member {
-    ($expr:expr) => { $expr };
-    // TODO: Maybe consider truncating at 32 elements
-    (@long_array $expr:expr) => { &&$expr[..] };
-    (@pfn $expr:expr) => {
-        &unsafe { std::mem::transmute::<_, *const c_void>($expr) }
-    };
-}
-
 macro_rules! impl_aggregate {
-    (@inner $kw:ident $name:ident { $($member:ident: $type:ty,)* }) => {
+    (
+        @inner
+        $(#[$($meta:tt)*])*
+        $kw:ident $name:ident { $($member:ident: $type:ty,)* }
+    ) => {
         #[repr(C)]
         #[derive(Clone, Copy)]
+        $(#[$($meta)*])*
         pub $kw $name { $(pub $member: $type,)* }
         #[cfg(feature = "reflection")]
         impl crate::reflection::AggregateInfo for $name {
@@ -246,22 +245,13 @@ macro_rules! impl_aggregate {
     };
     (
         struct $name:ident {
-            $(
-                $(#[debug = $debug_spec:ident])?
-                $member:ident: $type:ty $(= $default:expr)?,
-            )*
+            $($member:ident: $type:ty $(= $default:expr)?,)*
         }
     ) => {
-        impl_aggregate!(@inner struct $name { $($member: $type,)* });
-        impl std::fmt::Debug for $name {
-            fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-                f.debug_struct(stringify!($name))
-                    $(.field(
-                        stringify!($member),
-                        fmt_member!($(@$debug_spec)? &self.$member),
-                    ))*
-                    .finish()
-            }
+        impl_aggregate! {
+            @inner
+            #[derive(Debug, PartialEq)]
+            struct $name { $($member: $type,)* }
         }
         impl Default for $name {
             #[inline]
@@ -272,26 +262,18 @@ macro_rules! impl_aggregate {
                 }
             }
         }
-        impl PartialEq for $name {
-            fn eq(&self, other: &Self) -> bool {
-                // TODO: This isn't correct for nested structs
-                $(
-                    if crate::as_bytes(&self.$member) !=
-                        crate::as_bytes(&other.$member)
-                    {
-                        return false;
-                    }
-                )*
-                true
-            }
+        impl Eq for $name
+        where
+            $($type: Eq,)*
+        {
         }
-        impl Eq for $name {}
-        impl std::hash::Hash for $name {
-            fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
-                // TODO: Similarly incorrect
-                $(
-                    crate::as_bytes(&self.$member).hash(state);
-                )*
+        impl Hash for $name
+        where
+            $($type: Hash,)*
+        {
+            #[inline]
+            fn hash<H: Hasher>(&self, state: &mut H) {
+                $(self.$member.hash(state);)*
             }
         }
     };
@@ -306,16 +288,32 @@ macro_rules! impl_aggregate {
                 write!(f, concat!(stringify!($name), " {{ (union) }}"))
             }
         }
+        impl PartialEq for $name {
+            #[inline]
+            fn eq(&self, other: &Self) -> bool {
+                // TODO: This is likely to cause UB sooner or later
+                crate::as_bytes(self) == crate::as_bytes(other)
+            }
+        }
+        impl Eq for $name {}
+        impl Hash for $name {
+            #[inline]
+            fn hash<H: Hasher>(&self, state: &mut H) {
+                // TODO: Similarly likely to cause UB
+                crate::as_bytes(self).hash(state);
+            }
+        }
     };
 }
 
 macro_rules! impl_aggregates {
-    ($($ty:ident $name:ident $body:tt;)*) => {
+    ($($(#[$($meta:tt)*])* $ty:ident $name:ident $body:tt;)*) => {
         mod aggregates {
             use std::ffi::c_void;
+            use std::hash::{Hash, Hasher};
             use std::os::raw::*;
             use crate::externs::*;
-            $(impl_aggregate!($ty $name $body);)*
+            $(impl_aggregate!($(#[$($meta)*])* $ty $name $body);)*
         }
     }
 }

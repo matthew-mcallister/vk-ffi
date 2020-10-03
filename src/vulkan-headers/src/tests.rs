@@ -6,11 +6,34 @@ fn struct_equality_with_padding() {
         attachment_count: 1,
         ..Default::default()
     };
-    let b = vk::PipelineColorBlendStateCreateInfo {
+    let mut b = vk::PipelineColorBlendStateCreateInfo {
         attachment_count: 1,
         ..Default::default()
     };
     assert_eq!(a, b);
+
+    b.blend_constants = [1.0, 0.0, 0.0, 0.0];
+    assert_ne!(a, b);
+}
+
+#[test]
+fn struct_hash() {
+    use std::collections::HashSet;
+    let mut set = HashSet::new();
+    let entry = vk::SpecializationMapEntry {
+        constant_id: 0,
+        offset: 0,
+        size: 4,
+    };
+    set.insert(entry);
+    set.insert(entry);
+    assert_eq!(set.len(), 1);
+    set.insert(vk::SpecializationMapEntry {
+        constant_id: 1,
+        offset: 4,
+        size: 4,
+    });
+    assert_eq!(set.len(), 2);
 }
 
 #[cfg(feature = "reflection")]

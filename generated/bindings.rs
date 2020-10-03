@@ -2897,23 +2897,19 @@ impl_aggregates! {
         vendor_id: u32,
         device_id: u32,
         device_type: crate::data::PhysicalDeviceType,
-        #[debug = long_array]
         device_name: [c_char; 256],
         pipeline_cache_uuid: [u8; 16],
         limits: crate::data::PhysicalDeviceLimits,
         sparse_properties: crate::data::PhysicalDeviceSparseProperties,
     };
     struct ExtensionProperties {
-        #[debug = long_array]
         extension_name: [c_char; 256],
         spec_version: u32,
     };
     struct LayerProperties {
-        #[debug = long_array]
         layer_name: [c_char; 256],
         spec_version: u32,
         implementation_version: u32,
-        #[debug = long_array]
         description: [c_char; 256],
     };
     struct ApplicationInfo {
@@ -2927,15 +2923,10 @@ impl_aggregates! {
     };
     struct AllocationCallbacks {
         p_user_data: *mut c_void,
-        #[debug = pfn]
         pfn_allocation: crate::pfn::AllocationFunction,
-        #[debug = pfn]
         pfn_reallocation: crate::pfn::ReallocationFunction,
-        #[debug = pfn]
         pfn_free: crate::pfn::FreeFunction,
-        #[debug = pfn]
         pfn_internal_allocation: crate::pfn::InternalAllocationNotification,
-        #[debug = pfn]
         pfn_internal_free: crate::pfn::InternalFreeNotification,
     };
     struct DeviceQueueCreateInfo {
@@ -3953,7 +3944,6 @@ impl_aggregates! {
         s_type: crate::data::StructureType = crate::data::StructureType::DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT,
         p_next: *const c_void,
         flags: crate::data::DebugReportFlagsEXT,
-        #[debug = pfn]
         pfn_callback: crate::pfn::DebugReportCallbackEXT,
         p_user_data: *mut c_void,
     };
@@ -4230,9 +4220,7 @@ impl_aggregates! {
         s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_DRIVER_PROPERTIES,
         p_next: *mut c_void,
         driver_id: crate::data::DriverId,
-        #[debug = long_array]
         driver_name: [c_char; 256],
-        #[debug = long_array]
         driver_info: [c_char; 256],
         conformance_version: crate::data::ConformanceVersion,
     };
@@ -5188,7 +5176,6 @@ impl_aggregates! {
         flags: crate::data::DebugUtilsMessengerCreateFlagsEXT,
         message_severity: crate::data::DebugUtilsMessageSeverityFlagsEXT,
         message_type: crate::data::DebugUtilsMessageTypeFlagsEXT,
-        #[debug = pfn]
         pfn_user_callback: crate::pfn::DebugUtilsMessengerCallbackEXT,
         p_user_data: *mut c_void,
     };
@@ -6161,11 +6148,8 @@ impl_aggregates! {
         s_type: crate::data::StructureType = crate::data::StructureType::PERFORMANCE_COUNTER_DESCRIPTION_KHR,
         p_next: *const c_void,
         flags: crate::data::PerformanceCounterDescriptionFlagsKHR,
-        #[debug = long_array]
         name: [c_char; 256],
-        #[debug = long_array]
         category: [c_char; 256],
-        #[debug = long_array]
         description: [c_char; 256],
     };
     struct QueryPoolPerformanceCreateInfoKHR {
@@ -6325,9 +6309,7 @@ impl_aggregates! {
         s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_EXECUTABLE_PROPERTIES_KHR,
         p_next: *mut c_void,
         stages: crate::data::ShaderStageFlags,
-        #[debug = long_array]
         name: [c_char; 256],
-        #[debug = long_array]
         description: [c_char; 256],
         subgroup_size: u32,
     };
@@ -6346,9 +6328,7 @@ impl_aggregates! {
     struct PipelineExecutableStatisticKHR {
         s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_EXECUTABLE_STATISTIC_KHR,
         p_next: *mut c_void,
-        #[debug = long_array]
         name: [c_char; 256],
-        #[debug = long_array]
         description: [c_char; 256],
         format: crate::data::PipelineExecutableStatisticFormatKHR,
         value: crate::data::PipelineExecutableStatisticValueKHR,
@@ -6356,9 +6336,7 @@ impl_aggregates! {
     struct PipelineExecutableInternalRepresentationKHR {
         s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_EXECUTABLE_INTERNAL_REPRESENTATION_KHR,
         p_next: *mut c_void,
-        #[debug = long_array]
         name: [c_char; 256],
-        #[debug = long_array]
         description: [c_char; 256],
         is_text: crate::data::Bool32,
         data_size: usize,
@@ -6529,9 +6507,7 @@ impl_aggregates! {
         s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_VULKAN_1_2_PROPERTIES,
         p_next: *mut c_void,
         driver_id: crate::data::DriverId,
-        #[debug = long_array]
         driver_name: [c_char; 256],
-        #[debug = long_array]
         driver_info: [c_char; 256],
         conformance_version: crate::data::ConformanceVersion,
         denorm_behavior_independence: crate::data::ShaderFloatControlsIndependence,
@@ -6596,14 +6572,10 @@ impl_aggregates! {
     struct PhysicalDeviceToolPropertiesEXT {
         s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_TOOL_PROPERTIES_EXT,
         p_next: *mut c_void,
-        #[debug = long_array]
         name: [c_char; 256],
-        #[debug = long_array]
         version: [c_char; 256],
         purposes: crate::data::ToolPurposeFlagsEXT,
-        #[debug = long_array]
         description: [c_char; 256],
-        #[debug = long_array]
         layer: [c_char; 256],
     };
     struct SamplerCustomBorderColorCreateInfoEXT {
