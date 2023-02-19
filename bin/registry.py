@@ -21,6 +21,11 @@ ARRAY_SIZES = {
     'VK_MAX_DRIVER_INFO_SIZE':          256,
     'VK_MAX_DRIVER_NAME_SIZE_KHR':      256,
     'VK_MAX_DRIVER_INFO_SIZE_KHR':      256,
+    'VK_SHADER_UNUSED_KHR':             0xFFFFFFFF,
+    'VK_SHADER_UNUSED_NV':              0xFFFFFFFF,
+    'VK_MAX_GLOBAL_PRIORITY_SIZE_KHR':  16,
+    'VK_MAX_GLOBAL_PRIORITY_SIZE_EXT':  16,
+    'VK_MAX_SHADER_MODULE_IDENTIFIER_SIZE_EXT': 32,
 }
 
 def array_len(len):
@@ -467,7 +472,9 @@ class Registry:
             enum.add_member(name, value)
 
 
-    def parse_type(self, elem):
+    def parse_type(self, elem) -> None:
+        if elem.tag == 'comment':
+            return
         assert elem.tag == 'type'
 
         try:
