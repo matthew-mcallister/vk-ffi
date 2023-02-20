@@ -33,14 +33,6 @@ ARRAY_SIZES = {
     'VK_MAX_SHADER_MODULE_IDENTIFIER_SIZE_EXT': 32,
 }
 
-RENAME = {
-    'MTLDevice_id': 'MTLDeviceId',
-    'MTLCommandQueue_id': 'MTLCommandQueueId',
-    'MTLBuffer_id': 'MTLBufferId',
-    'MTLTexture_id': 'MTLTextureId',
-    'MTLSharedEvent_id': 'MTLSharedEventId',
-}
-
 
 def array_len(len):
     try:
@@ -234,8 +226,6 @@ class Name:
             base = ident[m.end():]
         else:
             base = ident
-        if base in RENAME:
-            base = RENAME[base]
         return Name(namespace=namespace, base=base)
 
 
@@ -392,20 +382,49 @@ class Extension:
 
 
 # Stuff that's easier to hardcode than to parse
+
 EXTERNS = [
     Extern('ANativeWindow'),
     Extern('AHardwareBuffer'),
     Extern('CAMetalLayer'),
     Extern('IOSurface'),
+    Extern('wl_display'),
+    Extern('wl_surface'),
+    Extern('IDirectFB'),
+    Extern('IDirectFBSurface'),
+    Extern('_screen_context'),
+    Extern('_screen_window'),
 ]
 
+
+def typedef(name: str, value: str) -> TypeAlias:
+    return TypeAlias(Name.from_ident(name), Name('', value))
+
+
 ALIASES = [
-    TypeAlias(Name.from_ident('MTLDeviceId'), Name('', '*mut c_void')),
-    TypeAlias(Name.from_ident('MTLCommandQueueId'), Name('', '*mut c_void')),
-    TypeAlias(Name.from_ident('MTLBufferId'), Name('', '*mut c_void')),
-    TypeAlias(Name.from_ident('MTLTextureId'), Name('', '*mut c_void')),
-    TypeAlias(Name.from_ident('MTLSharedEventId'), Name('', '*mut c_void')),
-    TypeAlias(Name.from_ident('IOSurfaceRef'), Name('', '*mut IOSurface')),
+    typedef('MTLDevice_id', '*mut c_void'),
+    typedef('MTLCommandQueue_id', '*mut c_void'),
+    typedef('MTLBuffer_id', '*mut c_void'),
+    typedef('MTLTexture_id', '*mut c_void'),
+    typedef('MTLSharedEvent_id', '*mut c_void'),
+    typedef('IOSurfaceRef', '*mut IOSurface'),
+    typedef('Display', 'u32'),
+    typedef('VisualID', 'u32'),
+    typedef('Window', 'u32'),
+    typedef('RROutput', 'c_ulong'),
+    typedef('DWORD', 'c_int'),
+    typedef('HANDLE', 'c_int'),
+    typedef('HINSTANCE', 'c_int'),
+    typedef('HMONITOR', 'c_int'),
+    typedef('HWND', 'c_int'),
+    typedef('LPCWSTR', 'c_int'),
+    typedef('SECURITY_ATTRIBUTES', 'c_int'),
+    typedef('xcb_connection_t', 'c_int'),
+    typedef('xcb_window_t', 'c_int'),
+    typedef('xcb_visualid_t', 'c_int'),
+    typedef('zx_handle_t', 'c_int'),
+    typedef('GgpStreamDescriptor', 'c_int'),
+    typedef('GgpFrameToken', 'c_int'),
 ]
 
 
@@ -545,7 +564,9 @@ class Registry:
                 target = Name.from_ident(ty.text)
                 self.types.append(TypeAlias(name, target))
             else:
-                # Remaining cases are hardcoded since the
+                # Remaining cases are hardcoded since the Vulkan
+                # committee mostly just pastes raw C code
+                # TODO: Add to list of missing types if not hardcoded
                 pass
         elif category == 'enum':
             self.parse_enum(elem)

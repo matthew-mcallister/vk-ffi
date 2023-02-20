@@ -150,9 +150,11 @@ macro_rules! impl_enums {
 
 macro_rules! impl_aliases {
     ($($name:ident = $target:ty;)*) => {
+        #[allow(non_camel_case_types)]
         mod aliases {
             use std::ffi::c_void;
-            use crate::externs::*;
+            use std::os::raw::*;
+            use crate::*;
             $(pub type $name = $target;)*
         }
     }
@@ -305,11 +307,9 @@ macro_rules! impl_aggregate {
 
 macro_rules! aggregate_imports {
     () => {
-        use crate::aliases::*;
-        use crate::externs::*;
+        use crate::*;
         use std::ffi::c_void;
         use std::hash::{Hash, Hasher};
-        use std::os::raw::*;
     };
 }
 
@@ -333,7 +333,7 @@ macro_rules! impl_commands {
         mod cmds {
             use std::ffi::c_void;
             use std::os::raw::*;
-            use crate::externs::*;
+            use crate::*;
             $(
                 pub type $name =
                     unsafe extern "C" fn($($arg: $type,)*) $(-> $ret)*;
@@ -348,8 +348,6 @@ macro_rules! impl_externs {
             extern {
                 $(pub type $name;)*
             }
-
-            pub use crate::system_headers::*;
         }
     }
 }
@@ -375,18 +373,6 @@ mod data {
 pub mod pfn {
     pub use crate::cmds::*;
     pub use crate::fn_ptrs::*;
-}
-
-// The following modules define types available in system headers.
-// TODO: None of this is tested; it's basically skeleton code.
-mod system_headers {
-    // X11 stuff
-    extern "C" {
-        pub type Display;
-    }
-    pub type RROutput = usize;
-    pub type VisualID = usize;
-    pub type Window = usize;
 }
 
 pub use data::*;

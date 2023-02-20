@@ -314,6 +314,39 @@ impl_table! {
             takes_handle: true,
         },
         {
+            name: pfn_create_wayland_surface_khr,
+            method_name: create_wayland_surface_khr,
+            ptr: CreateWaylandSurfaceKHR,
+            signature: (
+                p_create_info: *const WaylandSurfaceCreateInfoKHR,
+                p_allocator: *const AllocationCallbacks,
+                p_surface: *mut SurfaceKHR,
+            ) -> Result,
+            takes_handle: true,
+        },
+        {
+            name: pfn_get_physical_device_wayland_presentation_support_khr,
+            method_name: get_physical_device_wayland_presentation_support_khr,
+            ptr: GetPhysicalDeviceWaylandPresentationSupportKHR,
+            signature: (
+                physical_device: PhysicalDevice,
+                queue_family_index: u32,
+                display: *mut wl_display,
+            ) -> Bool32,
+            takes_handle: false,
+        },
+        {
+            name: pfn_create_win_32_surface_khr,
+            method_name: create_win_32_surface_khr,
+            ptr: CreateWin32SurfaceKHR,
+            signature: (
+                p_create_info: *const Win32SurfaceCreateInfoKHR,
+                p_allocator: *const AllocationCallbacks,
+                p_surface: *mut SurfaceKHR,
+            ) -> Result,
+            takes_handle: true,
+        },
+        {
             name: pfn_get_physical_device_win_32_presentation_support_khr,
             method_name: get_physical_device_win_32_presentation_support_khr,
             ptr: GetPhysicalDeviceWin32PresentationSupportKHR,
@@ -343,6 +376,95 @@ impl_table! {
                 queue_family_index: u32,
                 dpy: *mut Display,
                 visual_id: VisualID,
+            ) -> Bool32,
+            takes_handle: false,
+        },
+        {
+            name: pfn_create_xcb_surface_khr,
+            method_name: create_xcb_surface_khr,
+            ptr: CreateXcbSurfaceKHR,
+            signature: (
+                p_create_info: *const XcbSurfaceCreateInfoKHR,
+                p_allocator: *const AllocationCallbacks,
+                p_surface: *mut SurfaceKHR,
+            ) -> Result,
+            takes_handle: true,
+        },
+        {
+            name: pfn_get_physical_device_xcb_presentation_support_khr,
+            method_name: get_physical_device_xcb_presentation_support_khr,
+            ptr: GetPhysicalDeviceXcbPresentationSupportKHR,
+            signature: (
+                physical_device: PhysicalDevice,
+                queue_family_index: u32,
+                connection: *mut xcb_connection_t,
+                visual_id: xcb_visualid_t,
+            ) -> Bool32,
+            takes_handle: false,
+        },
+        {
+            name: pfn_create_direct_fb_surface_ext,
+            method_name: create_direct_fb_surface_ext,
+            ptr: CreateDirectFBSurfaceEXT,
+            signature: (
+                p_create_info: *const DirectFBSurfaceCreateInfoEXT,
+                p_allocator: *const AllocationCallbacks,
+                p_surface: *mut SurfaceKHR,
+            ) -> Result,
+            takes_handle: true,
+        },
+        {
+            name: pfn_get_physical_device_direct_fb_presentation_support_ext,
+            method_name: get_physical_device_direct_fb_presentation_support_ext,
+            ptr: GetPhysicalDeviceDirectFBPresentationSupportEXT,
+            signature: (
+                physical_device: PhysicalDevice,
+                queue_family_index: u32,
+                dfb: *mut IDirectFB,
+            ) -> Bool32,
+            takes_handle: false,
+        },
+        {
+            name: pfn_create_image_pipe_surface_fuchsia,
+            method_name: create_image_pipe_surface_fuchsia,
+            ptr: CreateImagePipeSurfaceFUCHSIA,
+            signature: (
+                p_create_info: *const ImagePipeSurfaceCreateInfoFUCHSIA,
+                p_allocator: *const AllocationCallbacks,
+                p_surface: *mut SurfaceKHR,
+            ) -> Result,
+            takes_handle: true,
+        },
+        {
+            name: pfn_create_stream_descriptor_surface_ggp,
+            method_name: create_stream_descriptor_surface_ggp,
+            ptr: CreateStreamDescriptorSurfaceGGP,
+            signature: (
+                p_create_info: *const StreamDescriptorSurfaceCreateInfoGGP,
+                p_allocator: *const AllocationCallbacks,
+                p_surface: *mut SurfaceKHR,
+            ) -> Result,
+            takes_handle: true,
+        },
+        {
+            name: pfn_create_screen_surface_qnx,
+            method_name: create_screen_surface_qnx,
+            ptr: CreateScreenSurfaceQNX,
+            signature: (
+                p_create_info: *const ScreenSurfaceCreateInfoQNX,
+                p_allocator: *const AllocationCallbacks,
+                p_surface: *mut SurfaceKHR,
+            ) -> Result,
+            takes_handle: true,
+        },
+        {
+            name: pfn_get_physical_device_screen_presentation_support_qnx,
+            method_name: get_physical_device_screen_presentation_support_qnx,
+            ptr: GetPhysicalDeviceScreenPresentationSupportQNX,
+            signature: (
+                physical_device: PhysicalDevice,
+                queue_family_index: u32,
+                window: *mut _screen_window,
             ) -> Bool32,
             takes_handle: false,
         },
@@ -2468,6 +2590,17 @@ impl_table! {
             takes_handle: false,
         },
         {
+            name: pfn_get_memory_win_32_handle_nv,
+            method_name: get_memory_win_32_handle_nv,
+            ptr: GetMemoryWin32HandleNV,
+            signature: (
+                memory: DeviceMemory,
+                handle_type: ExternalMemoryHandleTypeFlagsNV,
+                p_handle: *mut HANDLE,
+            ) -> Result,
+            takes_handle: true,
+        },
+        {
             name: pfn_cmd_execute_generated_commands_nv,
             method_name: cmd_execute_generated_commands_nv,
             ptr: CmdExecuteGeneratedCommandsNV,
@@ -2556,6 +2689,27 @@ impl_table! {
             takes_handle: true,
         },
         {
+            name: pfn_get_memory_win_32_handle_khr,
+            method_name: get_memory_win_32_handle_khr,
+            ptr: GetMemoryWin32HandleKHR,
+            signature: (
+                p_get_win_32_handle_info: *const MemoryGetWin32HandleInfoKHR,
+                p_handle: *mut HANDLE,
+            ) -> Result,
+            takes_handle: true,
+        },
+        {
+            name: pfn_get_memory_win_32_handle_properties_khr,
+            method_name: get_memory_win_32_handle_properties_khr,
+            ptr: GetMemoryWin32HandlePropertiesKHR,
+            signature: (
+                handle_type: ExternalMemoryHandleTypeFlagBits,
+                handle: HANDLE,
+                p_memory_win_32_handle_properties: *mut MemoryWin32HandlePropertiesKHR,
+            ) -> Result,
+            takes_handle: true,
+        },
+        {
             name: pfn_get_memory_fd_khr,
             method_name: get_memory_fd_khr,
             ptr: GetMemoryFdKHR,
@@ -2577,12 +2731,52 @@ impl_table! {
             takes_handle: true,
         },
         {
+            name: pfn_get_memory_zircon_handle_fuchsia,
+            method_name: get_memory_zircon_handle_fuchsia,
+            ptr: GetMemoryZirconHandleFUCHSIA,
+            signature: (
+                p_get_zircon_handle_info: *const MemoryGetZirconHandleInfoFUCHSIA,
+                p_zircon_handle: *mut zx_handle_t,
+            ) -> Result,
+            takes_handle: true,
+        },
+        {
+            name: pfn_get_memory_zircon_handle_properties_fuchsia,
+            method_name: get_memory_zircon_handle_properties_fuchsia,
+            ptr: GetMemoryZirconHandlePropertiesFUCHSIA,
+            signature: (
+                handle_type: ExternalMemoryHandleTypeFlagBits,
+                zircon_handle: zx_handle_t,
+                p_memory_zircon_handle_properties: *mut MemoryZirconHandlePropertiesFUCHSIA,
+            ) -> Result,
+            takes_handle: true,
+        },
+        {
             name: pfn_get_memory_remote_address_nv,
             method_name: get_memory_remote_address_nv,
             ptr: GetMemoryRemoteAddressNV,
             signature: (
                 p_memory_get_remote_address_info: *const MemoryGetRemoteAddressInfoNV,
                 p_address: *mut RemoteAddressNV,
+            ) -> Result,
+            takes_handle: true,
+        },
+        {
+            name: pfn_get_semaphore_win_32_handle_khr,
+            method_name: get_semaphore_win_32_handle_khr,
+            ptr: GetSemaphoreWin32HandleKHR,
+            signature: (
+                p_get_win_32_handle_info: *const SemaphoreGetWin32HandleInfoKHR,
+                p_handle: *mut HANDLE,
+            ) -> Result,
+            takes_handle: true,
+        },
+        {
+            name: pfn_import_semaphore_win_32_handle_khr,
+            method_name: import_semaphore_win_32_handle_khr,
+            ptr: ImportSemaphoreWin32HandleKHR,
+            signature: (
+                p_import_semaphore_win_32_handle_info: *const ImportSemaphoreWin32HandleInfoKHR,
             ) -> Result,
             takes_handle: true,
         },
@@ -2602,6 +2796,44 @@ impl_table! {
             ptr: ImportSemaphoreFdKHR,
             signature: (
                 p_import_semaphore_fd_info: *const ImportSemaphoreFdInfoKHR,
+            ) -> Result,
+            takes_handle: true,
+        },
+        {
+            name: pfn_get_semaphore_zircon_handle_fuchsia,
+            method_name: get_semaphore_zircon_handle_fuchsia,
+            ptr: GetSemaphoreZirconHandleFUCHSIA,
+            signature: (
+                p_get_zircon_handle_info: *const SemaphoreGetZirconHandleInfoFUCHSIA,
+                p_zircon_handle: *mut zx_handle_t,
+            ) -> Result,
+            takes_handle: true,
+        },
+        {
+            name: pfn_import_semaphore_zircon_handle_fuchsia,
+            method_name: import_semaphore_zircon_handle_fuchsia,
+            ptr: ImportSemaphoreZirconHandleFUCHSIA,
+            signature: (
+                p_import_semaphore_zircon_handle_info: *const ImportSemaphoreZirconHandleInfoFUCHSIA,
+            ) -> Result,
+            takes_handle: true,
+        },
+        {
+            name: pfn_get_fence_win_32_handle_khr,
+            method_name: get_fence_win_32_handle_khr,
+            ptr: GetFenceWin32HandleKHR,
+            signature: (
+                p_get_win_32_handle_info: *const FenceGetWin32HandleInfoKHR,
+                p_handle: *mut HANDLE,
+            ) -> Result,
+            takes_handle: true,
+        },
+        {
+            name: pfn_import_fence_win_32_handle_khr,
+            method_name: import_fence_win_32_handle_khr,
+            ptr: ImportFenceWin32HandleKHR,
+            signature: (
+                p_import_fence_win_32_handle_info: *const ImportFenceWin32HandleInfoKHR,
             ) -> Result,
             takes_handle: true,
         },
@@ -5202,6 +5434,17 @@ impl_table! {
                 swapchain: SwapchainKHR,
                 present_id: u64,
                 timeout: u64,
+            ) -> Result,
+            takes_handle: true,
+        },
+        {
+            name: pfn_create_buffer_collection_fuchsia,
+            method_name: create_buffer_collection_fuchsia,
+            ptr: CreateBufferCollectionFUCHSIA,
+            signature: (
+                p_create_info: *const BufferCollectionCreateInfoFUCHSIA,
+                p_allocator: *const AllocationCallbacks,
+                p_collection: *mut BufferCollectionFUCHSIA,
             ) -> Result,
             takes_handle: true,
         },
