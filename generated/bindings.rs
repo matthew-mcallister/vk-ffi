@@ -31,15 +31,15 @@ impl_enums! {
     };
     bitmask DescriptorUpdateTemplateCreateFlags {
     };
-    bitmask AccessFlags2 {
+    bitmask64 AccessFlags2 {
     };
-    bitmask PipelineStageFlags2 {
+    bitmask64 PipelineStageFlags2 {
     };
     bitmask AccelerationStructureMotionInfoFlagsNV {
     };
     bitmask AccelerationStructureMotionInstanceFlagsNV {
     };
-    bitmask FormatFeatureFlags2 {
+    bitmask64 FormatFeatureFlags2 {
     };
     bitmask DisplayModeCreateFlagsKHR {
     };
@@ -2743,7 +2743,7 @@ impl_enums! {
         NOT_MERGED_SINGLE_SUBPASS_EXT = 12,
         NOT_MERGED_UNSPECIFIED_EXT = 13,
     };
-    bitmask AccessFlagBits2 {
+    bitmask64 AccessFlagBits2 {
         ACCESS_2_NONE = 0,
         ACCESS_2_INDIRECT_COMMAND_READ_BIT = 1,
         ACCESS_2_INDEX_READ_BIT = 2,
@@ -2813,7 +2813,7 @@ impl_enums! {
         ACCESS_2_ACCELERATION_STRUCTURE_READ_BIT_NV = 2097152,
         ACCESS_2_ACCELERATION_STRUCTURE_WRITE_BIT_NV = 4194304,
     };
-    bitmask PipelineStageFlagBits2 {
+    bitmask64 PipelineStageFlagBits2 {
         PIPELINE_STAGE_2_NONE = 0,
         PIPELINE_STAGE_2_TOP_OF_PIPE_BIT = 1,
         PIPELINE_STAGE_2_DRAW_INDIRECT_BIT = 2,
@@ -2901,7 +2901,7 @@ impl_enums! {
         CPU_WRITE_OFTEN_FUCHSIA = 8,
         PROTECTED_OPTIONAL_FUCHSIA = 16,
     };
-    bitmask FormatFeatureFlagBits2 {
+    bitmask64 FormatFeatureFlagBits2 {
         FORMAT_FEATURE_2_SAMPLED_IMAGE_BIT = 1,
         FORMAT_FEATURE_2_STORAGE_IMAGE_BIT = 2,
         FORMAT_FEATURE_2_STORAGE_IMAGE_ATOMIC_BIT = 4,
@@ -3762,6 +3762,12 @@ impl_enums! {
 }
 
 impl_aliases! {
+    MTLDeviceId = *mut c_void;
+    MTLCommandQueueId = *mut c_void;
+    MTLBufferId = *mut c_void;
+    MTLTextureId = *mut c_void;
+    MTLSharedEventId = *mut c_void;
+    IOSurfaceRef = *mut IOSurface;
     SampleMask = u32;
     Bool32 = u32;
     Flags = u32;
@@ -4242,6004 +4248,7621 @@ impl_func_pointers! {
     );
 }
 
-impl_aggregates! {
-    struct BaseOutStructure {
-        s_type: crate::data::StructureType,
-        p_next: *mut crate::data::BaseOutStructure,
-    };
-    struct BaseInStructure {
-        s_type: crate::data::StructureType,
-        p_next: *const crate::data::BaseInStructure,
-    };
-    struct Offset2D {
-        x: i32,
-        y: i32,
-    };
-    struct Offset3D {
-        x: i32,
-        y: i32,
-        z: i32,
-    };
-    struct Extent2D {
-        width: u32,
-        height: u32,
-    };
-    struct Extent3D {
-        width: u32,
-        height: u32,
-        depth: u32,
-    };
-    struct Viewport {
-        x: c_float,
-        y: c_float,
-        width: c_float,
-        height: c_float,
-        min_depth: c_float,
-        max_depth: c_float,
-    };
-    struct Rect2D {
-        offset: crate::data::Offset2D,
-        extent: crate::data::Extent2D,
-    };
-    struct ClearRect {
-        rect: crate::data::Rect2D,
-        base_array_layer: u32,
-        layer_count: u32,
-    };
-    struct ComponentMapping {
-        r: crate::data::ComponentSwizzle,
-        g: crate::data::ComponentSwizzle,
-        b: crate::data::ComponentSwizzle,
-        a: crate::data::ComponentSwizzle,
-    };
-    struct PhysicalDeviceProperties {
-        api_version: u32,
-        driver_version: u32,
-        vendor_id: u32,
-        device_id: u32,
-        device_type: crate::data::PhysicalDeviceType,
-        device_name: [c_char; 256],
-        pipeline_cache_uuid: [u8; 16],
-        limits: crate::data::PhysicalDeviceLimits,
-        sparse_properties: crate::data::PhysicalDeviceSparseProperties,
-    };
-    struct ExtensionProperties {
-        extension_name: [c_char; 256],
-        spec_version: u32,
-    };
-    struct LayerProperties {
-        layer_name: [c_char; 256],
-        spec_version: u32,
-        implementation_version: u32,
-        description: [c_char; 256],
-    };
-    struct ApplicationInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::APPLICATION_INFO,
-        p_next: *const c_void,
-        p_application_name: *const c_char,
-        application_version: u32,
-        p_engine_name: *const c_char,
-        engine_version: u32,
-        api_version: u32,
-    };
-    struct AllocationCallbacks {
-        p_user_data: *mut c_void,
-        pfn_allocation: crate::pfn::AllocationFunction,
-        pfn_reallocation: crate::pfn::ReallocationFunction,
-        pfn_free: crate::pfn::FreeFunction,
-        pfn_internal_allocation: crate::pfn::InternalAllocationNotification,
-        pfn_internal_free: crate::pfn::InternalFreeNotification,
-    };
-    struct DeviceQueueCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_QUEUE_CREATE_INFO,
-        p_next: *const c_void,
-        flags: crate::data::DeviceQueueCreateFlags,
-        queue_family_index: u32,
-        queue_count: u32,
-        p_queue_priorities: *const c_float,
-    };
-    struct DeviceCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_CREATE_INFO,
-        p_next: *const c_void,
-        flags: crate::data::DeviceCreateFlags,
-        queue_create_info_count: u32,
-        p_queue_create_infos: *const crate::data::DeviceQueueCreateInfo,
-        enabled_layer_count: u32,
-        pp_enabled_layer_names: *const *const c_char,
-        enabled_extension_count: u32,
-        pp_enabled_extension_names: *const *const c_char,
-        p_enabled_features: *const crate::data::PhysicalDeviceFeatures,
-    };
-    struct InstanceCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::INSTANCE_CREATE_INFO,
-        p_next: *const c_void,
-        flags: crate::data::InstanceCreateFlags,
-        p_application_info: *const crate::data::ApplicationInfo,
-        enabled_layer_count: u32,
-        pp_enabled_layer_names: *const *const c_char,
-        enabled_extension_count: u32,
-        pp_enabled_extension_names: *const *const c_char,
-    };
-    struct QueueFamilyProperties {
-        queue_flags: crate::data::QueueFlags,
-        queue_count: u32,
-        timestamp_valid_bits: u32,
-        min_image_transfer_granularity: crate::data::Extent3D,
-    };
-    struct PhysicalDeviceMemoryProperties {
-        memory_type_count: u32,
-        memory_types: [crate::data::MemoryType; 32],
-        memory_heap_count: u32,
-        memory_heaps: [crate::data::MemoryHeap; 16],
-    };
-    struct MemoryAllocateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::MEMORY_ALLOCATE_INFO,
-        p_next: *const c_void,
-        allocation_size: crate::data::DeviceSize,
-        memory_type_index: u32,
-    };
-    struct MemoryRequirements {
-        size: crate::data::DeviceSize,
-        alignment: crate::data::DeviceSize,
-        memory_type_bits: u32,
-    };
-    struct SparseImageFormatProperties {
-        aspect_mask: crate::data::ImageAspectFlags,
-        image_granularity: crate::data::Extent3D,
-        flags: crate::data::SparseImageFormatFlags,
-    };
-    struct SparseImageMemoryRequirements {
-        format_properties: crate::data::SparseImageFormatProperties,
-        image_mip_tail_first_lod: u32,
-        image_mip_tail_size: crate::data::DeviceSize,
-        image_mip_tail_offset: crate::data::DeviceSize,
-        image_mip_tail_stride: crate::data::DeviceSize,
-    };
-    struct MemoryType {
-        property_flags: crate::data::MemoryPropertyFlags,
-        heap_index: u32,
-    };
-    struct MemoryHeap {
-        size: crate::data::DeviceSize,
-        flags: crate::data::MemoryHeapFlags,
-    };
-    struct MappedMemoryRange {
-        s_type: crate::data::StructureType = crate::data::StructureType::MAPPED_MEMORY_RANGE,
-        p_next: *const c_void,
-        memory: crate::data::DeviceMemory,
-        offset: crate::data::DeviceSize,
-        size: crate::data::DeviceSize,
-    };
-    struct FormatProperties {
-        linear_tiling_features: crate::data::FormatFeatureFlags,
-        optimal_tiling_features: crate::data::FormatFeatureFlags,
-        buffer_features: crate::data::FormatFeatureFlags,
-    };
-    struct ImageFormatProperties {
-        max_extent: crate::data::Extent3D,
-        max_mip_levels: u32,
-        max_array_layers: u32,
-        sample_counts: crate::data::SampleCountFlags,
-        max_resource_size: crate::data::DeviceSize,
-    };
-    struct DescriptorBufferInfo {
-        buffer: crate::data::Buffer,
-        offset: crate::data::DeviceSize,
-        range: crate::data::DeviceSize,
-    };
-    struct DescriptorImageInfo {
-        sampler: crate::data::Sampler,
-        image_view: crate::data::ImageView,
-        image_layout: crate::data::ImageLayout,
-    };
-    struct WriteDescriptorSet {
-        s_type: crate::data::StructureType = crate::data::StructureType::WRITE_DESCRIPTOR_SET,
-        p_next: *const c_void,
-        dst_set: crate::data::DescriptorSet,
-        dst_binding: u32,
-        dst_array_element: u32,
-        descriptor_count: u32,
-        descriptor_type: crate::data::DescriptorType,
-        p_image_info: *const crate::data::DescriptorImageInfo,
-        p_buffer_info: *const crate::data::DescriptorBufferInfo,
-        p_texel_buffer_view: *const crate::data::BufferView,
-    };
-    struct CopyDescriptorSet {
-        s_type: crate::data::StructureType = crate::data::StructureType::COPY_DESCRIPTOR_SET,
-        p_next: *const c_void,
-        src_set: crate::data::DescriptorSet,
-        src_binding: u32,
-        src_array_element: u32,
-        dst_set: crate::data::DescriptorSet,
-        dst_binding: u32,
-        dst_array_element: u32,
-        descriptor_count: u32,
-    };
-    struct BufferCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::BUFFER_CREATE_INFO,
-        p_next: *const c_void,
-        flags: crate::data::BufferCreateFlags,
-        size: crate::data::DeviceSize,
-        usage: crate::data::BufferUsageFlags,
-        sharing_mode: crate::data::SharingMode,
-        queue_family_index_count: u32,
-        p_queue_family_indices: *const u32,
-    };
-    struct BufferViewCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::BUFFER_VIEW_CREATE_INFO,
-        p_next: *const c_void,
-        flags: crate::data::BufferViewCreateFlags,
-        buffer: crate::data::Buffer,
-        format: crate::data::Format,
-        offset: crate::data::DeviceSize,
-        range: crate::data::DeviceSize,
-    };
-    struct ImageSubresource {
-        aspect_mask: crate::data::ImageAspectFlags,
-        mip_level: u32,
-        array_layer: u32,
-    };
-    struct ImageSubresourceLayers {
-        aspect_mask: crate::data::ImageAspectFlags,
-        mip_level: u32,
-        base_array_layer: u32,
-        layer_count: u32,
-    };
-    struct ImageSubresourceRange {
-        aspect_mask: crate::data::ImageAspectFlags,
-        base_mip_level: u32,
-        level_count: u32,
-        base_array_layer: u32,
-        layer_count: u32,
-    };
-    struct MemoryBarrier {
-        s_type: crate::data::StructureType = crate::data::StructureType::MEMORY_BARRIER,
-        p_next: *const c_void,
-        src_access_mask: crate::data::AccessFlags,
-        dst_access_mask: crate::data::AccessFlags,
-    };
-    struct BufferMemoryBarrier {
-        s_type: crate::data::StructureType = crate::data::StructureType::BUFFER_MEMORY_BARRIER,
-        p_next: *const c_void,
-        src_access_mask: crate::data::AccessFlags,
-        dst_access_mask: crate::data::AccessFlags,
-        src_queue_family_index: u32,
-        dst_queue_family_index: u32,
-        buffer: crate::data::Buffer,
-        offset: crate::data::DeviceSize,
-        size: crate::data::DeviceSize,
-    };
-    struct ImageMemoryBarrier {
-        s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_MEMORY_BARRIER,
-        p_next: *const c_void,
-        src_access_mask: crate::data::AccessFlags,
-        dst_access_mask: crate::data::AccessFlags,
-        old_layout: crate::data::ImageLayout,
-        new_layout: crate::data::ImageLayout,
-        src_queue_family_index: u32,
-        dst_queue_family_index: u32,
-        image: crate::data::Image,
-        subresource_range: crate::data::ImageSubresourceRange,
-    };
-    struct ImageCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_CREATE_INFO,
-        p_next: *const c_void,
-        flags: crate::data::ImageCreateFlags,
-        image_type: crate::data::ImageType,
-        format: crate::data::Format,
-        extent: crate::data::Extent3D,
-        mip_levels: u32,
-        array_layers: u32,
-        samples: crate::data::SampleCountFlagBits,
-        tiling: crate::data::ImageTiling,
-        usage: crate::data::ImageUsageFlags,
-        sharing_mode: crate::data::SharingMode,
-        queue_family_index_count: u32,
-        p_queue_family_indices: *const u32,
-        initial_layout: crate::data::ImageLayout,
-    };
-    struct SubresourceLayout {
-        offset: crate::data::DeviceSize,
-        size: crate::data::DeviceSize,
-        row_pitch: crate::data::DeviceSize,
-        array_pitch: crate::data::DeviceSize,
-        depth_pitch: crate::data::DeviceSize,
-    };
-    struct ImageViewCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_VIEW_CREATE_INFO,
-        p_next: *const c_void,
-        flags: crate::data::ImageViewCreateFlags,
-        image: crate::data::Image,
-        view_type: crate::data::ImageViewType,
-        format: crate::data::Format,
-        components: crate::data::ComponentMapping,
-        subresource_range: crate::data::ImageSubresourceRange,
-    };
-    struct BufferCopy {
-        src_offset: crate::data::DeviceSize,
-        dst_offset: crate::data::DeviceSize,
-        size: crate::data::DeviceSize,
-    };
-    struct SparseMemoryBind {
-        resource_offset: crate::data::DeviceSize,
-        size: crate::data::DeviceSize,
-        memory: crate::data::DeviceMemory,
-        memory_offset: crate::data::DeviceSize,
-        flags: crate::data::SparseMemoryBindFlags,
-    };
-    struct SparseImageMemoryBind {
-        subresource: crate::data::ImageSubresource,
-        offset: crate::data::Offset3D,
-        extent: crate::data::Extent3D,
-        memory: crate::data::DeviceMemory,
-        memory_offset: crate::data::DeviceSize,
-        flags: crate::data::SparseMemoryBindFlags,
-    };
-    struct SparseBufferMemoryBindInfo {
-        buffer: crate::data::Buffer,
-        bind_count: u32,
-        p_binds: *const crate::data::SparseMemoryBind,
-    };
-    struct SparseImageOpaqueMemoryBindInfo {
-        image: crate::data::Image,
-        bind_count: u32,
-        p_binds: *const crate::data::SparseMemoryBind,
-    };
-    struct SparseImageMemoryBindInfo {
-        image: crate::data::Image,
-        bind_count: u32,
-        p_binds: *const crate::data::SparseImageMemoryBind,
-    };
-    struct BindSparseInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::BIND_SPARSE_INFO,
-        p_next: *const c_void,
-        wait_semaphore_count: u32,
-        p_wait_semaphores: *const crate::data::Semaphore,
-        buffer_bind_count: u32,
-        p_buffer_binds: *const crate::data::SparseBufferMemoryBindInfo,
-        image_opaque_bind_count: u32,
-        p_image_opaque_binds: *const crate::data::SparseImageOpaqueMemoryBindInfo,
-        image_bind_count: u32,
-        p_image_binds: *const crate::data::SparseImageMemoryBindInfo,
-        signal_semaphore_count: u32,
-        p_signal_semaphores: *const crate::data::Semaphore,
-    };
-    struct ImageCopy {
-        src_subresource: crate::data::ImageSubresourceLayers,
-        src_offset: crate::data::Offset3D,
-        dst_subresource: crate::data::ImageSubresourceLayers,
-        dst_offset: crate::data::Offset3D,
-        extent: crate::data::Extent3D,
-    };
-    struct ImageBlit {
-        src_subresource: crate::data::ImageSubresourceLayers,
-        src_offsets: [crate::data::Offset3D; 2],
-        dst_subresource: crate::data::ImageSubresourceLayers,
-        dst_offsets: [crate::data::Offset3D; 2],
-    };
-    struct BufferImageCopy {
-        buffer_offset: crate::data::DeviceSize,
-        buffer_row_length: u32,
-        buffer_image_height: u32,
-        image_subresource: crate::data::ImageSubresourceLayers,
-        image_offset: crate::data::Offset3D,
-        image_extent: crate::data::Extent3D,
-    };
-    struct ImageResolve {
-        src_subresource: crate::data::ImageSubresourceLayers,
-        src_offset: crate::data::Offset3D,
-        dst_subresource: crate::data::ImageSubresourceLayers,
-        dst_offset: crate::data::Offset3D,
-        extent: crate::data::Extent3D,
-    };
-    struct ShaderModuleCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::SHADER_MODULE_CREATE_INFO,
-        p_next: *const c_void,
-        flags: crate::data::ShaderModuleCreateFlags,
-        code_size: usize,
-        p_code: *const u32,
-    };
-    struct DescriptorSetLayoutBinding {
-        binding: u32,
-        descriptor_type: crate::data::DescriptorType,
-        descriptor_count: u32,
-        stage_flags: crate::data::ShaderStageFlags,
-        p_immutable_samplers: *const crate::data::Sampler,
-    };
-    struct DescriptorSetLayoutCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
-        p_next: *const c_void,
-        flags: crate::data::DescriptorSetLayoutCreateFlags,
-        binding_count: u32,
-        p_bindings: *const crate::data::DescriptorSetLayoutBinding,
-    };
-    struct DescriptorPoolSize {
-        ty: crate::data::DescriptorType,
-        descriptor_count: u32,
-    };
-    struct DescriptorPoolCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::DESCRIPTOR_POOL_CREATE_INFO,
-        p_next: *const c_void,
-        flags: crate::data::DescriptorPoolCreateFlags,
-        max_sets: u32,
-        pool_size_count: u32,
-        p_pool_sizes: *const crate::data::DescriptorPoolSize,
-    };
-    struct DescriptorSetAllocateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::DESCRIPTOR_SET_ALLOCATE_INFO,
-        p_next: *const c_void,
-        descriptor_pool: crate::data::DescriptorPool,
-        descriptor_set_count: u32,
-        p_set_layouts: *const crate::data::DescriptorSetLayout,
-    };
-    struct SpecializationMapEntry {
-        constant_id: u32,
-        offset: u32,
-        size: usize,
-    };
-    struct SpecializationInfo {
-        map_entry_count: u32,
-        p_map_entries: *const crate::data::SpecializationMapEntry,
-        data_size: usize,
-        p_data: *const c_void,
-    };
-    struct PipelineShaderStageCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_SHADER_STAGE_CREATE_INFO,
-        p_next: *const c_void,
-        flags: crate::data::PipelineShaderStageCreateFlags,
-        stage: crate::data::ShaderStageFlagBits,
-        module: crate::data::ShaderModule,
-        p_name: *const c_char,
-        p_specialization_info: *const crate::data::SpecializationInfo,
-    };
-    struct ComputePipelineCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::COMPUTE_PIPELINE_CREATE_INFO,
-        p_next: *const c_void,
-        flags: crate::data::PipelineCreateFlags,
-        stage: crate::data::PipelineShaderStageCreateInfo,
-        layout: crate::data::PipelineLayout,
-        base_pipeline_handle: crate::data::Pipeline,
-        base_pipeline_index: i32,
-    };
-    struct VertexInputBindingDescription {
-        binding: u32,
-        stride: u32,
-        input_rate: crate::data::VertexInputRate,
-    };
-    struct VertexInputAttributeDescription {
-        location: u32,
-        binding: u32,
-        format: crate::data::Format,
-        offset: u32,
-    };
-    struct PipelineVertexInputStateCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
-        p_next: *const c_void,
-        flags: crate::data::PipelineVertexInputStateCreateFlags,
-        vertex_binding_description_count: u32,
-        p_vertex_binding_descriptions: *const crate::data::VertexInputBindingDescription,
-        vertex_attribute_description_count: u32,
-        p_vertex_attribute_descriptions: *const crate::data::VertexInputAttributeDescription,
-    };
-    struct PipelineInputAssemblyStateCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
-        p_next: *const c_void,
-        flags: crate::data::PipelineInputAssemblyStateCreateFlags,
-        topology: crate::data::PrimitiveTopology,
-        primitive_restart_enable: crate::data::Bool32,
-    };
-    struct PipelineTessellationStateCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_TESSELLATION_STATE_CREATE_INFO,
-        p_next: *const c_void,
-        flags: crate::data::PipelineTessellationStateCreateFlags,
-        patch_control_points: u32,
-    };
-    struct PipelineViewportStateCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_VIEWPORT_STATE_CREATE_INFO,
-        p_next: *const c_void,
-        flags: crate::data::PipelineViewportStateCreateFlags,
-        viewport_count: u32,
-        p_viewports: *const crate::data::Viewport,
-        scissor_count: u32,
-        p_scissors: *const crate::data::Rect2D,
-    };
-    struct PipelineRasterizationStateCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_RASTERIZATION_STATE_CREATE_INFO,
-        p_next: *const c_void,
-        flags: crate::data::PipelineRasterizationStateCreateFlags,
-        depth_clamp_enable: crate::data::Bool32,
-        rasterizer_discard_enable: crate::data::Bool32,
-        polygon_mode: crate::data::PolygonMode,
-        cull_mode: crate::data::CullModeFlags,
-        front_face: crate::data::FrontFace,
-        depth_bias_enable: crate::data::Bool32,
-        depth_bias_constant_factor: c_float,
-        depth_bias_clamp: c_float,
-        depth_bias_slope_factor: c_float,
-        line_width: c_float,
-    };
-    struct PipelineMultisampleStateCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
-        p_next: *const c_void,
-        flags: crate::data::PipelineMultisampleStateCreateFlags,
-        rasterization_samples: crate::data::SampleCountFlagBits,
-        sample_shading_enable: crate::data::Bool32,
-        min_sample_shading: c_float,
-        p_sample_mask: *const crate::data::SampleMask,
-        alpha_to_coverage_enable: crate::data::Bool32,
-        alpha_to_one_enable: crate::data::Bool32,
-    };
-    struct PipelineColorBlendAttachmentState {
-        blend_enable: crate::data::Bool32,
-        src_color_blend_factor: crate::data::BlendFactor,
-        dst_color_blend_factor: crate::data::BlendFactor,
-        color_blend_op: crate::data::BlendOp,
-        src_alpha_blend_factor: crate::data::BlendFactor,
-        dst_alpha_blend_factor: crate::data::BlendFactor,
-        alpha_blend_op: crate::data::BlendOp,
-        color_write_mask: crate::data::ColorComponentFlags,
-    };
-    struct PipelineColorBlendStateCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
-        p_next: *const c_void,
-        flags: crate::data::PipelineColorBlendStateCreateFlags,
-        logic_op_enable: crate::data::Bool32,
-        logic_op: crate::data::LogicOp,
-        attachment_count: u32,
-        p_attachments: *const crate::data::PipelineColorBlendAttachmentState,
-        blend_constants: [c_float; 4],
-    };
-    struct PipelineDynamicStateCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_DYNAMIC_STATE_CREATE_INFO,
-        p_next: *const c_void,
-        flags: crate::data::PipelineDynamicStateCreateFlags,
-        dynamic_state_count: u32,
-        p_dynamic_states: *const crate::data::DynamicState,
-    };
-    struct StencilOpState {
-        fail_op: crate::data::StencilOp,
-        pass_op: crate::data::StencilOp,
-        depth_fail_op: crate::data::StencilOp,
-        compare_op: crate::data::CompareOp,
-        compare_mask: u32,
-        write_mask: u32,
-        reference: u32,
-    };
-    struct PipelineDepthStencilStateCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO,
-        p_next: *const c_void,
-        flags: crate::data::PipelineDepthStencilStateCreateFlags,
-        depth_test_enable: crate::data::Bool32,
-        depth_write_enable: crate::data::Bool32,
-        depth_compare_op: crate::data::CompareOp,
-        depth_bounds_test_enable: crate::data::Bool32,
-        stencil_test_enable: crate::data::Bool32,
-        front: crate::data::StencilOpState,
-        back: crate::data::StencilOpState,
-        min_depth_bounds: c_float,
-        max_depth_bounds: c_float,
-    };
-    struct GraphicsPipelineCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::GRAPHICS_PIPELINE_CREATE_INFO,
-        p_next: *const c_void,
-        flags: crate::data::PipelineCreateFlags,
-        stage_count: u32,
-        p_stages: *const crate::data::PipelineShaderStageCreateInfo,
-        p_vertex_input_state: *const crate::data::PipelineVertexInputStateCreateInfo,
-        p_input_assembly_state: *const crate::data::PipelineInputAssemblyStateCreateInfo,
-        p_tessellation_state: *const crate::data::PipelineTessellationStateCreateInfo,
-        p_viewport_state: *const crate::data::PipelineViewportStateCreateInfo,
-        p_rasterization_state: *const crate::data::PipelineRasterizationStateCreateInfo,
-        p_multisample_state: *const crate::data::PipelineMultisampleStateCreateInfo,
-        p_depth_stencil_state: *const crate::data::PipelineDepthStencilStateCreateInfo,
-        p_color_blend_state: *const crate::data::PipelineColorBlendStateCreateInfo,
-        p_dynamic_state: *const crate::data::PipelineDynamicStateCreateInfo,
-        layout: crate::data::PipelineLayout,
-        render_pass: crate::data::RenderPass,
-        subpass: u32,
-        base_pipeline_handle: crate::data::Pipeline,
-        base_pipeline_index: i32,
-    };
-    struct PipelineCacheCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_CACHE_CREATE_INFO,
-        p_next: *const c_void,
-        flags: crate::data::PipelineCacheCreateFlags,
-        initial_data_size: usize,
-        p_initial_data: *const c_void,
-    };
-    struct PipelineCacheHeaderVersionOne {
-        header_size: u32,
-        header_version: crate::data::PipelineCacheHeaderVersion,
-        vendor_id: u32,
-        device_id: u32,
-        pipeline_cache_uuid: [u8; 16],
-    };
-    struct PushConstantRange {
-        stage_flags: crate::data::ShaderStageFlags,
-        offset: u32,
-        size: u32,
-    };
-    struct PipelineLayoutCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_LAYOUT_CREATE_INFO,
-        p_next: *const c_void,
-        flags: crate::data::PipelineLayoutCreateFlags,
-        set_layout_count: u32,
-        p_set_layouts: *const crate::data::DescriptorSetLayout,
-        push_constant_range_count: u32,
-        p_push_constant_ranges: *const crate::data::PushConstantRange,
-    };
-    struct SamplerCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::SAMPLER_CREATE_INFO,
-        p_next: *const c_void,
-        flags: crate::data::SamplerCreateFlags,
-        mag_filter: crate::data::Filter,
-        min_filter: crate::data::Filter,
-        mipmap_mode: crate::data::SamplerMipmapMode,
-        address_mode_u: crate::data::SamplerAddressMode,
-        address_mode_v: crate::data::SamplerAddressMode,
-        address_mode_w: crate::data::SamplerAddressMode,
-        mip_lod_bias: c_float,
-        anisotropy_enable: crate::data::Bool32,
-        max_anisotropy: c_float,
-        compare_enable: crate::data::Bool32,
-        compare_op: crate::data::CompareOp,
-        min_lod: c_float,
-        max_lod: c_float,
-        border_color: crate::data::BorderColor,
-        unnormalized_coordinates: crate::data::Bool32,
-    };
-    struct CommandPoolCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::COMMAND_POOL_CREATE_INFO,
-        p_next: *const c_void,
-        flags: crate::data::CommandPoolCreateFlags,
-        queue_family_index: u32,
-    };
-    struct CommandBufferAllocateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::COMMAND_BUFFER_ALLOCATE_INFO,
-        p_next: *const c_void,
-        command_pool: crate::data::CommandPool,
-        level: crate::data::CommandBufferLevel,
-        command_buffer_count: u32,
-    };
-    struct CommandBufferInheritanceInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::COMMAND_BUFFER_INHERITANCE_INFO,
-        p_next: *const c_void,
-        render_pass: crate::data::RenderPass,
-        subpass: u32,
-        framebuffer: crate::data::Framebuffer,
-        occlusion_query_enable: crate::data::Bool32,
-        query_flags: crate::data::QueryControlFlags,
-        pipeline_statistics: crate::data::QueryPipelineStatisticFlags,
-    };
-    struct CommandBufferBeginInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::COMMAND_BUFFER_BEGIN_INFO,
-        p_next: *const c_void,
-        flags: crate::data::CommandBufferUsageFlags,
-        p_inheritance_info: *const crate::data::CommandBufferInheritanceInfo,
-    };
-    struct RenderPassBeginInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::RENDER_PASS_BEGIN_INFO,
-        p_next: *const c_void,
-        render_pass: crate::data::RenderPass,
-        framebuffer: crate::data::Framebuffer,
-        render_area: crate::data::Rect2D,
-        clear_value_count: u32,
-        p_clear_values: *const crate::data::ClearValue,
-    };
-    union ClearColorValue {
-        float_32: [c_float; 4],
-        int_32: [i32; 4],
-        uint_32: [u32; 4],
-    };
-    struct ClearDepthStencilValue {
-        depth: c_float,
-        stencil: u32,
-    };
-    union ClearValue {
-        color: crate::data::ClearColorValue,
-        depth_stencil: crate::data::ClearDepthStencilValue,
-    };
-    struct ClearAttachment {
-        aspect_mask: crate::data::ImageAspectFlags,
-        color_attachment: u32,
-        clear_value: crate::data::ClearValue,
-    };
-    struct AttachmentDescription {
-        flags: crate::data::AttachmentDescriptionFlags,
-        format: crate::data::Format,
-        samples: crate::data::SampleCountFlagBits,
-        load_op: crate::data::AttachmentLoadOp,
-        store_op: crate::data::AttachmentStoreOp,
-        stencil_load_op: crate::data::AttachmentLoadOp,
-        stencil_store_op: crate::data::AttachmentStoreOp,
-        initial_layout: crate::data::ImageLayout,
-        final_layout: crate::data::ImageLayout,
-    };
-    struct AttachmentReference {
-        attachment: u32,
-        layout: crate::data::ImageLayout,
-    };
-    struct SubpassDescription {
-        flags: crate::data::SubpassDescriptionFlags,
-        pipeline_bind_point: crate::data::PipelineBindPoint,
-        input_attachment_count: u32,
-        p_input_attachments: *const crate::data::AttachmentReference,
-        color_attachment_count: u32,
-        p_color_attachments: *const crate::data::AttachmentReference,
-        p_resolve_attachments: *const crate::data::AttachmentReference,
-        p_depth_stencil_attachment: *const crate::data::AttachmentReference,
-        preserve_attachment_count: u32,
-        p_preserve_attachments: *const u32,
-    };
-    struct SubpassDependency {
-        src_subpass: u32,
-        dst_subpass: u32,
-        src_stage_mask: crate::data::PipelineStageFlags,
-        dst_stage_mask: crate::data::PipelineStageFlags,
-        src_access_mask: crate::data::AccessFlags,
-        dst_access_mask: crate::data::AccessFlags,
-        dependency_flags: crate::data::DependencyFlags,
-    };
-    struct RenderPassCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::RENDER_PASS_CREATE_INFO,
-        p_next: *const c_void,
-        flags: crate::data::RenderPassCreateFlags,
-        attachment_count: u32,
-        p_attachments: *const crate::data::AttachmentDescription,
-        subpass_count: u32,
-        p_subpasses: *const crate::data::SubpassDescription,
-        dependency_count: u32,
-        p_dependencies: *const crate::data::SubpassDependency,
-    };
-    struct EventCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::EVENT_CREATE_INFO,
-        p_next: *const c_void,
-        flags: crate::data::EventCreateFlags,
-    };
-    struct FenceCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::FENCE_CREATE_INFO,
-        p_next: *const c_void,
-        flags: crate::data::FenceCreateFlags,
-    };
-    struct PhysicalDeviceFeatures {
-        robust_buffer_access: crate::data::Bool32,
-        full_draw_index_uint_32: crate::data::Bool32,
-        image_cube_array: crate::data::Bool32,
-        independent_blend: crate::data::Bool32,
-        geometry_shader: crate::data::Bool32,
-        tessellation_shader: crate::data::Bool32,
-        sample_rate_shading: crate::data::Bool32,
-        dual_src_blend: crate::data::Bool32,
-        logic_op: crate::data::Bool32,
-        multi_draw_indirect: crate::data::Bool32,
-        draw_indirect_first_instance: crate::data::Bool32,
-        depth_clamp: crate::data::Bool32,
-        depth_bias_clamp: crate::data::Bool32,
-        fill_mode_non_solid: crate::data::Bool32,
-        depth_bounds: crate::data::Bool32,
-        wide_lines: crate::data::Bool32,
-        large_points: crate::data::Bool32,
-        alpha_to_one: crate::data::Bool32,
-        multi_viewport: crate::data::Bool32,
-        sampler_anisotropy: crate::data::Bool32,
-        texture_compression_etc_2: crate::data::Bool32,
-        texture_compression_astc_ldr: crate::data::Bool32,
-        texture_compression_bc: crate::data::Bool32,
-        occlusion_query_precise: crate::data::Bool32,
-        pipeline_statistics_query: crate::data::Bool32,
-        vertex_pipeline_stores_and_atomics: crate::data::Bool32,
-        fragment_stores_and_atomics: crate::data::Bool32,
-        shader_tessellation_and_geometry_point_size: crate::data::Bool32,
-        shader_image_gather_extended: crate::data::Bool32,
-        shader_storage_image_extended_formats: crate::data::Bool32,
-        shader_storage_image_multisample: crate::data::Bool32,
-        shader_storage_image_read_without_format: crate::data::Bool32,
-        shader_storage_image_write_without_format: crate::data::Bool32,
-        shader_uniform_buffer_array_dynamic_indexing: crate::data::Bool32,
-        shader_sampled_image_array_dynamic_indexing: crate::data::Bool32,
-        shader_storage_buffer_array_dynamic_indexing: crate::data::Bool32,
-        shader_storage_image_array_dynamic_indexing: crate::data::Bool32,
-        shader_clip_distance: crate::data::Bool32,
-        shader_cull_distance: crate::data::Bool32,
-        shader_float_64: crate::data::Bool32,
-        shader_int_64: crate::data::Bool32,
-        shader_int_16: crate::data::Bool32,
-        shader_resource_residency: crate::data::Bool32,
-        shader_resource_min_lod: crate::data::Bool32,
-        sparse_binding: crate::data::Bool32,
-        sparse_residency_buffer: crate::data::Bool32,
-        sparse_residency_image_2d: crate::data::Bool32,
-        sparse_residency_image_3d: crate::data::Bool32,
-        sparse_residency_2_samples: crate::data::Bool32,
-        sparse_residency_4_samples: crate::data::Bool32,
-        sparse_residency_8_samples: crate::data::Bool32,
-        sparse_residency_16_samples: crate::data::Bool32,
-        sparse_residency_aliased: crate::data::Bool32,
-        variable_multisample_rate: crate::data::Bool32,
-        inherited_queries: crate::data::Bool32,
-    };
-    struct PhysicalDeviceSparseProperties {
-        residency_standard_2d_block_shape: crate::data::Bool32,
-        residency_standard_2d_multisample_block_shape: crate::data::Bool32,
-        residency_standard_3d_block_shape: crate::data::Bool32,
-        residency_aligned_mip_size: crate::data::Bool32,
-        residency_non_resident_strict: crate::data::Bool32,
-    };
-    struct PhysicalDeviceLimits {
-        max_image_dimension_1d: u32,
-        max_image_dimension_2d: u32,
-        max_image_dimension_3d: u32,
-        max_image_dimension_cube: u32,
-        max_image_array_layers: u32,
-        max_texel_buffer_elements: u32,
-        max_uniform_buffer_range: u32,
-        max_storage_buffer_range: u32,
-        max_push_constants_size: u32,
-        max_memory_allocation_count: u32,
-        max_sampler_allocation_count: u32,
-        buffer_image_granularity: crate::data::DeviceSize,
-        sparse_address_space_size: crate::data::DeviceSize,
-        max_bound_descriptor_sets: u32,
-        max_per_stage_descriptor_samplers: u32,
-        max_per_stage_descriptor_uniform_buffers: u32,
-        max_per_stage_descriptor_storage_buffers: u32,
-        max_per_stage_descriptor_sampled_images: u32,
-        max_per_stage_descriptor_storage_images: u32,
-        max_per_stage_descriptor_input_attachments: u32,
-        max_per_stage_resources: u32,
-        max_descriptor_set_samplers: u32,
-        max_descriptor_set_uniform_buffers: u32,
-        max_descriptor_set_uniform_buffers_dynamic: u32,
-        max_descriptor_set_storage_buffers: u32,
-        max_descriptor_set_storage_buffers_dynamic: u32,
-        max_descriptor_set_sampled_images: u32,
-        max_descriptor_set_storage_images: u32,
-        max_descriptor_set_input_attachments: u32,
-        max_vertex_input_attributes: u32,
-        max_vertex_input_bindings: u32,
-        max_vertex_input_attribute_offset: u32,
-        max_vertex_input_binding_stride: u32,
-        max_vertex_output_components: u32,
-        max_tessellation_generation_level: u32,
-        max_tessellation_patch_size: u32,
-        max_tessellation_control_per_vertex_input_components: u32,
-        max_tessellation_control_per_vertex_output_components: u32,
-        max_tessellation_control_per_patch_output_components: u32,
-        max_tessellation_control_total_output_components: u32,
-        max_tessellation_evaluation_input_components: u32,
-        max_tessellation_evaluation_output_components: u32,
-        max_geometry_shader_invocations: u32,
-        max_geometry_input_components: u32,
-        max_geometry_output_components: u32,
-        max_geometry_output_vertices: u32,
-        max_geometry_total_output_components: u32,
-        max_fragment_input_components: u32,
-        max_fragment_output_attachments: u32,
-        max_fragment_dual_src_attachments: u32,
-        max_fragment_combined_output_resources: u32,
-        max_compute_shared_memory_size: u32,
-        max_compute_work_group_count: [u32; 3],
-        max_compute_work_group_invocations: u32,
-        max_compute_work_group_size: [u32; 3],
-        sub_pixel_precision_bits: u32,
-        sub_texel_precision_bits: u32,
-        mipmap_precision_bits: u32,
-        max_draw_indexed_index_value: u32,
-        max_draw_indirect_count: u32,
-        max_sampler_lod_bias: c_float,
-        max_sampler_anisotropy: c_float,
-        max_viewports: u32,
-        max_viewport_dimensions: [u32; 2],
-        viewport_bounds_range: [c_float; 2],
-        viewport_sub_pixel_bits: u32,
-        min_memory_map_alignment: usize,
-        min_texel_buffer_offset_alignment: crate::data::DeviceSize,
-        min_uniform_buffer_offset_alignment: crate::data::DeviceSize,
-        min_storage_buffer_offset_alignment: crate::data::DeviceSize,
-        min_texel_offset: i32,
-        max_texel_offset: u32,
-        min_texel_gather_offset: i32,
-        max_texel_gather_offset: u32,
-        min_interpolation_offset: c_float,
-        max_interpolation_offset: c_float,
-        sub_pixel_interpolation_offset_bits: u32,
-        max_framebuffer_width: u32,
-        max_framebuffer_height: u32,
-        max_framebuffer_layers: u32,
-        framebuffer_color_sample_counts: crate::data::SampleCountFlags,
-        framebuffer_depth_sample_counts: crate::data::SampleCountFlags,
-        framebuffer_stencil_sample_counts: crate::data::SampleCountFlags,
-        framebuffer_no_attachments_sample_counts: crate::data::SampleCountFlags,
-        max_color_attachments: u32,
-        sampled_image_color_sample_counts: crate::data::SampleCountFlags,
-        sampled_image_integer_sample_counts: crate::data::SampleCountFlags,
-        sampled_image_depth_sample_counts: crate::data::SampleCountFlags,
-        sampled_image_stencil_sample_counts: crate::data::SampleCountFlags,
-        storage_image_sample_counts: crate::data::SampleCountFlags,
-        max_sample_mask_words: u32,
-        timestamp_compute_and_graphics: crate::data::Bool32,
-        timestamp_period: c_float,
-        max_clip_distances: u32,
-        max_cull_distances: u32,
-        max_combined_clip_and_cull_distances: u32,
-        discrete_queue_priorities: u32,
-        point_size_range: [c_float; 2],
-        line_width_range: [c_float; 2],
-        point_size_granularity: c_float,
-        line_width_granularity: c_float,
-        strict_lines: crate::data::Bool32,
-        standard_sample_locations: crate::data::Bool32,
-        optimal_buffer_copy_offset_alignment: crate::data::DeviceSize,
-        optimal_buffer_copy_row_pitch_alignment: crate::data::DeviceSize,
-        non_coherent_atom_size: crate::data::DeviceSize,
-    };
-    struct SemaphoreCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::SEMAPHORE_CREATE_INFO,
-        p_next: *const c_void,
-        flags: crate::data::SemaphoreCreateFlags,
-    };
-    struct QueryPoolCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::QUERY_POOL_CREATE_INFO,
-        p_next: *const c_void,
-        flags: crate::data::QueryPoolCreateFlags,
-        query_type: crate::data::QueryType,
-        query_count: u32,
-        pipeline_statistics: crate::data::QueryPipelineStatisticFlags,
-    };
-    struct FramebufferCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::FRAMEBUFFER_CREATE_INFO,
-        p_next: *const c_void,
-        flags: crate::data::FramebufferCreateFlags,
-        render_pass: crate::data::RenderPass,
-        attachment_count: u32,
-        p_attachments: *const crate::data::ImageView,
-        width: u32,
-        height: u32,
-        layers: u32,
-    };
-    struct DrawIndirectCommand {
-        vertex_count: u32,
-        instance_count: u32,
-        first_vertex: u32,
-        first_instance: u32,
-    };
-    struct DrawIndexedIndirectCommand {
-        index_count: u32,
-        instance_count: u32,
-        first_index: u32,
-        vertex_offset: i32,
-        first_instance: u32,
-    };
-    struct DispatchIndirectCommand {
-        x: u32,
-        y: u32,
-        z: u32,
-    };
-    struct MultiDrawInfoEXT {
-        first_vertex: u32,
-        vertex_count: u32,
-    };
-    struct MultiDrawIndexedInfoEXT {
-        first_index: u32,
-        index_count: u32,
-        vertex_offset: i32,
-    };
-    struct SubmitInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::SUBMIT_INFO,
-        p_next: *const c_void,
-        wait_semaphore_count: u32,
-        p_wait_semaphores: *const crate::data::Semaphore,
-        p_wait_dst_stage_mask: *const crate::data::PipelineStageFlags,
-        command_buffer_count: u32,
-        p_command_buffers: *const crate::data::CommandBuffer,
-        signal_semaphore_count: u32,
-        p_signal_semaphores: *const crate::data::Semaphore,
-    };
-    struct DisplayPropertiesKHR {
-        display: crate::data::DisplayKHR,
-        display_name: *const c_char,
-        physical_dimensions: crate::data::Extent2D,
-        physical_resolution: crate::data::Extent2D,
-        supported_transforms: crate::data::SurfaceTransformFlagsKHR,
-        plane_reorder_possible: crate::data::Bool32,
-        persistent_content: crate::data::Bool32,
-    };
-    struct DisplayPlanePropertiesKHR {
-        current_display: crate::data::DisplayKHR,
-        current_stack_index: u32,
-    };
-    struct DisplayModeParametersKHR {
-        visible_region: crate::data::Extent2D,
-        refresh_rate: u32,
-    };
-    struct DisplayModePropertiesKHR {
-        display_mode: crate::data::DisplayModeKHR,
-        parameters: crate::data::DisplayModeParametersKHR,
-    };
-    struct DisplayModeCreateInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::DISPLAY_MODE_CREATE_INFO_KHR,
-        p_next: *const c_void,
-        flags: crate::data::DisplayModeCreateFlagsKHR,
-        parameters: crate::data::DisplayModeParametersKHR,
-    };
-    struct DisplayPlaneCapabilitiesKHR {
-        supported_alpha: crate::data::DisplayPlaneAlphaFlagsKHR,
-        min_src_position: crate::data::Offset2D,
-        max_src_position: crate::data::Offset2D,
-        min_src_extent: crate::data::Extent2D,
-        max_src_extent: crate::data::Extent2D,
-        min_dst_position: crate::data::Offset2D,
-        max_dst_position: crate::data::Offset2D,
-        min_dst_extent: crate::data::Extent2D,
-        max_dst_extent: crate::data::Extent2D,
-    };
-    struct DisplaySurfaceCreateInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::DISPLAY_SURFACE_CREATE_INFO_KHR,
-        p_next: *const c_void,
-        flags: crate::data::DisplaySurfaceCreateFlagsKHR,
-        display_mode: crate::data::DisplayModeKHR,
-        plane_index: u32,
-        plane_stack_index: u32,
-        transform: crate::data::SurfaceTransformFlagBitsKHR,
-        global_alpha: c_float,
-        alpha_mode: crate::data::DisplayPlaneAlphaFlagBitsKHR,
-        image_extent: crate::data::Extent2D,
-    };
-    struct DisplayPresentInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::DISPLAY_PRESENT_INFO_KHR,
-        p_next: *const c_void,
-        src_rect: crate::data::Rect2D,
-        dst_rect: crate::data::Rect2D,
-        persistent: crate::data::Bool32,
-    };
-    struct SurfaceCapabilitiesKHR {
-        min_image_count: u32,
-        max_image_count: u32,
-        current_extent: crate::data::Extent2D,
-        min_image_extent: crate::data::Extent2D,
-        max_image_extent: crate::data::Extent2D,
-        max_image_array_layers: u32,
-        supported_transforms: crate::data::SurfaceTransformFlagsKHR,
-        current_transform: crate::data::SurfaceTransformFlagBitsKHR,
-        supported_composite_alpha: crate::data::CompositeAlphaFlagsKHR,
-        supported_usage_flags: crate::data::ImageUsageFlags,
-    };
-    struct AndroidSurfaceCreateInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::ANDROID_SURFACE_CREATE_INFO_KHR,
-        p_next: *const c_void,
-        flags: crate::data::AndroidSurfaceCreateFlagsKHR,
-        window: *mut ANativeWindow,
-    };
-    struct ViSurfaceCreateInfoNN {
-        s_type: crate::data::StructureType = crate::data::StructureType::VI_SURFACE_CREATE_INFO_NN,
-        p_next: *const c_void,
-        flags: crate::data::ViSurfaceCreateFlagsNN,
-        window: *mut c_void,
-    };
-    struct XlibSurfaceCreateInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::XLIB_SURFACE_CREATE_INFO_KHR,
-        p_next: *const c_void,
-        flags: crate::data::XlibSurfaceCreateFlagsKHR,
-        dpy: *mut Display,
-        window: Window,
-    };
-    struct SurfaceFormatKHR {
-        format: crate::data::Format,
-        color_space: crate::data::ColorSpaceKHR,
-    };
-    struct SwapchainCreateInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::SWAPCHAIN_CREATE_INFO_KHR,
-        p_next: *const c_void,
-        flags: crate::data::SwapchainCreateFlagsKHR,
-        surface: crate::data::SurfaceKHR,
-        min_image_count: u32,
-        image_format: crate::data::Format,
-        image_color_space: crate::data::ColorSpaceKHR,
-        image_extent: crate::data::Extent2D,
-        image_array_layers: u32,
-        image_usage: crate::data::ImageUsageFlags,
-        image_sharing_mode: crate::data::SharingMode,
-        queue_family_index_count: u32,
-        p_queue_family_indices: *const u32,
-        pre_transform: crate::data::SurfaceTransformFlagBitsKHR,
-        composite_alpha: crate::data::CompositeAlphaFlagBitsKHR,
-        present_mode: crate::data::PresentModeKHR,
-        clipped: crate::data::Bool32,
-        old_swapchain: crate::data::SwapchainKHR,
-    };
-    struct PresentInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::PRESENT_INFO_KHR,
-        p_next: *const c_void,
-        wait_semaphore_count: u32,
-        p_wait_semaphores: *const crate::data::Semaphore,
-        swapchain_count: u32,
-        p_swapchains: *const crate::data::SwapchainKHR,
-        p_image_indices: *const u32,
-        p_results: *mut crate::data::Result,
-    };
-    struct DebugReportCallbackCreateInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT,
-        p_next: *const c_void,
-        flags: crate::data::DebugReportFlagsEXT,
-        pfn_callback: crate::pfn::DebugReportCallbackEXT,
-        p_user_data: *mut c_void,
-    };
-    struct ValidationFlagsEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::VALIDATION_FLAGS_EXT,
-        p_next: *const c_void,
-        disabled_validation_check_count: u32,
-        p_disabled_validation_checks: *const crate::data::ValidationCheckEXT,
-    };
-    struct ValidationFeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::VALIDATION_FEATURES_EXT,
-        p_next: *const c_void,
-        enabled_validation_feature_count: u32,
-        p_enabled_validation_features: *const crate::data::ValidationFeatureEnableEXT,
-        disabled_validation_feature_count: u32,
-        p_disabled_validation_features: *const crate::data::ValidationFeatureDisableEXT,
-    };
-    struct PipelineRasterizationStateRasterizationOrderAMD {
-        s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_RASTERIZATION_STATE_RASTERIZATION_ORDER_AMD,
-        p_next: *const c_void,
-        rasterization_order: crate::data::RasterizationOrderAMD,
-    };
-    struct DebugMarkerObjectNameInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::DEBUG_MARKER_OBJECT_NAME_INFO_EXT,
-        p_next: *const c_void,
-        object_type: crate::data::DebugReportObjectTypeEXT,
-        object: u64,
-        p_object_name: *const c_char,
-    };
-    struct DebugMarkerObjectTagInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::DEBUG_MARKER_OBJECT_TAG_INFO_EXT,
-        p_next: *const c_void,
-        object_type: crate::data::DebugReportObjectTypeEXT,
-        object: u64,
-        tag_name: u64,
-        tag_size: usize,
-        p_tag: *const c_void,
-    };
-    struct DebugMarkerMarkerInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::DEBUG_MARKER_MARKER_INFO_EXT,
-        p_next: *const c_void,
-        p_marker_name: *const c_char,
-        color: [c_float; 4],
-    };
-    struct DedicatedAllocationImageCreateInfoNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::DEDICATED_ALLOCATION_IMAGE_CREATE_INFO_NV,
-        p_next: *const c_void,
-        dedicated_allocation: crate::data::Bool32,
-    };
-    struct DedicatedAllocationBufferCreateInfoNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::DEDICATED_ALLOCATION_BUFFER_CREATE_INFO_NV,
-        p_next: *const c_void,
-        dedicated_allocation: crate::data::Bool32,
-    };
-    struct DedicatedAllocationMemoryAllocateInfoNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::DEDICATED_ALLOCATION_MEMORY_ALLOCATE_INFO_NV,
-        p_next: *const c_void,
-        image: crate::data::Image,
-        buffer: crate::data::Buffer,
-    };
-    struct ExternalImageFormatPropertiesNV {
-        image_format_properties: crate::data::ImageFormatProperties,
-        external_memory_features: crate::data::ExternalMemoryFeatureFlagsNV,
-        export_from_imported_handle_types: crate::data::ExternalMemoryHandleTypeFlagsNV,
-        compatible_handle_types: crate::data::ExternalMemoryHandleTypeFlagsNV,
-    };
-    struct ExternalMemoryImageCreateInfoNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::EXTERNAL_MEMORY_IMAGE_CREATE_INFO_NV,
-        p_next: *const c_void,
-        handle_types: crate::data::ExternalMemoryHandleTypeFlagsNV,
-    };
-    struct ExportMemoryAllocateInfoNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::EXPORT_MEMORY_ALLOCATE_INFO_NV,
-        p_next: *const c_void,
-        handle_types: crate::data::ExternalMemoryHandleTypeFlagsNV,
-    };
-    struct Win32KeyedMutexAcquireReleaseInfoNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::WIN32_KEYED_MUTEX_ACQUIRE_RELEASE_INFO_NV,
-        p_next: *const c_void,
-        acquire_count: u32,
-        p_acquire_syncs: *const crate::data::DeviceMemory,
-        p_acquire_keys: *const u64,
-        p_acquire_timeout_milliseconds: *const u32,
-        release_count: u32,
-        p_release_syncs: *const crate::data::DeviceMemory,
-        p_release_keys: *const u64,
-    };
-    struct PhysicalDeviceDeviceGeneratedCommandsFeaturesNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_DEVICE_GENERATED_COMMANDS_FEATURES_NV,
-        p_next: *mut c_void,
-        device_generated_commands: crate::data::Bool32,
-    };
-    struct DevicePrivateDataCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_PRIVATE_DATA_CREATE_INFO,
-        p_next: *const c_void,
-        private_data_slot_request_count: u32,
-    };
-    struct PrivateDataSlotCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::PRIVATE_DATA_SLOT_CREATE_INFO,
-        p_next: *const c_void,
-        flags: crate::data::PrivateDataSlotCreateFlags,
-    };
-    struct PhysicalDevicePrivateDataFeatures {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PRIVATE_DATA_FEATURES,
-        p_next: *mut c_void,
-        private_data: crate::data::Bool32,
-    };
-    struct PhysicalDeviceDeviceGeneratedCommandsPropertiesNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_DEVICE_GENERATED_COMMANDS_PROPERTIES_NV,
-        p_next: *mut c_void,
-        max_graphics_shader_group_count: u32,
-        max_indirect_sequence_count: u32,
-        max_indirect_commands_token_count: u32,
-        max_indirect_commands_stream_count: u32,
-        max_indirect_commands_token_offset: u32,
-        max_indirect_commands_stream_stride: u32,
-        min_sequences_count_buffer_offset_alignment: u32,
-        min_sequences_index_buffer_offset_alignment: u32,
-        min_indirect_commands_buffer_offset_alignment: u32,
-    };
-    struct PhysicalDeviceMultiDrawPropertiesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_MULTI_DRAW_PROPERTIES_EXT,
-        p_next: *mut c_void,
-        max_multi_draw_count: u32,
-    };
-    struct GraphicsShaderGroupCreateInfoNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::GRAPHICS_SHADER_GROUP_CREATE_INFO_NV,
-        p_next: *const c_void,
-        stage_count: u32,
-        p_stages: *const crate::data::PipelineShaderStageCreateInfo,
-        p_vertex_input_state: *const crate::data::PipelineVertexInputStateCreateInfo,
-        p_tessellation_state: *const crate::data::PipelineTessellationStateCreateInfo,
-    };
-    struct GraphicsPipelineShaderGroupsCreateInfoNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::GRAPHICS_PIPELINE_SHADER_GROUPS_CREATE_INFO_NV,
-        p_next: *const c_void,
-        group_count: u32,
-        p_groups: *const crate::data::GraphicsShaderGroupCreateInfoNV,
-        pipeline_count: u32,
-        p_pipelines: *const crate::data::Pipeline,
-    };
-    struct BindShaderGroupIndirectCommandNV {
-        group_index: u32,
-    };
-    struct BindIndexBufferIndirectCommandNV {
-        buffer_address: crate::data::DeviceAddress,
-        size: u32,
-        index_type: crate::data::IndexType,
-    };
-    struct BindVertexBufferIndirectCommandNV {
-        buffer_address: crate::data::DeviceAddress,
-        size: u32,
-        stride: u32,
-    };
-    struct SetStateFlagsIndirectCommandNV {
-        data: u32,
-    };
-    struct IndirectCommandsStreamNV {
-        buffer: crate::data::Buffer,
-        offset: crate::data::DeviceSize,
-    };
-    struct IndirectCommandsLayoutTokenNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::INDIRECT_COMMANDS_LAYOUT_TOKEN_NV,
-        p_next: *const c_void,
-        token_type: crate::data::IndirectCommandsTokenTypeNV,
-        stream: u32,
-        offset: u32,
-        vertex_binding_unit: u32,
-        vertex_dynamic_stride: crate::data::Bool32,
-        pushconstant_pipeline_layout: crate::data::PipelineLayout,
-        pushconstant_shader_stage_flags: crate::data::ShaderStageFlags,
-        pushconstant_offset: u32,
-        pushconstant_size: u32,
-        indirect_state_flags: crate::data::IndirectStateFlagsNV,
-        index_type_count: u32,
-        p_index_types: *const crate::data::IndexType,
-        p_index_type_values: *const u32,
-    };
-    struct IndirectCommandsLayoutCreateInfoNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::INDIRECT_COMMANDS_LAYOUT_CREATE_INFO_NV,
-        p_next: *const c_void,
-        flags: crate::data::IndirectCommandsLayoutUsageFlagsNV,
-        pipeline_bind_point: crate::data::PipelineBindPoint,
-        token_count: u32,
-        p_tokens: *const crate::data::IndirectCommandsLayoutTokenNV,
-        stream_count: u32,
-        p_stream_strides: *const u32,
-    };
-    struct GeneratedCommandsInfoNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::GENERATED_COMMANDS_INFO_NV,
-        p_next: *const c_void,
-        pipeline_bind_point: crate::data::PipelineBindPoint,
-        pipeline: crate::data::Pipeline,
-        indirect_commands_layout: crate::data::IndirectCommandsLayoutNV,
-        stream_count: u32,
-        p_streams: *const crate::data::IndirectCommandsStreamNV,
-        sequences_count: u32,
-        preprocess_buffer: crate::data::Buffer,
-        preprocess_offset: crate::data::DeviceSize,
-        preprocess_size: crate::data::DeviceSize,
-        sequences_count_buffer: crate::data::Buffer,
-        sequences_count_offset: crate::data::DeviceSize,
-        sequences_index_buffer: crate::data::Buffer,
-        sequences_index_offset: crate::data::DeviceSize,
-    };
-    struct GeneratedCommandsMemoryRequirementsInfoNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::GENERATED_COMMANDS_MEMORY_REQUIREMENTS_INFO_NV,
-        p_next: *const c_void,
-        pipeline_bind_point: crate::data::PipelineBindPoint,
-        pipeline: crate::data::Pipeline,
-        indirect_commands_layout: crate::data::IndirectCommandsLayoutNV,
-        max_sequences_count: u32,
-    };
-    struct PhysicalDeviceFeatures2 {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_FEATURES_2,
-        p_next: *mut c_void,
-        features: crate::data::PhysicalDeviceFeatures,
-    };
-    struct PhysicalDeviceProperties2 {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PROPERTIES_2,
-        p_next: *mut c_void,
-        properties: crate::data::PhysicalDeviceProperties,
-    };
-    struct FormatProperties2 {
-        s_type: crate::data::StructureType = crate::data::StructureType::FORMAT_PROPERTIES_2,
-        p_next: *mut c_void,
-        format_properties: crate::data::FormatProperties,
-    };
-    struct ImageFormatProperties2 {
-        s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_FORMAT_PROPERTIES_2,
-        p_next: *mut c_void,
-        image_format_properties: crate::data::ImageFormatProperties,
-    };
-    struct PhysicalDeviceImageFormatInfo2 {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_IMAGE_FORMAT_INFO_2,
-        p_next: *const c_void,
-        format: crate::data::Format,
-        ty: crate::data::ImageType,
-        tiling: crate::data::ImageTiling,
-        usage: crate::data::ImageUsageFlags,
-        flags: crate::data::ImageCreateFlags,
-    };
-    struct QueueFamilyProperties2 {
-        s_type: crate::data::StructureType = crate::data::StructureType::QUEUE_FAMILY_PROPERTIES_2,
-        p_next: *mut c_void,
-        queue_family_properties: crate::data::QueueFamilyProperties,
-    };
-    struct PhysicalDeviceMemoryProperties2 {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_MEMORY_PROPERTIES_2,
-        p_next: *mut c_void,
-        memory_properties: crate::data::PhysicalDeviceMemoryProperties,
-    };
-    struct SparseImageFormatProperties2 {
-        s_type: crate::data::StructureType = crate::data::StructureType::SPARSE_IMAGE_FORMAT_PROPERTIES_2,
-        p_next: *mut c_void,
-        properties: crate::data::SparseImageFormatProperties,
-    };
-    struct PhysicalDeviceSparseImageFormatInfo2 {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SPARSE_IMAGE_FORMAT_INFO_2,
-        p_next: *const c_void,
-        format: crate::data::Format,
-        ty: crate::data::ImageType,
-        samples: crate::data::SampleCountFlagBits,
-        usage: crate::data::ImageUsageFlags,
-        tiling: crate::data::ImageTiling,
-    };
-    struct PhysicalDevicePushDescriptorPropertiesKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PUSH_DESCRIPTOR_PROPERTIES_KHR,
-        p_next: *mut c_void,
-        max_push_descriptors: u32,
-    };
-    struct ConformanceVersion {
-        major: u8,
-        minor: u8,
-        subminor: u8,
-        patch: u8,
-    };
-    struct PhysicalDeviceDriverProperties {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_DRIVER_PROPERTIES,
-        p_next: *mut c_void,
-        driver_id: crate::data::DriverId,
-        driver_name: [c_char; 256],
-        driver_info: [c_char; 256],
-        conformance_version: crate::data::ConformanceVersion,
-    };
-    struct PresentRegionsKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::PRESENT_REGIONS_KHR,
-        p_next: *const c_void,
-        swapchain_count: u32,
-        p_regions: *const crate::data::PresentRegionKHR,
-    };
-    struct PresentRegionKHR {
-        rectangle_count: u32,
-        p_rectangles: *const crate::data::RectLayerKHR,
-    };
-    struct RectLayerKHR {
-        offset: crate::data::Offset2D,
-        extent: crate::data::Extent2D,
-        layer: u32,
-    };
-    struct PhysicalDeviceVariablePointersFeatures {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_VARIABLE_POINTERS_FEATURES,
-        p_next: *mut c_void,
-        variable_pointers_storage_buffer: crate::data::Bool32,
-        variable_pointers: crate::data::Bool32,
-    };
-    struct ExternalMemoryProperties {
-        external_memory_features: crate::data::ExternalMemoryFeatureFlags,
-        export_from_imported_handle_types: crate::data::ExternalMemoryHandleTypeFlags,
-        compatible_handle_types: crate::data::ExternalMemoryHandleTypeFlags,
-    };
-    struct PhysicalDeviceExternalImageFormatInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_EXTERNAL_IMAGE_FORMAT_INFO,
-        p_next: *const c_void,
-        handle_type: crate::data::ExternalMemoryHandleTypeFlagBits,
-    };
-    struct ExternalImageFormatProperties {
-        s_type: crate::data::StructureType = crate::data::StructureType::EXTERNAL_IMAGE_FORMAT_PROPERTIES,
-        p_next: *mut c_void,
-        external_memory_properties: crate::data::ExternalMemoryProperties,
-    };
-    struct PhysicalDeviceExternalBufferInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_EXTERNAL_BUFFER_INFO,
-        p_next: *const c_void,
-        flags: crate::data::BufferCreateFlags,
-        usage: crate::data::BufferUsageFlags,
-        handle_type: crate::data::ExternalMemoryHandleTypeFlagBits,
-    };
-    struct ExternalBufferProperties {
-        s_type: crate::data::StructureType = crate::data::StructureType::EXTERNAL_BUFFER_PROPERTIES,
-        p_next: *mut c_void,
-        external_memory_properties: crate::data::ExternalMemoryProperties,
-    };
-    struct PhysicalDeviceIDProperties {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_ID_PROPERTIES,
-        p_next: *mut c_void,
-        device_uuid: [u8; 16],
-        driver_uuid: [u8; 16],
-        device_luid: [u8; 8],
-        device_node_mask: u32,
-        device_luid_valid: crate::data::Bool32,
-    };
-    struct ExternalMemoryImageCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::EXTERNAL_MEMORY_IMAGE_CREATE_INFO,
-        p_next: *const c_void,
-        handle_types: crate::data::ExternalMemoryHandleTypeFlags,
-    };
-    struct ExternalMemoryBufferCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::EXTERNAL_MEMORY_BUFFER_CREATE_INFO,
-        p_next: *const c_void,
-        handle_types: crate::data::ExternalMemoryHandleTypeFlags,
-    };
-    struct ExportMemoryAllocateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::EXPORT_MEMORY_ALLOCATE_INFO,
-        p_next: *const c_void,
-        handle_types: crate::data::ExternalMemoryHandleTypeFlags,
-    };
-    struct MemoryZirconHandlePropertiesFUCHSIA {
-        s_type: crate::data::StructureType = crate::data::StructureType::MEMORY_ZIRCON_HANDLE_PROPERTIES_FUCHSIA,
-        p_next: *mut c_void,
-        memory_type_bits: u32,
-    };
-    struct MemoryGetZirconHandleInfoFUCHSIA {
-        s_type: crate::data::StructureType = crate::data::StructureType::MEMORY_GET_ZIRCON_HANDLE_INFO_FUCHSIA,
-        p_next: *const c_void,
-        memory: crate::data::DeviceMemory,
-        handle_type: crate::data::ExternalMemoryHandleTypeFlagBits,
-    };
-    struct MemoryWin32HandlePropertiesKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::MEMORY_WIN32_HANDLE_PROPERTIES_KHR,
-        p_next: *mut c_void,
-        memory_type_bits: u32,
-    };
-    struct MemoryGetWin32HandleInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::MEMORY_GET_WIN32_HANDLE_INFO_KHR,
-        p_next: *const c_void,
-        memory: crate::data::DeviceMemory,
-        handle_type: crate::data::ExternalMemoryHandleTypeFlagBits,
-    };
-    struct ImportMemoryFdInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::IMPORT_MEMORY_FD_INFO_KHR,
-        p_next: *const c_void,
-        handle_type: crate::data::ExternalMemoryHandleTypeFlagBits,
-        fd: c_int,
-    };
-    struct MemoryFdPropertiesKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::MEMORY_FD_PROPERTIES_KHR,
-        p_next: *mut c_void,
-        memory_type_bits: u32,
-    };
-    struct MemoryGetFdInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::MEMORY_GET_FD_INFO_KHR,
-        p_next: *const c_void,
-        memory: crate::data::DeviceMemory,
-        handle_type: crate::data::ExternalMemoryHandleTypeFlagBits,
-    };
-    struct Win32KeyedMutexAcquireReleaseInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::WIN32_KEYED_MUTEX_ACQUIRE_RELEASE_INFO_KHR,
-        p_next: *const c_void,
-        acquire_count: u32,
-        p_acquire_syncs: *const crate::data::DeviceMemory,
-        p_acquire_keys: *const u64,
-        p_acquire_timeouts: *const u32,
-        release_count: u32,
-        p_release_syncs: *const crate::data::DeviceMemory,
-        p_release_keys: *const u64,
-    };
-    struct PhysicalDeviceExternalSemaphoreInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_EXTERNAL_SEMAPHORE_INFO,
-        p_next: *const c_void,
-        handle_type: crate::data::ExternalSemaphoreHandleTypeFlagBits,
-    };
-    struct ExternalSemaphoreProperties {
-        s_type: crate::data::StructureType = crate::data::StructureType::EXTERNAL_SEMAPHORE_PROPERTIES,
-        p_next: *mut c_void,
-        export_from_imported_handle_types: crate::data::ExternalSemaphoreHandleTypeFlags,
-        compatible_handle_types: crate::data::ExternalSemaphoreHandleTypeFlags,
-        external_semaphore_features: crate::data::ExternalSemaphoreFeatureFlags,
-    };
-    struct ExportSemaphoreCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::EXPORT_SEMAPHORE_CREATE_INFO,
-        p_next: *const c_void,
-        handle_types: crate::data::ExternalSemaphoreHandleTypeFlags,
-    };
-    struct D3D12FenceSubmitInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::D3D12_FENCE_SUBMIT_INFO_KHR,
-        p_next: *const c_void,
-        wait_semaphore_values_count: u32,
-        p_wait_semaphore_values: *const u64,
-        signal_semaphore_values_count: u32,
-        p_signal_semaphore_values: *const u64,
-    };
-    struct SemaphoreGetWin32HandleInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::SEMAPHORE_GET_WIN32_HANDLE_INFO_KHR,
-        p_next: *const c_void,
-        semaphore: crate::data::Semaphore,
-        handle_type: crate::data::ExternalSemaphoreHandleTypeFlagBits,
-    };
-    struct ImportSemaphoreFdInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::IMPORT_SEMAPHORE_FD_INFO_KHR,
-        p_next: *const c_void,
-        semaphore: crate::data::Semaphore,
-        flags: crate::data::SemaphoreImportFlags,
-        handle_type: crate::data::ExternalSemaphoreHandleTypeFlagBits,
-        fd: c_int,
-    };
-    struct SemaphoreGetFdInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::SEMAPHORE_GET_FD_INFO_KHR,
-        p_next: *const c_void,
-        semaphore: crate::data::Semaphore,
-        handle_type: crate::data::ExternalSemaphoreHandleTypeFlagBits,
-    };
-    struct SemaphoreGetZirconHandleInfoFUCHSIA {
-        s_type: crate::data::StructureType = crate::data::StructureType::SEMAPHORE_GET_ZIRCON_HANDLE_INFO_FUCHSIA,
-        p_next: *const c_void,
-        semaphore: crate::data::Semaphore,
-        handle_type: crate::data::ExternalSemaphoreHandleTypeFlagBits,
-    };
-    struct PhysicalDeviceExternalFenceInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_EXTERNAL_FENCE_INFO,
-        p_next: *const c_void,
-        handle_type: crate::data::ExternalFenceHandleTypeFlagBits,
-    };
-    struct ExternalFenceProperties {
-        s_type: crate::data::StructureType = crate::data::StructureType::EXTERNAL_FENCE_PROPERTIES,
-        p_next: *mut c_void,
-        export_from_imported_handle_types: crate::data::ExternalFenceHandleTypeFlags,
-        compatible_handle_types: crate::data::ExternalFenceHandleTypeFlags,
-        external_fence_features: crate::data::ExternalFenceFeatureFlags,
-    };
-    struct ExportFenceCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::EXPORT_FENCE_CREATE_INFO,
-        p_next: *const c_void,
-        handle_types: crate::data::ExternalFenceHandleTypeFlags,
-    };
-    struct FenceGetWin32HandleInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::FENCE_GET_WIN32_HANDLE_INFO_KHR,
-        p_next: *const c_void,
-        fence: crate::data::Fence,
-        handle_type: crate::data::ExternalFenceHandleTypeFlagBits,
-    };
-    struct ImportFenceFdInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::IMPORT_FENCE_FD_INFO_KHR,
-        p_next: *const c_void,
-        fence: crate::data::Fence,
-        flags: crate::data::FenceImportFlags,
-        handle_type: crate::data::ExternalFenceHandleTypeFlagBits,
-        fd: c_int,
-    };
-    struct FenceGetFdInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::FENCE_GET_FD_INFO_KHR,
-        p_next: *const c_void,
-        fence: crate::data::Fence,
-        handle_type: crate::data::ExternalFenceHandleTypeFlagBits,
-    };
-    struct PhysicalDeviceMultiviewFeatures {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_MULTIVIEW_FEATURES,
-        p_next: *mut c_void,
-        multiview: crate::data::Bool32,
-        multiview_geometry_shader: crate::data::Bool32,
-        multiview_tessellation_shader: crate::data::Bool32,
-    };
-    struct PhysicalDeviceMultiviewProperties {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_MULTIVIEW_PROPERTIES,
-        p_next: *mut c_void,
-        max_multiview_view_count: u32,
-        max_multiview_instance_index: u32,
-    };
-    struct RenderPassMultiviewCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::RENDER_PASS_MULTIVIEW_CREATE_INFO,
-        p_next: *const c_void,
-        subpass_count: u32,
-        p_view_masks: *const u32,
-        dependency_count: u32,
-        p_view_offsets: *const i32,
-        correlation_mask_count: u32,
-        p_correlation_masks: *const u32,
-    };
-    struct SurfaceCapabilities2EXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::SURFACE_CAPABILITIES_2_EXT,
-        p_next: *mut c_void,
-        min_image_count: u32,
-        max_image_count: u32,
-        current_extent: crate::data::Extent2D,
-        min_image_extent: crate::data::Extent2D,
-        max_image_extent: crate::data::Extent2D,
-        max_image_array_layers: u32,
-        supported_transforms: crate::data::SurfaceTransformFlagsKHR,
-        current_transform: crate::data::SurfaceTransformFlagBitsKHR,
-        supported_composite_alpha: crate::data::CompositeAlphaFlagsKHR,
-        supported_usage_flags: crate::data::ImageUsageFlags,
-        supported_surface_counters: crate::data::SurfaceCounterFlagsEXT,
-    };
-    struct DisplayPowerInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::DISPLAY_POWER_INFO_EXT,
-        p_next: *const c_void,
-        power_state: crate::data::DisplayPowerStateEXT,
-    };
-    struct DeviceEventInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_EVENT_INFO_EXT,
-        p_next: *const c_void,
-        device_event: crate::data::DeviceEventTypeEXT,
-    };
-    struct DisplayEventInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::DISPLAY_EVENT_INFO_EXT,
-        p_next: *const c_void,
-        display_event: crate::data::DisplayEventTypeEXT,
-    };
-    struct SwapchainCounterCreateInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::SWAPCHAIN_COUNTER_CREATE_INFO_EXT,
-        p_next: *const c_void,
-        surface_counters: crate::data::SurfaceCounterFlagsEXT,
-    };
-    struct PhysicalDeviceGroupProperties {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_GROUP_PROPERTIES,
-        p_next: *mut c_void,
-        physical_device_count: u32,
-        physical_devices: [crate::data::PhysicalDevice; 32],
-        subset_allocation: crate::data::Bool32,
-    };
-    struct MemoryAllocateFlagsInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::MEMORY_ALLOCATE_FLAGS_INFO,
-        p_next: *const c_void,
-        flags: crate::data::MemoryAllocateFlags,
-        device_mask: u32,
-    };
-    struct BindBufferMemoryInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::BIND_BUFFER_MEMORY_INFO,
-        p_next: *const c_void,
-        buffer: crate::data::Buffer,
-        memory: crate::data::DeviceMemory,
-        memory_offset: crate::data::DeviceSize,
-    };
-    struct BindBufferMemoryDeviceGroupInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::BIND_BUFFER_MEMORY_DEVICE_GROUP_INFO,
-        p_next: *const c_void,
-        device_index_count: u32,
-        p_device_indices: *const u32,
-    };
-    struct BindImageMemoryInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::BIND_IMAGE_MEMORY_INFO,
-        p_next: *const c_void,
-        image: crate::data::Image,
-        memory: crate::data::DeviceMemory,
-        memory_offset: crate::data::DeviceSize,
-    };
-    struct BindImageMemoryDeviceGroupInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::BIND_IMAGE_MEMORY_DEVICE_GROUP_INFO,
-        p_next: *const c_void,
-        device_index_count: u32,
-        p_device_indices: *const u32,
-        split_instance_bind_region_count: u32,
-        p_split_instance_bind_regions: *const crate::data::Rect2D,
-    };
-    struct DeviceGroupRenderPassBeginInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_GROUP_RENDER_PASS_BEGIN_INFO,
-        p_next: *const c_void,
-        device_mask: u32,
-        device_render_area_count: u32,
-        p_device_render_areas: *const crate::data::Rect2D,
-    };
-    struct DeviceGroupCommandBufferBeginInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_GROUP_COMMAND_BUFFER_BEGIN_INFO,
-        p_next: *const c_void,
-        device_mask: u32,
-    };
-    struct DeviceGroupSubmitInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_GROUP_SUBMIT_INFO,
-        p_next: *const c_void,
-        wait_semaphore_count: u32,
-        p_wait_semaphore_device_indices: *const u32,
-        command_buffer_count: u32,
-        p_command_buffer_device_masks: *const u32,
-        signal_semaphore_count: u32,
-        p_signal_semaphore_device_indices: *const u32,
-    };
-    struct DeviceGroupBindSparseInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_GROUP_BIND_SPARSE_INFO,
-        p_next: *const c_void,
-        resource_device_index: u32,
-        memory_device_index: u32,
-    };
-    struct DeviceGroupPresentCapabilitiesKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_GROUP_PRESENT_CAPABILITIES_KHR,
-        p_next: *mut c_void,
-        present_mask: [u32; 32],
-        modes: crate::data::DeviceGroupPresentModeFlagsKHR,
-    };
-    struct ImageSwapchainCreateInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_SWAPCHAIN_CREATE_INFO_KHR,
-        p_next: *const c_void,
-        swapchain: crate::data::SwapchainKHR,
-    };
-    struct BindImageMemorySwapchainInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::BIND_IMAGE_MEMORY_SWAPCHAIN_INFO_KHR,
-        p_next: *const c_void,
-        swapchain: crate::data::SwapchainKHR,
-        image_index: u32,
-    };
-    struct AcquireNextImageInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::ACQUIRE_NEXT_IMAGE_INFO_KHR,
-        p_next: *const c_void,
-        swapchain: crate::data::SwapchainKHR,
-        timeout: u64,
-        semaphore: crate::data::Semaphore,
-        fence: crate::data::Fence,
-        device_mask: u32,
-    };
-    struct DeviceGroupPresentInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_GROUP_PRESENT_INFO_KHR,
-        p_next: *const c_void,
-        swapchain_count: u32,
-        p_device_masks: *const u32,
-        mode: crate::data::DeviceGroupPresentModeFlagBitsKHR,
-    };
-    struct DeviceGroupDeviceCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_GROUP_DEVICE_CREATE_INFO,
-        p_next: *const c_void,
-        physical_device_count: u32,
-        p_physical_devices: *const crate::data::PhysicalDevice,
-    };
-    struct DeviceGroupSwapchainCreateInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_GROUP_SWAPCHAIN_CREATE_INFO_KHR,
-        p_next: *const c_void,
-        modes: crate::data::DeviceGroupPresentModeFlagsKHR,
-    };
-    struct DescriptorUpdateTemplateEntry {
-        dst_binding: u32,
-        dst_array_element: u32,
-        descriptor_count: u32,
-        descriptor_type: crate::data::DescriptorType,
-        offset: usize,
-        stride: usize,
-    };
-    struct DescriptorUpdateTemplateCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::DESCRIPTOR_UPDATE_TEMPLATE_CREATE_INFO,
-        p_next: *const c_void,
-        flags: crate::data::DescriptorUpdateTemplateCreateFlags,
-        descriptor_update_entry_count: u32,
-        p_descriptor_update_entries: *const crate::data::DescriptorUpdateTemplateEntry,
-        template_type: crate::data::DescriptorUpdateTemplateType,
-        descriptor_set_layout: crate::data::DescriptorSetLayout,
-        pipeline_bind_point: crate::data::PipelineBindPoint,
-        pipeline_layout: crate::data::PipelineLayout,
-        set: u32,
-    };
-    struct XYColorEXT {
-        x: c_float,
-        y: c_float,
-    };
-    struct PhysicalDevicePresentIdFeaturesKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PRESENT_ID_FEATURES_KHR,
-        p_next: *mut c_void,
-        present_id: crate::data::Bool32,
-    };
-    struct PresentIdKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::PRESENT_ID_KHR,
-        p_next: *const c_void,
-        swapchain_count: u32,
-        p_present_ids: *const u64,
-    };
-    struct PhysicalDevicePresentWaitFeaturesKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PRESENT_WAIT_FEATURES_KHR,
-        p_next: *mut c_void,
-        present_wait: crate::data::Bool32,
-    };
-    struct HdrMetadataEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::HDR_METADATA_EXT,
-        p_next: *const c_void,
-        display_primary_red: crate::data::XYColorEXT,
-        display_primary_green: crate::data::XYColorEXT,
-        display_primary_blue: crate::data::XYColorEXT,
-        white_point: crate::data::XYColorEXT,
-        max_luminance: c_float,
-        min_luminance: c_float,
-        max_content_light_level: c_float,
-        max_frame_average_light_level: c_float,
-    };
-    struct DisplayNativeHdrSurfaceCapabilitiesAMD {
-        s_type: crate::data::StructureType = crate::data::StructureType::DISPLAY_NATIVE_HDR_SURFACE_CAPABILITIES_AMD,
-        p_next: *mut c_void,
-        local_dimming_support: crate::data::Bool32,
-    };
-    struct SwapchainDisplayNativeHdrCreateInfoAMD {
-        s_type: crate::data::StructureType = crate::data::StructureType::SWAPCHAIN_DISPLAY_NATIVE_HDR_CREATE_INFO_AMD,
-        p_next: *const c_void,
-        local_dimming_enable: crate::data::Bool32,
-    };
-    struct RefreshCycleDurationGOOGLE {
-        refresh_duration: u64,
-    };
-    struct PastPresentationTimingGOOGLE {
-        present_id: u32,
-        desired_present_time: u64,
-        actual_present_time: u64,
-        earliest_present_time: u64,
-        present_margin: u64,
-    };
-    struct PresentTimesInfoGOOGLE {
-        s_type: crate::data::StructureType = crate::data::StructureType::PRESENT_TIMES_INFO_GOOGLE,
-        p_next: *const c_void,
-        swapchain_count: u32,
-        p_times: *const crate::data::PresentTimeGOOGLE,
-    };
-    struct PresentTimeGOOGLE {
-        present_id: u32,
-        desired_present_time: u64,
-    };
-    struct IOSSurfaceCreateInfoMVK {
-        s_type: crate::data::StructureType = crate::data::StructureType::IOS_SURFACE_CREATE_INFO_MVK,
-        p_next: *const c_void,
-        flags: crate::data::IOSSurfaceCreateFlagsMVK,
-        p_view: *const c_void,
-    };
-    struct MacOSSurfaceCreateInfoMVK {
-        s_type: crate::data::StructureType = crate::data::StructureType::MACOS_SURFACE_CREATE_INFO_MVK,
-        p_next: *const c_void,
-        flags: crate::data::MacOSSurfaceCreateFlagsMVK,
-        p_view: *const c_void,
-    };
-    struct MetalSurfaceCreateInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::METAL_SURFACE_CREATE_INFO_EXT,
-        p_next: *const c_void,
-        flags: crate::data::MetalSurfaceCreateFlagsEXT,
-        p_layer: *const CAMetalLayer,
-    };
-    struct ViewportWScalingNV {
-        xcoeff: c_float,
-        ycoeff: c_float,
-    };
-    struct PipelineViewportWScalingStateCreateInfoNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_VIEWPORT_W_SCALING_STATE_CREATE_INFO_NV,
-        p_next: *const c_void,
-        viewport_w_scaling_enable: crate::data::Bool32,
-        viewport_count: u32,
-        p_viewport_w_scalings: *const crate::data::ViewportWScalingNV,
-    };
-    struct ViewportSwizzleNV {
-        x: crate::data::ViewportCoordinateSwizzleNV,
-        y: crate::data::ViewportCoordinateSwizzleNV,
-        z: crate::data::ViewportCoordinateSwizzleNV,
-        w: crate::data::ViewportCoordinateSwizzleNV,
-    };
-    struct PipelineViewportSwizzleStateCreateInfoNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_VIEWPORT_SWIZZLE_STATE_CREATE_INFO_NV,
-        p_next: *const c_void,
-        flags: crate::data::PipelineViewportSwizzleStateCreateFlagsNV,
-        viewport_count: u32,
-        p_viewport_swizzles: *const crate::data::ViewportSwizzleNV,
-    };
-    struct PhysicalDeviceDiscardRectanglePropertiesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_DISCARD_RECTANGLE_PROPERTIES_EXT,
-        p_next: *mut c_void,
-        max_discard_rectangles: u32,
-    };
-    struct PipelineDiscardRectangleStateCreateInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_DISCARD_RECTANGLE_STATE_CREATE_INFO_EXT,
-        p_next: *const c_void,
-        flags: crate::data::PipelineDiscardRectangleStateCreateFlagsEXT,
-        discard_rectangle_mode: crate::data::DiscardRectangleModeEXT,
-        discard_rectangle_count: u32,
-        p_discard_rectangles: *const crate::data::Rect2D,
-    };
-    struct PhysicalDeviceMultiviewPerViewAttributesPropertiesNVX {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_MULTIVIEW_PER_VIEW_ATTRIBUTES_PROPERTIES_NVX,
-        p_next: *mut c_void,
-        per_view_position_all_components: crate::data::Bool32,
-    };
-    struct InputAttachmentAspectReference {
-        subpass: u32,
-        input_attachment_index: u32,
-        aspect_mask: crate::data::ImageAspectFlags,
-    };
-    struct RenderPassInputAttachmentAspectCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::RENDER_PASS_INPUT_ATTACHMENT_ASPECT_CREATE_INFO,
-        p_next: *const c_void,
-        aspect_reference_count: u32,
-        p_aspect_references: *const crate::data::InputAttachmentAspectReference,
-    };
-    struct PhysicalDeviceSurfaceInfo2KHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SURFACE_INFO_2_KHR,
-        p_next: *const c_void,
-        surface: crate::data::SurfaceKHR,
-    };
-    struct SurfaceCapabilities2KHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::SURFACE_CAPABILITIES_2_KHR,
-        p_next: *mut c_void,
-        surface_capabilities: crate::data::SurfaceCapabilitiesKHR,
-    };
-    struct SurfaceFormat2KHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::SURFACE_FORMAT_2_KHR,
-        p_next: *mut c_void,
-        surface_format: crate::data::SurfaceFormatKHR,
-    };
-    struct DisplayProperties2KHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::DISPLAY_PROPERTIES_2_KHR,
-        p_next: *mut c_void,
-        display_properties: crate::data::DisplayPropertiesKHR,
-    };
-    struct DisplayPlaneProperties2KHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::DISPLAY_PLANE_PROPERTIES_2_KHR,
-        p_next: *mut c_void,
-        display_plane_properties: crate::data::DisplayPlanePropertiesKHR,
-    };
-    struct DisplayModeProperties2KHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::DISPLAY_MODE_PROPERTIES_2_KHR,
-        p_next: *mut c_void,
-        display_mode_properties: crate::data::DisplayModePropertiesKHR,
-    };
-    struct DisplayPlaneInfo2KHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::DISPLAY_PLANE_INFO_2_KHR,
-        p_next: *const c_void,
-        mode: crate::data::DisplayModeKHR,
-        plane_index: u32,
-    };
-    struct DisplayPlaneCapabilities2KHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::DISPLAY_PLANE_CAPABILITIES_2_KHR,
-        p_next: *mut c_void,
-        capabilities: crate::data::DisplayPlaneCapabilitiesKHR,
-    };
-    struct SharedPresentSurfaceCapabilitiesKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::SHARED_PRESENT_SURFACE_CAPABILITIES_KHR,
-        p_next: *mut c_void,
-        shared_present_supported_usage_flags: crate::data::ImageUsageFlags,
-    };
-    struct PhysicalDevice16BitStorageFeatures {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_16BIT_STORAGE_FEATURES,
-        p_next: *mut c_void,
-        storage_buffer_16_bit_access: crate::data::Bool32,
-        uniform_and_storage_buffer_16_bit_access: crate::data::Bool32,
-        storage_push_constant_16: crate::data::Bool32,
-        storage_input_output_16: crate::data::Bool32,
-    };
-    struct PhysicalDeviceSubgroupProperties {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SUBGROUP_PROPERTIES,
-        p_next: *mut c_void,
-        subgroup_size: u32,
-        supported_stages: crate::data::ShaderStageFlags,
-        supported_operations: crate::data::SubgroupFeatureFlags,
-        quad_operations_in_all_stages: crate::data::Bool32,
-    };
-    struct PhysicalDeviceShaderSubgroupExtendedTypesFeatures {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SHADER_SUBGROUP_EXTENDED_TYPES_FEATURES,
-        p_next: *mut c_void,
-        shader_subgroup_extended_types: crate::data::Bool32,
-    };
-    struct BufferMemoryRequirementsInfo2 {
-        s_type: crate::data::StructureType = crate::data::StructureType::BUFFER_MEMORY_REQUIREMENTS_INFO_2,
-        p_next: *const c_void,
-        buffer: crate::data::Buffer,
-    };
-    struct DeviceBufferMemoryRequirements {
-        s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_BUFFER_MEMORY_REQUIREMENTS,
-        p_next: *const c_void,
-        p_create_info: *const crate::data::BufferCreateInfo,
-    };
-    struct ImageMemoryRequirementsInfo2 {
-        s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_MEMORY_REQUIREMENTS_INFO_2,
-        p_next: *const c_void,
-        image: crate::data::Image,
-    };
-    struct ImageSparseMemoryRequirementsInfo2 {
-        s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_SPARSE_MEMORY_REQUIREMENTS_INFO_2,
-        p_next: *const c_void,
-        image: crate::data::Image,
-    };
-    struct DeviceImageMemoryRequirements {
-        s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_IMAGE_MEMORY_REQUIREMENTS,
-        p_next: *const c_void,
-        p_create_info: *const crate::data::ImageCreateInfo,
-        plane_aspect: crate::data::ImageAspectFlagBits,
-    };
-    struct MemoryRequirements2 {
-        s_type: crate::data::StructureType = crate::data::StructureType::MEMORY_REQUIREMENTS_2,
-        p_next: *mut c_void,
-        memory_requirements: crate::data::MemoryRequirements,
-    };
-    struct SparseImageMemoryRequirements2 {
-        s_type: crate::data::StructureType = crate::data::StructureType::SPARSE_IMAGE_MEMORY_REQUIREMENTS_2,
-        p_next: *mut c_void,
-        memory_requirements: crate::data::SparseImageMemoryRequirements,
-    };
-    struct PhysicalDevicePointClippingProperties {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_POINT_CLIPPING_PROPERTIES,
-        p_next: *mut c_void,
-        point_clipping_behavior: crate::data::PointClippingBehavior,
-    };
-    struct MemoryDedicatedRequirements {
-        s_type: crate::data::StructureType = crate::data::StructureType::MEMORY_DEDICATED_REQUIREMENTS,
-        p_next: *mut c_void,
-        prefers_dedicated_allocation: crate::data::Bool32,
-        requires_dedicated_allocation: crate::data::Bool32,
-    };
-    struct MemoryDedicatedAllocateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::MEMORY_DEDICATED_ALLOCATE_INFO,
-        p_next: *const c_void,
-        image: crate::data::Image,
-        buffer: crate::data::Buffer,
-    };
-    struct ImageViewUsageCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_VIEW_USAGE_CREATE_INFO,
-        p_next: *const c_void,
-        usage: crate::data::ImageUsageFlags,
-    };
-    struct PipelineTessellationDomainOriginStateCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_TESSELLATION_DOMAIN_ORIGIN_STATE_CREATE_INFO,
-        p_next: *const c_void,
-        domain_origin: crate::data::TessellationDomainOrigin,
-    };
-    struct SamplerYcbcrConversionInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::SAMPLER_YCBCR_CONVERSION_INFO,
-        p_next: *const c_void,
-        conversion: crate::data::SamplerYcbcrConversion,
-    };
-    struct SamplerYcbcrConversionCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::SAMPLER_YCBCR_CONVERSION_CREATE_INFO,
-        p_next: *const c_void,
-        format: crate::data::Format,
-        ycbcr_model: crate::data::SamplerYcbcrModelConversion,
-        ycbcr_range: crate::data::SamplerYcbcrRange,
-        components: crate::data::ComponentMapping,
-        x_chroma_offset: crate::data::ChromaLocation,
-        y_chroma_offset: crate::data::ChromaLocation,
-        chroma_filter: crate::data::Filter,
-        force_explicit_reconstruction: crate::data::Bool32,
-    };
-    struct BindImagePlaneMemoryInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::BIND_IMAGE_PLANE_MEMORY_INFO,
-        p_next: *const c_void,
-        plane_aspect: crate::data::ImageAspectFlagBits,
-    };
-    struct ImagePlaneMemoryRequirementsInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_PLANE_MEMORY_REQUIREMENTS_INFO,
-        p_next: *const c_void,
-        plane_aspect: crate::data::ImageAspectFlagBits,
-    };
-    struct PhysicalDeviceSamplerYcbcrConversionFeatures {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES,
-        p_next: *mut c_void,
-        sampler_ycbcr_conversion: crate::data::Bool32,
-    };
-    struct SamplerYcbcrConversionImageFormatProperties {
-        s_type: crate::data::StructureType = crate::data::StructureType::SAMPLER_YCBCR_CONVERSION_IMAGE_FORMAT_PROPERTIES,
-        p_next: *mut c_void,
-        combined_image_sampler_descriptor_count: u32,
-    };
-    struct TextureLODGatherFormatPropertiesAMD {
-        s_type: crate::data::StructureType = crate::data::StructureType::TEXTURE_LOD_GATHER_FORMAT_PROPERTIES_AMD,
-        p_next: *mut c_void,
-        supports_texture_gather_lod_bias_amd: crate::data::Bool32,
-    };
-    struct ConditionalRenderingBeginInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::CONDITIONAL_RENDERING_BEGIN_INFO_EXT,
-        p_next: *const c_void,
-        buffer: crate::data::Buffer,
-        offset: crate::data::DeviceSize,
-        flags: crate::data::ConditionalRenderingFlagsEXT,
-    };
-    struct ProtectedSubmitInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::PROTECTED_SUBMIT_INFO,
-        p_next: *const c_void,
-        protected_submit: crate::data::Bool32,
-    };
-    struct PhysicalDeviceProtectedMemoryFeatures {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PROTECTED_MEMORY_FEATURES,
-        p_next: *mut c_void,
-        protected_memory: crate::data::Bool32,
-    };
-    struct PhysicalDeviceProtectedMemoryProperties {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PROTECTED_MEMORY_PROPERTIES,
-        p_next: *mut c_void,
-        protected_no_fault: crate::data::Bool32,
-    };
-    struct DeviceQueueInfo2 {
-        s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_QUEUE_INFO_2,
-        p_next: *const c_void,
-        flags: crate::data::DeviceQueueCreateFlags,
-        queue_family_index: u32,
-        queue_index: u32,
-    };
-    struct PipelineCoverageToColorStateCreateInfoNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_COVERAGE_TO_COLOR_STATE_CREATE_INFO_NV,
-        p_next: *const c_void,
-        flags: crate::data::PipelineCoverageToColorStateCreateFlagsNV,
-        coverage_to_color_enable: crate::data::Bool32,
-        coverage_to_color_location: u32,
-    };
-    struct PhysicalDeviceSamplerFilterMinmaxProperties {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SAMPLER_FILTER_MINMAX_PROPERTIES,
-        p_next: *mut c_void,
-        filter_minmax_single_component_formats: crate::data::Bool32,
-        filter_minmax_image_component_mapping: crate::data::Bool32,
-    };
-    struct SampleLocationEXT {
-        x: c_float,
-        y: c_float,
-    };
-    struct SampleLocationsInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::SAMPLE_LOCATIONS_INFO_EXT,
-        p_next: *const c_void,
-        sample_locations_per_pixel: crate::data::SampleCountFlagBits,
-        sample_location_grid_size: crate::data::Extent2D,
-        sample_locations_count: u32,
-        p_sample_locations: *const crate::data::SampleLocationEXT,
-    };
-    struct AttachmentSampleLocationsEXT {
-        attachment_index: u32,
-        sample_locations_info: crate::data::SampleLocationsInfoEXT,
-    };
-    struct SubpassSampleLocationsEXT {
-        subpass_index: u32,
-        sample_locations_info: crate::data::SampleLocationsInfoEXT,
-    };
-    struct RenderPassSampleLocationsBeginInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::RENDER_PASS_SAMPLE_LOCATIONS_BEGIN_INFO_EXT,
-        p_next: *const c_void,
-        attachment_initial_sample_locations_count: u32,
-        p_attachment_initial_sample_locations: *const crate::data::AttachmentSampleLocationsEXT,
-        post_subpass_sample_locations_count: u32,
-        p_post_subpass_sample_locations: *const crate::data::SubpassSampleLocationsEXT,
-    };
-    struct PipelineSampleLocationsStateCreateInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_SAMPLE_LOCATIONS_STATE_CREATE_INFO_EXT,
-        p_next: *const c_void,
-        sample_locations_enable: crate::data::Bool32,
-        sample_locations_info: crate::data::SampleLocationsInfoEXT,
-    };
-    struct PhysicalDeviceSampleLocationsPropertiesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SAMPLE_LOCATIONS_PROPERTIES_EXT,
-        p_next: *mut c_void,
-        sample_location_sample_counts: crate::data::SampleCountFlags,
-        max_sample_location_grid_size: crate::data::Extent2D,
-        sample_location_coordinate_range: [c_float; 2],
-        sample_location_sub_pixel_bits: u32,
-        variable_sample_locations: crate::data::Bool32,
-    };
-    struct MultisamplePropertiesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::MULTISAMPLE_PROPERTIES_EXT,
-        p_next: *mut c_void,
-        max_sample_location_grid_size: crate::data::Extent2D,
-    };
-    struct SamplerReductionModeCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::SAMPLER_REDUCTION_MODE_CREATE_INFO,
-        p_next: *const c_void,
-        reduction_mode: crate::data::SamplerReductionMode,
-    };
-    struct PhysicalDeviceBlendOperationAdvancedFeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_FEATURES_EXT,
-        p_next: *mut c_void,
-        advanced_blend_coherent_operations: crate::data::Bool32,
-    };
-    struct PhysicalDeviceMultiDrawFeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_MULTI_DRAW_FEATURES_EXT,
-        p_next: *mut c_void,
-        multi_draw: crate::data::Bool32,
-    };
-    struct PhysicalDeviceBlendOperationAdvancedPropertiesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_PROPERTIES_EXT,
-        p_next: *mut c_void,
-        advanced_blend_max_color_attachments: u32,
-        advanced_blend_independent_blend: crate::data::Bool32,
-        advanced_blend_non_premultiplied_src_color: crate::data::Bool32,
-        advanced_blend_non_premultiplied_dst_color: crate::data::Bool32,
-        advanced_blend_correlated_overlap: crate::data::Bool32,
-        advanced_blend_all_operations: crate::data::Bool32,
-    };
-    struct PipelineColorBlendAdvancedStateCreateInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_COLOR_BLEND_ADVANCED_STATE_CREATE_INFO_EXT,
-        p_next: *const c_void,
-        src_premultiplied: crate::data::Bool32,
-        dst_premultiplied: crate::data::Bool32,
-        blend_overlap: crate::data::BlendOverlapEXT,
-    };
-    struct PhysicalDeviceInlineUniformBlockFeatures {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_INLINE_UNIFORM_BLOCK_FEATURES,
-        p_next: *mut c_void,
-        inline_uniform_block: crate::data::Bool32,
-        descriptor_binding_inline_uniform_block_update_after_bind: crate::data::Bool32,
-    };
-    struct PhysicalDeviceInlineUniformBlockProperties {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_INLINE_UNIFORM_BLOCK_PROPERTIES,
-        p_next: *mut c_void,
-        max_inline_uniform_block_size: u32,
-        max_per_stage_descriptor_inline_uniform_blocks: u32,
-        max_per_stage_descriptor_update_after_bind_inline_uniform_blocks: u32,
-        max_descriptor_set_inline_uniform_blocks: u32,
-        max_descriptor_set_update_after_bind_inline_uniform_blocks: u32,
-    };
-    struct WriteDescriptorSetInlineUniformBlock {
-        s_type: crate::data::StructureType = crate::data::StructureType::WRITE_DESCRIPTOR_SET_INLINE_UNIFORM_BLOCK,
-        p_next: *const c_void,
-        data_size: u32,
-        p_data: *const c_void,
-    };
-    struct DescriptorPoolInlineUniformBlockCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::DESCRIPTOR_POOL_INLINE_UNIFORM_BLOCK_CREATE_INFO,
-        p_next: *const c_void,
-        max_inline_uniform_block_bindings: u32,
-    };
-    struct PipelineCoverageModulationStateCreateInfoNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_COVERAGE_MODULATION_STATE_CREATE_INFO_NV,
-        p_next: *const c_void,
-        flags: crate::data::PipelineCoverageModulationStateCreateFlagsNV,
-        coverage_modulation_mode: crate::data::CoverageModulationModeNV,
-        coverage_modulation_table_enable: crate::data::Bool32,
-        coverage_modulation_table_count: u32,
-        p_coverage_modulation_table: *const c_float,
-    };
-    struct ImageFormatListCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_FORMAT_LIST_CREATE_INFO,
-        p_next: *const c_void,
-        view_format_count: u32,
-        p_view_formats: *const crate::data::Format,
-    };
-    struct ValidationCacheCreateInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::VALIDATION_CACHE_CREATE_INFO_EXT,
-        p_next: *const c_void,
-        flags: crate::data::ValidationCacheCreateFlagsEXT,
-        initial_data_size: usize,
-        p_initial_data: *const c_void,
-    };
-    struct ShaderModuleValidationCacheCreateInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::SHADER_MODULE_VALIDATION_CACHE_CREATE_INFO_EXT,
-        p_next: *const c_void,
-        validation_cache: crate::data::ValidationCacheEXT,
-    };
-    struct PhysicalDeviceMaintenance3Properties {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_MAINTENANCE_3_PROPERTIES,
-        p_next: *mut c_void,
-        max_per_set_descriptors: u32,
-        max_memory_allocation_size: crate::data::DeviceSize,
-    };
-    struct PhysicalDeviceMaintenance4Features {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_MAINTENANCE_4_FEATURES,
-        p_next: *mut c_void,
-        maintenance_4: crate::data::Bool32,
-    };
-    struct PhysicalDeviceMaintenance4Properties {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_MAINTENANCE_4_PROPERTIES,
-        p_next: *mut c_void,
-        max_buffer_size: crate::data::DeviceSize,
-    };
-    struct DescriptorSetLayoutSupport {
-        s_type: crate::data::StructureType = crate::data::StructureType::DESCRIPTOR_SET_LAYOUT_SUPPORT,
-        p_next: *mut c_void,
-        supported: crate::data::Bool32,
-    };
-    struct PhysicalDeviceShaderDrawParametersFeatures {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SHADER_DRAW_PARAMETERS_FEATURES,
-        p_next: *mut c_void,
-        shader_draw_parameters: crate::data::Bool32,
-    };
-    struct PhysicalDeviceShaderFloat16Int8Features {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SHADER_FLOAT16_INT8_FEATURES,
-        p_next: *mut c_void,
-        shader_float_16: crate::data::Bool32,
-        shader_int_8: crate::data::Bool32,
-    };
-    struct PhysicalDeviceFloatControlsProperties {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_FLOAT_CONTROLS_PROPERTIES,
-        p_next: *mut c_void,
-        denorm_behavior_independence: crate::data::ShaderFloatControlsIndependence,
-        rounding_mode_independence: crate::data::ShaderFloatControlsIndependence,
-        shader_signed_zero_inf_nan_preserve_float_16: crate::data::Bool32,
-        shader_signed_zero_inf_nan_preserve_float_32: crate::data::Bool32,
-        shader_signed_zero_inf_nan_preserve_float_64: crate::data::Bool32,
-        shader_denorm_preserve_float_16: crate::data::Bool32,
-        shader_denorm_preserve_float_32: crate::data::Bool32,
-        shader_denorm_preserve_float_64: crate::data::Bool32,
-        shader_denorm_flush_to_zero_float_16: crate::data::Bool32,
-        shader_denorm_flush_to_zero_float_32: crate::data::Bool32,
-        shader_denorm_flush_to_zero_float_64: crate::data::Bool32,
-        shader_rounding_mode_rte_float_16: crate::data::Bool32,
-        shader_rounding_mode_rte_float_32: crate::data::Bool32,
-        shader_rounding_mode_rte_float_64: crate::data::Bool32,
-        shader_rounding_mode_rtz_float_16: crate::data::Bool32,
-        shader_rounding_mode_rtz_float_32: crate::data::Bool32,
-        shader_rounding_mode_rtz_float_64: crate::data::Bool32,
-    };
-    struct PhysicalDeviceHostQueryResetFeatures {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_HOST_QUERY_RESET_FEATURES,
-        p_next: *mut c_void,
-        host_query_reset: crate::data::Bool32,
-    };
-    struct NativeBufferUsage2ANDROID {
-        consumer: u64,
-        producer: u64,
-    };
-    struct NativeBufferANDROID {
-        s_type: crate::data::StructureType = crate::data::StructureType::NATIVE_BUFFER_ANDROID,
-        p_next: *const c_void,
-        handle: *const c_void,
-        stride: c_int,
-        format: c_int,
-        usage: c_int,
-        usage_2: crate::data::NativeBufferUsage2ANDROID,
-    };
-    struct SwapchainImageCreateInfoANDROID {
-        s_type: crate::data::StructureType = crate::data::StructureType::SWAPCHAIN_IMAGE_CREATE_INFO_ANDROID,
-        p_next: *const c_void,
-        usage: crate::data::SwapchainImageUsageFlagsANDROID,
-    };
-    struct PhysicalDevicePresentationPropertiesANDROID {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PRESENTATION_PROPERTIES_ANDROID,
-        p_next: *const c_void,
-        shared_image: crate::data::Bool32,
-    };
-    struct ShaderResourceUsageAMD {
-        num_used_vgprs: u32,
-        num_used_sgprs: u32,
-        lds_size_per_local_work_group: u32,
-        lds_usage_size_in_bytes: usize,
-        scratch_mem_usage_in_bytes: usize,
-    };
-    struct ShaderStatisticsInfoAMD {
-        shader_stage_mask: crate::data::ShaderStageFlags,
-        resource_usage: crate::data::ShaderResourceUsageAMD,
-        num_physical_vgprs: u32,
-        num_physical_sgprs: u32,
-        num_available_vgprs: u32,
-        num_available_sgprs: u32,
-        compute_work_group_size: [u32; 3],
-    };
-    struct DeviceQueueGlobalPriorityCreateInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_QUEUE_GLOBAL_PRIORITY_CREATE_INFO_KHR,
-        p_next: *const c_void,
-        global_priority: crate::data::QueueGlobalPriorityKHR,
-    };
-    struct PhysicalDeviceGlobalPriorityQueryFeaturesKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_GLOBAL_PRIORITY_QUERY_FEATURES_KHR,
-        p_next: *mut c_void,
-        global_priority_query: crate::data::Bool32,
-    };
-    struct QueueFamilyGlobalPriorityPropertiesKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::QUEUE_FAMILY_GLOBAL_PRIORITY_PROPERTIES_KHR,
-        p_next: *mut c_void,
-        priority_count: u32,
-        priorities: [crate::data::QueueGlobalPriorityKHR; 16],
-    };
-    struct DebugUtilsObjectNameInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::DEBUG_UTILS_OBJECT_NAME_INFO_EXT,
-        p_next: *const c_void,
-        object_type: crate::data::ObjectType,
-        object_handle: u64,
-        p_object_name: *const c_char,
-    };
-    struct DebugUtilsObjectTagInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::DEBUG_UTILS_OBJECT_TAG_INFO_EXT,
-        p_next: *const c_void,
-        object_type: crate::data::ObjectType,
-        object_handle: u64,
-        tag_name: u64,
-        tag_size: usize,
-        p_tag: *const c_void,
-    };
-    struct DebugUtilsLabelEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::DEBUG_UTILS_LABEL_EXT,
-        p_next: *const c_void,
-        p_label_name: *const c_char,
-        color: [c_float; 4],
-    };
-    struct DebugUtilsMessengerCreateInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
-        p_next: *const c_void,
-        flags: crate::data::DebugUtilsMessengerCreateFlagsEXT,
-        message_severity: crate::data::DebugUtilsMessageSeverityFlagsEXT,
-        message_type: crate::data::DebugUtilsMessageTypeFlagsEXT,
-        pfn_user_callback: crate::pfn::DebugUtilsMessengerCallbackEXT,
-        p_user_data: *mut c_void,
-    };
-    struct DebugUtilsMessengerCallbackDataEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::DEBUG_UTILS_MESSENGER_CALLBACK_DATA_EXT,
-        p_next: *const c_void,
-        flags: crate::data::DebugUtilsMessengerCallbackDataFlagsEXT,
-        p_message_id_name: *const c_char,
-        message_id_number: i32,
-        p_message: *const c_char,
-        queue_label_count: u32,
-        p_queue_labels: *const crate::data::DebugUtilsLabelEXT,
-        cmd_buf_label_count: u32,
-        p_cmd_buf_labels: *const crate::data::DebugUtilsLabelEXT,
-        object_count: u32,
-        p_objects: *const crate::data::DebugUtilsObjectNameInfoEXT,
-    };
-    struct PhysicalDeviceDeviceMemoryReportFeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_DEVICE_MEMORY_REPORT_FEATURES_EXT,
-        p_next: *mut c_void,
-        device_memory_report: crate::data::Bool32,
-    };
-    struct DeviceDeviceMemoryReportCreateInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_DEVICE_MEMORY_REPORT_CREATE_INFO_EXT,
-        p_next: *const c_void,
-        flags: crate::data::DeviceMemoryReportFlagsEXT,
-        pfn_user_callback: crate::pfn::DeviceMemoryReportCallbackEXT,
-        p_user_data: *mut c_void,
-    };
-    struct DeviceMemoryReportCallbackDataEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_MEMORY_REPORT_CALLBACK_DATA_EXT,
-        p_next: *mut c_void,
-        flags: crate::data::DeviceMemoryReportFlagsEXT,
-        ty: crate::data::DeviceMemoryReportEventTypeEXT,
-        memory_object_id: u64,
-        size: crate::data::DeviceSize,
-        object_type: crate::data::ObjectType,
-        object_handle: u64,
-        heap_index: u32,
-    };
-    struct ImportMemoryHostPointerInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::IMPORT_MEMORY_HOST_POINTER_INFO_EXT,
-        p_next: *const c_void,
-        handle_type: crate::data::ExternalMemoryHandleTypeFlagBits,
-        p_host_pointer: *mut c_void,
-    };
-    struct MemoryHostPointerPropertiesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::MEMORY_HOST_POINTER_PROPERTIES_EXT,
-        p_next: *mut c_void,
-        memory_type_bits: u32,
-    };
-    struct PhysicalDeviceExternalMemoryHostPropertiesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_EXTERNAL_MEMORY_HOST_PROPERTIES_EXT,
-        p_next: *mut c_void,
-        min_imported_host_pointer_alignment: crate::data::DeviceSize,
-    };
-    struct PhysicalDeviceConservativeRasterizationPropertiesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_CONSERVATIVE_RASTERIZATION_PROPERTIES_EXT,
-        p_next: *mut c_void,
-        primitive_overestimation_size: c_float,
-        max_extra_primitive_overestimation_size: c_float,
-        extra_primitive_overestimation_size_granularity: c_float,
-        primitive_underestimation: crate::data::Bool32,
-        conservative_point_and_line_rasterization: crate::data::Bool32,
-        degenerate_triangles_rasterized: crate::data::Bool32,
-        degenerate_lines_rasterized: crate::data::Bool32,
-        fully_covered_fragment_shader_input_variable: crate::data::Bool32,
-        conservative_rasterization_post_depth_coverage: crate::data::Bool32,
-    };
-    struct CalibratedTimestampInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::CALIBRATED_TIMESTAMP_INFO_EXT,
-        p_next: *const c_void,
-        time_domain: crate::data::TimeDomainEXT,
-    };
-    struct PhysicalDeviceShaderCorePropertiesAMD {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SHADER_CORE_PROPERTIES_AMD,
-        p_next: *mut c_void,
-        shader_engine_count: u32,
-        shader_arrays_per_engine_count: u32,
-        compute_units_per_shader_array: u32,
-        simd_per_compute_unit: u32,
-        wavefronts_per_simd: u32,
-        wavefront_size: u32,
-        sgprs_per_simd: u32,
-        min_sgpr_allocation: u32,
-        max_sgpr_allocation: u32,
-        sgpr_allocation_granularity: u32,
-        vgprs_per_simd: u32,
-        min_vgpr_allocation: u32,
-        max_vgpr_allocation: u32,
-        vgpr_allocation_granularity: u32,
-    };
-    struct PhysicalDeviceShaderCoreProperties2AMD {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SHADER_CORE_PROPERTIES_2_AMD,
-        p_next: *mut c_void,
-        shader_core_features: crate::data::ShaderCorePropertiesFlagsAMD,
-        active_compute_unit_count: u32,
-    };
-    struct PipelineRasterizationConservativeStateCreateInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_RASTERIZATION_CONSERVATIVE_STATE_CREATE_INFO_EXT,
-        p_next: *const c_void,
-        flags: crate::data::PipelineRasterizationConservativeStateCreateFlagsEXT,
-        conservative_rasterization_mode: crate::data::ConservativeRasterizationModeEXT,
-        extra_primitive_overestimation_size: c_float,
-    };
-    struct PhysicalDeviceDescriptorIndexingFeatures {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES,
-        p_next: *mut c_void,
-        shader_input_attachment_array_dynamic_indexing: crate::data::Bool32,
-        shader_uniform_texel_buffer_array_dynamic_indexing: crate::data::Bool32,
-        shader_storage_texel_buffer_array_dynamic_indexing: crate::data::Bool32,
-        shader_uniform_buffer_array_non_uniform_indexing: crate::data::Bool32,
-        shader_sampled_image_array_non_uniform_indexing: crate::data::Bool32,
-        shader_storage_buffer_array_non_uniform_indexing: crate::data::Bool32,
-        shader_storage_image_array_non_uniform_indexing: crate::data::Bool32,
-        shader_input_attachment_array_non_uniform_indexing: crate::data::Bool32,
-        shader_uniform_texel_buffer_array_non_uniform_indexing: crate::data::Bool32,
-        shader_storage_texel_buffer_array_non_uniform_indexing: crate::data::Bool32,
-        descriptor_binding_uniform_buffer_update_after_bind: crate::data::Bool32,
-        descriptor_binding_sampled_image_update_after_bind: crate::data::Bool32,
-        descriptor_binding_storage_image_update_after_bind: crate::data::Bool32,
-        descriptor_binding_storage_buffer_update_after_bind: crate::data::Bool32,
-        descriptor_binding_uniform_texel_buffer_update_after_bind: crate::data::Bool32,
-        descriptor_binding_storage_texel_buffer_update_after_bind: crate::data::Bool32,
-        descriptor_binding_update_unused_while_pending: crate::data::Bool32,
-        descriptor_binding_partially_bound: crate::data::Bool32,
-        descriptor_binding_variable_descriptor_count: crate::data::Bool32,
-        runtime_descriptor_array: crate::data::Bool32,
-    };
-    struct PhysicalDeviceDescriptorIndexingProperties {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_PROPERTIES,
-        p_next: *mut c_void,
-        max_update_after_bind_descriptors_in_all_pools: u32,
-        shader_uniform_buffer_array_non_uniform_indexing_native: crate::data::Bool32,
-        shader_sampled_image_array_non_uniform_indexing_native: crate::data::Bool32,
-        shader_storage_buffer_array_non_uniform_indexing_native: crate::data::Bool32,
-        shader_storage_image_array_non_uniform_indexing_native: crate::data::Bool32,
-        shader_input_attachment_array_non_uniform_indexing_native: crate::data::Bool32,
-        robust_buffer_access_update_after_bind: crate::data::Bool32,
-        quad_divergent_implicit_lod: crate::data::Bool32,
-        max_per_stage_descriptor_update_after_bind_samplers: u32,
-        max_per_stage_descriptor_update_after_bind_uniform_buffers: u32,
-        max_per_stage_descriptor_update_after_bind_storage_buffers: u32,
-        max_per_stage_descriptor_update_after_bind_sampled_images: u32,
-        max_per_stage_descriptor_update_after_bind_storage_images: u32,
-        max_per_stage_descriptor_update_after_bind_input_attachments: u32,
-        max_per_stage_update_after_bind_resources: u32,
-        max_descriptor_set_update_after_bind_samplers: u32,
-        max_descriptor_set_update_after_bind_uniform_buffers: u32,
-        max_descriptor_set_update_after_bind_uniform_buffers_dynamic: u32,
-        max_descriptor_set_update_after_bind_storage_buffers: u32,
-        max_descriptor_set_update_after_bind_storage_buffers_dynamic: u32,
-        max_descriptor_set_update_after_bind_sampled_images: u32,
-        max_descriptor_set_update_after_bind_storage_images: u32,
-        max_descriptor_set_update_after_bind_input_attachments: u32,
-    };
-    struct DescriptorSetLayoutBindingFlagsCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO,
-        p_next: *const c_void,
-        binding_count: u32,
-        p_binding_flags: *const crate::data::DescriptorBindingFlags,
-    };
-    struct DescriptorSetVariableDescriptorCountAllocateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_ALLOCATE_INFO,
-        p_next: *const c_void,
-        descriptor_set_count: u32,
-        p_descriptor_counts: *const u32,
-    };
-    struct DescriptorSetVariableDescriptorCountLayoutSupport {
-        s_type: crate::data::StructureType = crate::data::StructureType::DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_LAYOUT_SUPPORT,
-        p_next: *mut c_void,
-        max_variable_descriptor_count: u32,
-    };
-    struct AttachmentDescription2 {
-        s_type: crate::data::StructureType = crate::data::StructureType::ATTACHMENT_DESCRIPTION_2,
-        p_next: *const c_void,
-        flags: crate::data::AttachmentDescriptionFlags,
-        format: crate::data::Format,
-        samples: crate::data::SampleCountFlagBits,
-        load_op: crate::data::AttachmentLoadOp,
-        store_op: crate::data::AttachmentStoreOp,
-        stencil_load_op: crate::data::AttachmentLoadOp,
-        stencil_store_op: crate::data::AttachmentStoreOp,
-        initial_layout: crate::data::ImageLayout,
-        final_layout: crate::data::ImageLayout,
-    };
-    struct AttachmentReference2 {
-        s_type: crate::data::StructureType = crate::data::StructureType::ATTACHMENT_REFERENCE_2,
-        p_next: *const c_void,
-        attachment: u32,
-        layout: crate::data::ImageLayout,
-        aspect_mask: crate::data::ImageAspectFlags,
-    };
-    struct SubpassDescription2 {
-        s_type: crate::data::StructureType = crate::data::StructureType::SUBPASS_DESCRIPTION_2,
-        p_next: *const c_void,
-        flags: crate::data::SubpassDescriptionFlags,
-        pipeline_bind_point: crate::data::PipelineBindPoint,
-        view_mask: u32,
-        input_attachment_count: u32,
-        p_input_attachments: *const crate::data::AttachmentReference2,
-        color_attachment_count: u32,
-        p_color_attachments: *const crate::data::AttachmentReference2,
-        p_resolve_attachments: *const crate::data::AttachmentReference2,
-        p_depth_stencil_attachment: *const crate::data::AttachmentReference2,
-        preserve_attachment_count: u32,
-        p_preserve_attachments: *const u32,
-    };
-    struct SubpassDependency2 {
-        s_type: crate::data::StructureType = crate::data::StructureType::SUBPASS_DEPENDENCY_2,
-        p_next: *const c_void,
-        src_subpass: u32,
-        dst_subpass: u32,
-        src_stage_mask: crate::data::PipelineStageFlags,
-        dst_stage_mask: crate::data::PipelineStageFlags,
-        src_access_mask: crate::data::AccessFlags,
-        dst_access_mask: crate::data::AccessFlags,
-        dependency_flags: crate::data::DependencyFlags,
-        view_offset: i32,
-    };
-    struct RenderPassCreateInfo2 {
-        s_type: crate::data::StructureType = crate::data::StructureType::RENDER_PASS_CREATE_INFO_2,
-        p_next: *const c_void,
-        flags: crate::data::RenderPassCreateFlags,
-        attachment_count: u32,
-        p_attachments: *const crate::data::AttachmentDescription2,
-        subpass_count: u32,
-        p_subpasses: *const crate::data::SubpassDescription2,
-        dependency_count: u32,
-        p_dependencies: *const crate::data::SubpassDependency2,
-        correlated_view_mask_count: u32,
-        p_correlated_view_masks: *const u32,
-    };
-    struct SubpassBeginInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::SUBPASS_BEGIN_INFO,
-        p_next: *const c_void,
-        contents: crate::data::SubpassContents,
-    };
-    struct SubpassEndInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::SUBPASS_END_INFO,
-        p_next: *const c_void,
-    };
-    struct PhysicalDeviceTimelineSemaphoreFeatures {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES,
-        p_next: *mut c_void,
-        timeline_semaphore: crate::data::Bool32,
-    };
-    struct PhysicalDeviceTimelineSemaphoreProperties {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_PROPERTIES,
-        p_next: *mut c_void,
-        max_timeline_semaphore_value_difference: u64,
-    };
-    struct SemaphoreTypeCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::SEMAPHORE_TYPE_CREATE_INFO,
-        p_next: *const c_void,
-        semaphore_type: crate::data::SemaphoreType,
-        initial_value: u64,
-    };
-    struct TimelineSemaphoreSubmitInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::TIMELINE_SEMAPHORE_SUBMIT_INFO,
-        p_next: *const c_void,
-        wait_semaphore_value_count: u32,
-        p_wait_semaphore_values: *const u64,
-        signal_semaphore_value_count: u32,
-        p_signal_semaphore_values: *const u64,
-    };
-    struct SemaphoreWaitInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::SEMAPHORE_WAIT_INFO,
-        p_next: *const c_void,
-        flags: crate::data::SemaphoreWaitFlags,
-        semaphore_count: u32,
-        p_semaphores: *const crate::data::Semaphore,
-        p_values: *const u64,
-    };
-    struct SemaphoreSignalInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::SEMAPHORE_SIGNAL_INFO,
-        p_next: *const c_void,
-        semaphore: crate::data::Semaphore,
-        value: u64,
-    };
-    struct VertexInputBindingDivisorDescriptionEXT {
-        binding: u32,
-        divisor: u32,
-    };
-    struct PipelineVertexInputDivisorStateCreateInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_VERTEX_INPUT_DIVISOR_STATE_CREATE_INFO_EXT,
-        p_next: *const c_void,
-        vertex_binding_divisor_count: u32,
-        p_vertex_binding_divisors: *const crate::data::VertexInputBindingDivisorDescriptionEXT,
-    };
-    struct PhysicalDeviceVertexAttributeDivisorPropertiesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_PROPERTIES_EXT,
-        p_next: *mut c_void,
-        max_vertex_attrib_divisor: u32,
-    };
-    struct PhysicalDevicePCIBusInfoPropertiesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PCI_BUS_INFO_PROPERTIES_EXT,
-        p_next: *mut c_void,
-        pci_domain: u32,
-        pci_bus: u32,
-        pci_device: u32,
-        pci_function: u32,
-    };
-    struct ImportAndroidHardwareBufferInfoANDROID {
-        s_type: crate::data::StructureType = crate::data::StructureType::IMPORT_ANDROID_HARDWARE_BUFFER_INFO_ANDROID,
-        p_next: *const c_void,
-        buffer: *mut AHardwareBuffer,
-    };
-    struct AndroidHardwareBufferUsageANDROID {
-        s_type: crate::data::StructureType = crate::data::StructureType::ANDROID_HARDWARE_BUFFER_USAGE_ANDROID,
-        p_next: *mut c_void,
-        android_hardware_buffer_usage: u64,
-    };
-    struct AndroidHardwareBufferPropertiesANDROID {
-        s_type: crate::data::StructureType = crate::data::StructureType::ANDROID_HARDWARE_BUFFER_PROPERTIES_ANDROID,
-        p_next: *mut c_void,
-        allocation_size: crate::data::DeviceSize,
-        memory_type_bits: u32,
-    };
-    struct MemoryGetAndroidHardwareBufferInfoANDROID {
-        s_type: crate::data::StructureType = crate::data::StructureType::MEMORY_GET_ANDROID_HARDWARE_BUFFER_INFO_ANDROID,
-        p_next: *const c_void,
-        memory: crate::data::DeviceMemory,
-    };
-    struct AndroidHardwareBufferFormatPropertiesANDROID {
-        s_type: crate::data::StructureType = crate::data::StructureType::ANDROID_HARDWARE_BUFFER_FORMAT_PROPERTIES_ANDROID,
-        p_next: *mut c_void,
-        format: crate::data::Format,
-        external_format: u64,
-        format_features: crate::data::FormatFeatureFlags,
-        sampler_ycbcr_conversion_components: crate::data::ComponentMapping,
-        suggested_ycbcr_model: crate::data::SamplerYcbcrModelConversion,
-        suggested_ycbcr_range: crate::data::SamplerYcbcrRange,
-        suggested_x_chroma_offset: crate::data::ChromaLocation,
-        suggested_y_chroma_offset: crate::data::ChromaLocation,
-    };
-    struct CommandBufferInheritanceConditionalRenderingInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::COMMAND_BUFFER_INHERITANCE_CONDITIONAL_RENDERING_INFO_EXT,
-        p_next: *const c_void,
-        conditional_rendering_enable: crate::data::Bool32,
-    };
-    struct ExternalFormatANDROID {
-        s_type: crate::data::StructureType = crate::data::StructureType::EXTERNAL_FORMAT_ANDROID,
-        p_next: *mut c_void,
-        external_format: u64,
-    };
-    struct PhysicalDevice8BitStorageFeatures {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_8BIT_STORAGE_FEATURES,
-        p_next: *mut c_void,
-        storage_buffer_8_bit_access: crate::data::Bool32,
-        uniform_and_storage_buffer_8_bit_access: crate::data::Bool32,
-        storage_push_constant_8: crate::data::Bool32,
-    };
-    struct PhysicalDeviceConditionalRenderingFeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_CONDITIONAL_RENDERING_FEATURES_EXT,
-        p_next: *mut c_void,
-        conditional_rendering: crate::data::Bool32,
-        inherited_conditional_rendering: crate::data::Bool32,
-    };
-    struct PhysicalDeviceVulkanMemoryModelFeatures {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_VULKAN_MEMORY_MODEL_FEATURES,
-        p_next: *mut c_void,
-        vulkan_memory_model: crate::data::Bool32,
-        vulkan_memory_model_device_scope: crate::data::Bool32,
-        vulkan_memory_model_availability_visibility_chains: crate::data::Bool32,
-    };
-    struct PhysicalDeviceShaderAtomicInt64Features {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SHADER_ATOMIC_INT64_FEATURES,
-        p_next: *mut c_void,
-        shader_buffer_int_64_atomics: crate::data::Bool32,
-        shader_shared_int_64_atomics: crate::data::Bool32,
-    };
-    struct PhysicalDeviceShaderAtomicFloatFeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SHADER_ATOMIC_FLOAT_FEATURES_EXT,
-        p_next: *mut c_void,
-        shader_buffer_float_32_atomics: crate::data::Bool32,
-        shader_buffer_float_32_atomic_add: crate::data::Bool32,
-        shader_buffer_float_64_atomics: crate::data::Bool32,
-        shader_buffer_float_64_atomic_add: crate::data::Bool32,
-        shader_shared_float_32_atomics: crate::data::Bool32,
-        shader_shared_float_32_atomic_add: crate::data::Bool32,
-        shader_shared_float_64_atomics: crate::data::Bool32,
-        shader_shared_float_64_atomic_add: crate::data::Bool32,
-        shader_image_float_32_atomics: crate::data::Bool32,
-        shader_image_float_32_atomic_add: crate::data::Bool32,
-        sparse_image_float_32_atomics: crate::data::Bool32,
-        sparse_image_float_32_atomic_add: crate::data::Bool32,
-    };
-    struct PhysicalDeviceShaderAtomicFloat2FeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SHADER_ATOMIC_FLOAT_2_FEATURES_EXT,
-        p_next: *mut c_void,
-        shader_buffer_float_16_atomics: crate::data::Bool32,
-        shader_buffer_float_16_atomic_add: crate::data::Bool32,
-        shader_buffer_float_16_atomic_min_max: crate::data::Bool32,
-        shader_buffer_float_32_atomic_min_max: crate::data::Bool32,
-        shader_buffer_float_64_atomic_min_max: crate::data::Bool32,
-        shader_shared_float_16_atomics: crate::data::Bool32,
-        shader_shared_float_16_atomic_add: crate::data::Bool32,
-        shader_shared_float_16_atomic_min_max: crate::data::Bool32,
-        shader_shared_float_32_atomic_min_max: crate::data::Bool32,
-        shader_shared_float_64_atomic_min_max: crate::data::Bool32,
-        shader_image_float_32_atomic_min_max: crate::data::Bool32,
-        sparse_image_float_32_atomic_min_max: crate::data::Bool32,
-    };
-    struct PhysicalDeviceVertexAttributeDivisorFeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_FEATURES_EXT,
-        p_next: *mut c_void,
-        vertex_attribute_instance_rate_divisor: crate::data::Bool32,
-        vertex_attribute_instance_rate_zero_divisor: crate::data::Bool32,
-    };
-    struct QueueFamilyCheckpointPropertiesNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::QUEUE_FAMILY_CHECKPOINT_PROPERTIES_NV,
-        p_next: *mut c_void,
-        checkpoint_execution_stage_mask: crate::data::PipelineStageFlags,
-    };
-    struct CheckpointDataNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::CHECKPOINT_DATA_NV,
-        p_next: *mut c_void,
-        stage: crate::data::PipelineStageFlagBits,
-        p_checkpoint_marker: *mut c_void,
-    };
-    struct PhysicalDeviceDepthStencilResolveProperties {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_DEPTH_STENCIL_RESOLVE_PROPERTIES,
-        p_next: *mut c_void,
-        supported_depth_resolve_modes: crate::data::ResolveModeFlags,
-        supported_stencil_resolve_modes: crate::data::ResolveModeFlags,
-        independent_resolve_none: crate::data::Bool32,
-        independent_resolve: crate::data::Bool32,
-    };
-    struct SubpassDescriptionDepthStencilResolve {
-        s_type: crate::data::StructureType = crate::data::StructureType::SUBPASS_DESCRIPTION_DEPTH_STENCIL_RESOLVE,
-        p_next: *const c_void,
-        depth_resolve_mode: crate::data::ResolveModeFlagBits,
-        stencil_resolve_mode: crate::data::ResolveModeFlagBits,
-        p_depth_stencil_resolve_attachment: *const crate::data::AttachmentReference2,
-    };
-    struct ImageViewASTCDecodeModeEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_VIEW_ASTC_DECODE_MODE_EXT,
-        p_next: *const c_void,
-        decode_mode: crate::data::Format,
-    };
-    struct PhysicalDeviceASTCDecodeFeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_ASTC_DECODE_FEATURES_EXT,
-        p_next: *mut c_void,
-        decode_mode_shared_exponent: crate::data::Bool32,
-    };
-    struct PhysicalDeviceTransformFeedbackFeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_TRANSFORM_FEEDBACK_FEATURES_EXT,
-        p_next: *mut c_void,
-        transform_feedback: crate::data::Bool32,
-        geometry_streams: crate::data::Bool32,
-    };
-    struct PhysicalDeviceTransformFeedbackPropertiesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_TRANSFORM_FEEDBACK_PROPERTIES_EXT,
-        p_next: *mut c_void,
-        max_transform_feedback_streams: u32,
-        max_transform_feedback_buffers: u32,
-        max_transform_feedback_buffer_size: crate::data::DeviceSize,
-        max_transform_feedback_stream_data_size: u32,
-        max_transform_feedback_buffer_data_size: u32,
-        max_transform_feedback_buffer_data_stride: u32,
-        transform_feedback_queries: crate::data::Bool32,
-        transform_feedback_streams_lines_triangles: crate::data::Bool32,
-        transform_feedback_rasterization_stream_select: crate::data::Bool32,
-        transform_feedback_draw: crate::data::Bool32,
-    };
-    struct PipelineRasterizationStateStreamCreateInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_RASTERIZATION_STATE_STREAM_CREATE_INFO_EXT,
-        p_next: *const c_void,
-        flags: crate::data::PipelineRasterizationStateStreamCreateFlagsEXT,
-        rasterization_stream: u32,
-    };
-    struct PhysicalDeviceRepresentativeFragmentTestFeaturesNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_REPRESENTATIVE_FRAGMENT_TEST_FEATURES_NV,
-        p_next: *mut c_void,
-        representative_fragment_test: crate::data::Bool32,
-    };
-    struct PipelineRepresentativeFragmentTestStateCreateInfoNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_REPRESENTATIVE_FRAGMENT_TEST_STATE_CREATE_INFO_NV,
-        p_next: *const c_void,
-        representative_fragment_test_enable: crate::data::Bool32,
-    };
-    struct PhysicalDeviceExclusiveScissorFeaturesNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_EXCLUSIVE_SCISSOR_FEATURES_NV,
-        p_next: *mut c_void,
-        exclusive_scissor: crate::data::Bool32,
-    };
-    struct PipelineViewportExclusiveScissorStateCreateInfoNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_VIEWPORT_EXCLUSIVE_SCISSOR_STATE_CREATE_INFO_NV,
-        p_next: *const c_void,
-        exclusive_scissor_count: u32,
-        p_exclusive_scissors: *const crate::data::Rect2D,
-    };
-    struct PhysicalDeviceCornerSampledImageFeaturesNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_CORNER_SAMPLED_IMAGE_FEATURES_NV,
-        p_next: *mut c_void,
-        corner_sampled_image: crate::data::Bool32,
-    };
-    struct PhysicalDeviceComputeShaderDerivativesFeaturesNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_COMPUTE_SHADER_DERIVATIVES_FEATURES_NV,
-        p_next: *mut c_void,
-        compute_derivative_group_quads: crate::data::Bool32,
-        compute_derivative_group_linear: crate::data::Bool32,
-    };
-    struct PhysicalDeviceShaderImageFootprintFeaturesNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SHADER_IMAGE_FOOTPRINT_FEATURES_NV,
-        p_next: *mut c_void,
-        image_footprint: crate::data::Bool32,
-    };
-    struct PhysicalDeviceDedicatedAllocationImageAliasingFeaturesNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_DEDICATED_ALLOCATION_IMAGE_ALIASING_FEATURES_NV,
-        p_next: *mut c_void,
-        dedicated_allocation_image_aliasing: crate::data::Bool32,
-    };
-    struct ShadingRatePaletteNV {
-        shading_rate_palette_entry_count: u32,
-        p_shading_rate_palette_entries: *const crate::data::ShadingRatePaletteEntryNV,
-    };
-    struct PipelineViewportShadingRateImageStateCreateInfoNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_VIEWPORT_SHADING_RATE_IMAGE_STATE_CREATE_INFO_NV,
-        p_next: *const c_void,
-        shading_rate_image_enable: crate::data::Bool32,
-        viewport_count: u32,
-        p_shading_rate_palettes: *const crate::data::ShadingRatePaletteNV,
-    };
-    struct PhysicalDeviceShadingRateImageFeaturesNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SHADING_RATE_IMAGE_FEATURES_NV,
-        p_next: *mut c_void,
-        shading_rate_image: crate::data::Bool32,
-        shading_rate_coarse_sample_order: crate::data::Bool32,
-    };
-    struct PhysicalDeviceShadingRateImagePropertiesNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SHADING_RATE_IMAGE_PROPERTIES_NV,
-        p_next: *mut c_void,
-        shading_rate_texel_size: crate::data::Extent2D,
-        shading_rate_palette_size: u32,
-        shading_rate_max_coarse_samples: u32,
-    };
-    struct PhysicalDeviceInvocationMaskFeaturesHUAWEI {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_INVOCATION_MASK_FEATURES_HUAWEI,
-        p_next: *mut c_void,
-        invocation_mask: crate::data::Bool32,
-    };
-    struct CoarseSampleLocationNV {
-        pixel_x: u32,
-        pixel_y: u32,
-        sample: u32,
-    };
-    struct CoarseSampleOrderCustomNV {
-        shading_rate: crate::data::ShadingRatePaletteEntryNV,
-        sample_count: u32,
-        sample_location_count: u32,
-        p_sample_locations: *const crate::data::CoarseSampleLocationNV,
-    };
-    struct PipelineViewportCoarseSampleOrderStateCreateInfoNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_VIEWPORT_COARSE_SAMPLE_ORDER_STATE_CREATE_INFO_NV,
-        p_next: *const c_void,
-        sample_order_type: crate::data::CoarseSampleOrderTypeNV,
-        custom_sample_order_count: u32,
-        p_custom_sample_orders: *const crate::data::CoarseSampleOrderCustomNV,
-    };
-    struct PhysicalDeviceMeshShaderFeaturesNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_MESH_SHADER_FEATURES_NV,
-        p_next: *mut c_void,
-        task_shader: crate::data::Bool32,
-        mesh_shader: crate::data::Bool32,
-    };
-    struct PhysicalDeviceMeshShaderPropertiesNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_MESH_SHADER_PROPERTIES_NV,
-        p_next: *mut c_void,
-        max_draw_mesh_tasks_count: u32,
-        max_task_work_group_invocations: u32,
-        max_task_work_group_size: [u32; 3],
-        max_task_total_memory_size: u32,
-        max_task_output_count: u32,
-        max_mesh_work_group_invocations: u32,
-        max_mesh_work_group_size: [u32; 3],
-        max_mesh_total_memory_size: u32,
-        max_mesh_output_vertices: u32,
-        max_mesh_output_primitives: u32,
-        max_mesh_multiview_view_count: u32,
-        mesh_output_per_vertex_granularity: u32,
-        mesh_output_per_primitive_granularity: u32,
-    };
-    struct DrawMeshTasksIndirectCommandNV {
-        task_count: u32,
-        first_task: u32,
-    };
-    struct PhysicalDeviceMeshShaderFeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_MESH_SHADER_FEATURES_EXT,
-        p_next: *mut c_void,
-        task_shader: crate::data::Bool32,
-        mesh_shader: crate::data::Bool32,
-        multiview_mesh_shader: crate::data::Bool32,
-        primitive_fragment_shading_rate_mesh_shader: crate::data::Bool32,
-        mesh_shader_queries: crate::data::Bool32,
-    };
-    struct PhysicalDeviceMeshShaderPropertiesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_MESH_SHADER_PROPERTIES_EXT,
-        p_next: *mut c_void,
-        max_task_work_group_total_count: u32,
-        max_task_work_group_count: [u32; 3],
-        max_task_work_group_invocations: u32,
-        max_task_work_group_size: [u32; 3],
-        max_task_payload_size: u32,
-        max_task_shared_memory_size: u32,
-        max_task_payload_and_shared_memory_size: u32,
-        max_mesh_work_group_total_count: u32,
-        max_mesh_work_group_count: [u32; 3],
-        max_mesh_work_group_invocations: u32,
-        max_mesh_work_group_size: [u32; 3],
-        max_mesh_shared_memory_size: u32,
-        max_mesh_payload_and_shared_memory_size: u32,
-        max_mesh_output_memory_size: u32,
-        max_mesh_payload_and_output_memory_size: u32,
-        max_mesh_output_components: u32,
-        max_mesh_output_vertices: u32,
-        max_mesh_output_primitives: u32,
-        max_mesh_output_layers: u32,
-        max_mesh_multiview_view_count: u32,
-        mesh_output_per_vertex_granularity: u32,
-        mesh_output_per_primitive_granularity: u32,
-        max_preferred_task_work_group_invocations: u32,
-        max_preferred_mesh_work_group_invocations: u32,
-        prefers_local_invocation_vertex_output: crate::data::Bool32,
-        prefers_local_invocation_primitive_output: crate::data::Bool32,
-        prefers_compact_vertex_output: crate::data::Bool32,
-        prefers_compact_primitive_output: crate::data::Bool32,
-    };
-    struct DrawMeshTasksIndirectCommandEXT {
-        group_count_x: u32,
-        group_count_y: u32,
-        group_count_z: u32,
-    };
-    struct RayTracingShaderGroupCreateInfoNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::RAY_TRACING_SHADER_GROUP_CREATE_INFO_NV,
-        p_next: *const c_void,
-        ty: crate::data::RayTracingShaderGroupTypeKHR,
-        general_shader: u32,
-        closest_hit_shader: u32,
-        any_hit_shader: u32,
-        intersection_shader: u32,
-    };
-    struct RayTracingShaderGroupCreateInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::RAY_TRACING_SHADER_GROUP_CREATE_INFO_KHR,
-        p_next: *const c_void,
-        ty: crate::data::RayTracingShaderGroupTypeKHR,
-        general_shader: u32,
-        closest_hit_shader: u32,
-        any_hit_shader: u32,
-        intersection_shader: u32,
-        p_shader_group_capture_replay_handle: *const c_void,
-    };
-    struct RayTracingPipelineCreateInfoNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::RAY_TRACING_PIPELINE_CREATE_INFO_NV,
-        p_next: *const c_void,
-        flags: crate::data::PipelineCreateFlags,
-        stage_count: u32,
-        p_stages: *const crate::data::PipelineShaderStageCreateInfo,
-        group_count: u32,
-        p_groups: *const crate::data::RayTracingShaderGroupCreateInfoNV,
-        max_recursion_depth: u32,
-        layout: crate::data::PipelineLayout,
-        base_pipeline_handle: crate::data::Pipeline,
-        base_pipeline_index: i32,
-    };
-    struct RayTracingPipelineCreateInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::RAY_TRACING_PIPELINE_CREATE_INFO_KHR,
-        p_next: *const c_void,
-        flags: crate::data::PipelineCreateFlags,
-        stage_count: u32,
-        p_stages: *const crate::data::PipelineShaderStageCreateInfo,
-        group_count: u32,
-        p_groups: *const crate::data::RayTracingShaderGroupCreateInfoKHR,
-        max_pipeline_ray_recursion_depth: u32,
-        p_library_info: *const crate::data::PipelineLibraryCreateInfoKHR,
-        p_library_interface: *const crate::data::RayTracingPipelineInterfaceCreateInfoKHR,
-        p_dynamic_state: *const crate::data::PipelineDynamicStateCreateInfo,
-        layout: crate::data::PipelineLayout,
-        base_pipeline_handle: crate::data::Pipeline,
-        base_pipeline_index: i32,
-    };
-    struct GeometryTrianglesNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::GEOMETRY_TRIANGLES_NV,
-        p_next: *const c_void,
-        vertex_data: crate::data::Buffer,
-        vertex_offset: crate::data::DeviceSize,
-        vertex_count: u32,
-        vertex_stride: crate::data::DeviceSize,
-        vertex_format: crate::data::Format,
-        index_data: crate::data::Buffer,
-        index_offset: crate::data::DeviceSize,
-        index_count: u32,
-        index_type: crate::data::IndexType,
-        transform_data: crate::data::Buffer,
-        transform_offset: crate::data::DeviceSize,
-    };
-    struct GeometryAABBNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::GEOMETRY_AABB_NV,
-        p_next: *const c_void,
-        aabb_data: crate::data::Buffer,
-        num_aab_bs: u32,
-        stride: u32,
-        offset: crate::data::DeviceSize,
-    };
-    struct GeometryDataNV {
-        triangles: crate::data::GeometryTrianglesNV,
-        aabbs: crate::data::GeometryAABBNV,
-    };
-    struct GeometryNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::GEOMETRY_NV,
-        p_next: *const c_void,
-        geometry_type: crate::data::GeometryTypeKHR,
-        geometry: crate::data::GeometryDataNV,
-        flags: crate::data::GeometryFlagsKHR,
-    };
-    struct AccelerationStructureInfoNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::ACCELERATION_STRUCTURE_INFO_NV,
-        p_next: *const c_void,
-        ty: crate::data::AccelerationStructureTypeNV,
-        flags: crate::data::BuildAccelerationStructureFlagsNV,
-        instance_count: u32,
-        geometry_count: u32,
-        p_geometries: *const crate::data::GeometryNV,
-    };
-    struct AccelerationStructureCreateInfoNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::ACCELERATION_STRUCTURE_CREATE_INFO_NV,
-        p_next: *const c_void,
-        compacted_size: crate::data::DeviceSize,
-        info: crate::data::AccelerationStructureInfoNV,
-    };
-    struct BindAccelerationStructureMemoryInfoNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::BIND_ACCELERATION_STRUCTURE_MEMORY_INFO_NV,
-        p_next: *const c_void,
-        acceleration_structure: crate::data::AccelerationStructureNV,
-        memory: crate::data::DeviceMemory,
-        memory_offset: crate::data::DeviceSize,
-        device_index_count: u32,
-        p_device_indices: *const u32,
-    };
-    struct WriteDescriptorSetAccelerationStructureKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::WRITE_DESCRIPTOR_SET_ACCELERATION_STRUCTURE_KHR,
-        p_next: *const c_void,
-        acceleration_structure_count: u32,
-        p_acceleration_structures: *const crate::data::AccelerationStructureKHR,
-    };
-    struct WriteDescriptorSetAccelerationStructureNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::WRITE_DESCRIPTOR_SET_ACCELERATION_STRUCTURE_NV,
-        p_next: *const c_void,
-        acceleration_structure_count: u32,
-        p_acceleration_structures: *const crate::data::AccelerationStructureNV,
-    };
-    struct AccelerationStructureMemoryRequirementsInfoNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::ACCELERATION_STRUCTURE_MEMORY_REQUIREMENTS_INFO_NV,
-        p_next: *const c_void,
-        ty: crate::data::AccelerationStructureMemoryRequirementsTypeNV,
-        acceleration_structure: crate::data::AccelerationStructureNV,
-    };
-    struct PhysicalDeviceAccelerationStructureFeaturesKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_FEATURES_KHR,
-        p_next: *mut c_void,
-        acceleration_structure: crate::data::Bool32,
-        acceleration_structure_capture_replay: crate::data::Bool32,
-        acceleration_structure_indirect_build: crate::data::Bool32,
-        acceleration_structure_host_commands: crate::data::Bool32,
-        descriptor_binding_acceleration_structure_update_after_bind: crate::data::Bool32,
-    };
-    struct PhysicalDeviceRayTracingPipelineFeaturesKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_FEATURES_KHR,
-        p_next: *mut c_void,
-        ray_tracing_pipeline: crate::data::Bool32,
-        ray_tracing_pipeline_shader_group_handle_capture_replay: crate::data::Bool32,
-        ray_tracing_pipeline_shader_group_handle_capture_replay_mixed: crate::data::Bool32,
-        ray_tracing_pipeline_trace_rays_indirect: crate::data::Bool32,
-        ray_traversal_primitive_culling: crate::data::Bool32,
-    };
-    struct PhysicalDeviceRayQueryFeaturesKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_RAY_QUERY_FEATURES_KHR,
-        p_next: *mut c_void,
-        ray_query: crate::data::Bool32,
-    };
-    struct PhysicalDeviceAccelerationStructurePropertiesKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_PROPERTIES_KHR,
-        p_next: *mut c_void,
-        max_geometry_count: u64,
-        max_instance_count: u64,
-        max_primitive_count: u64,
-        max_per_stage_descriptor_acceleration_structures: u32,
-        max_per_stage_descriptor_update_after_bind_acceleration_structures: u32,
-        max_descriptor_set_acceleration_structures: u32,
-        max_descriptor_set_update_after_bind_acceleration_structures: u32,
-        min_acceleration_structure_scratch_offset_alignment: u32,
-    };
-    struct PhysicalDeviceRayTracingPipelinePropertiesKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_PROPERTIES_KHR,
-        p_next: *mut c_void,
-        shader_group_handle_size: u32,
-        max_ray_recursion_depth: u32,
-        max_shader_group_stride: u32,
-        shader_group_base_alignment: u32,
-        shader_group_handle_capture_replay_size: u32,
-        max_ray_dispatch_invocation_count: u32,
-        shader_group_handle_alignment: u32,
-        max_ray_hit_attribute_size: u32,
-    };
-    struct PhysicalDeviceRayTracingPropertiesNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_RAY_TRACING_PROPERTIES_NV,
-        p_next: *mut c_void,
-        shader_group_handle_size: u32,
-        max_recursion_depth: u32,
-        max_shader_group_stride: u32,
-        shader_group_base_alignment: u32,
-        max_geometry_count: u64,
-        max_instance_count: u64,
-        max_triangle_count: u64,
-        max_descriptor_set_acceleration_structures: u32,
-    };
-    struct StridedDeviceAddressRegionKHR {
-        device_address: crate::data::DeviceAddress,
-        stride: crate::data::DeviceSize,
-        size: crate::data::DeviceSize,
-    };
-    struct TraceRaysIndirectCommandKHR {
-        width: u32,
-        height: u32,
-        depth: u32,
-    };
-    struct TraceRaysIndirectCommand2KHR {
-        raygen_shader_record_address: crate::data::DeviceAddress,
-        raygen_shader_record_size: crate::data::DeviceSize,
-        miss_shader_binding_table_address: crate::data::DeviceAddress,
-        miss_shader_binding_table_size: crate::data::DeviceSize,
-        miss_shader_binding_table_stride: crate::data::DeviceSize,
-        hit_shader_binding_table_address: crate::data::DeviceAddress,
-        hit_shader_binding_table_size: crate::data::DeviceSize,
-        hit_shader_binding_table_stride: crate::data::DeviceSize,
-        callable_shader_binding_table_address: crate::data::DeviceAddress,
-        callable_shader_binding_table_size: crate::data::DeviceSize,
-        callable_shader_binding_table_stride: crate::data::DeviceSize,
-        width: u32,
-        height: u32,
-        depth: u32,
-    };
-    struct PhysicalDeviceRayTracingMaintenance1FeaturesKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_RAY_TRACING_MAINTENANCE_1_FEATURES_KHR,
-        p_next: *mut c_void,
-        ray_tracing_maintenance_1: crate::data::Bool32,
-        ray_tracing_pipeline_trace_rays_indirect_2: crate::data::Bool32,
-    };
-    struct DrmFormatModifierPropertiesListEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::DRM_FORMAT_MODIFIER_PROPERTIES_LIST_EXT,
-        p_next: *mut c_void,
-        drm_format_modifier_count: u32,
-        p_drm_format_modifier_properties: *mut crate::data::DrmFormatModifierPropertiesEXT,
-    };
-    struct DrmFormatModifierPropertiesEXT {
-        drm_format_modifier: u64,
-        drm_format_modifier_plane_count: u32,
-        drm_format_modifier_tiling_features: crate::data::FormatFeatureFlags,
-    };
-    struct PhysicalDeviceImageDrmFormatModifierInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_IMAGE_DRM_FORMAT_MODIFIER_INFO_EXT,
-        p_next: *const c_void,
-        drm_format_modifier: u64,
-        sharing_mode: crate::data::SharingMode,
-        queue_family_index_count: u32,
-        p_queue_family_indices: *const u32,
-    };
-    struct ImageDrmFormatModifierListCreateInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_DRM_FORMAT_MODIFIER_LIST_CREATE_INFO_EXT,
-        p_next: *const c_void,
-        drm_format_modifier_count: u32,
-        p_drm_format_modifiers: *const u64,
-    };
-    struct ImageDrmFormatModifierExplicitCreateInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_DRM_FORMAT_MODIFIER_EXPLICIT_CREATE_INFO_EXT,
-        p_next: *const c_void,
-        drm_format_modifier: u64,
-        drm_format_modifier_plane_count: u32,
-        p_plane_layouts: *const crate::data::SubresourceLayout,
-    };
-    struct ImageDrmFormatModifierPropertiesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_DRM_FORMAT_MODIFIER_PROPERTIES_EXT,
-        p_next: *mut c_void,
-        drm_format_modifier: u64,
-    };
-    struct ImageStencilUsageCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_STENCIL_USAGE_CREATE_INFO,
-        p_next: *const c_void,
-        stencil_usage: crate::data::ImageUsageFlags,
-    };
-    struct DeviceMemoryOverallocationCreateInfoAMD {
-        s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_MEMORY_OVERALLOCATION_CREATE_INFO_AMD,
-        p_next: *const c_void,
-        overallocation_behavior: crate::data::MemoryOverallocationBehaviorAMD,
-    };
-    struct PhysicalDeviceFragmentDensityMapFeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_FEATURES_EXT,
-        p_next: *mut c_void,
-        fragment_density_map: crate::data::Bool32,
-        fragment_density_map_dynamic: crate::data::Bool32,
-        fragment_density_map_non_subsampled_images: crate::data::Bool32,
-    };
-    struct PhysicalDeviceFragmentDensityMap2FeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_2_FEATURES_EXT,
-        p_next: *mut c_void,
-        fragment_density_map_deferred: crate::data::Bool32,
-    };
-    struct PhysicalDeviceFragmentDensityMapOffsetFeaturesQCOM {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_OFFSET_FEATURES_QCOM,
-        p_next: *mut c_void,
-        fragment_density_map_offset: crate::data::Bool32,
-    };
-    struct PhysicalDeviceFragmentDensityMapPropertiesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_PROPERTIES_EXT,
-        p_next: *mut c_void,
-        min_fragment_density_texel_size: crate::data::Extent2D,
-        max_fragment_density_texel_size: crate::data::Extent2D,
-        fragment_density_invocations: crate::data::Bool32,
-    };
-    struct PhysicalDeviceFragmentDensityMap2PropertiesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_2_PROPERTIES_EXT,
-        p_next: *mut c_void,
-        subsampled_loads: crate::data::Bool32,
-        subsampled_coarse_reconstruction_early_access: crate::data::Bool32,
-        max_subsampled_array_layers: u32,
-        max_descriptor_set_subsampled_samplers: u32,
-    };
-    struct PhysicalDeviceFragmentDensityMapOffsetPropertiesQCOM {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_OFFSET_PROPERTIES_QCOM,
-        p_next: *mut c_void,
-        fragment_density_offset_granularity: crate::data::Extent2D,
-    };
-    struct RenderPassFragmentDensityMapCreateInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::RENDER_PASS_FRAGMENT_DENSITY_MAP_CREATE_INFO_EXT,
-        p_next: *const c_void,
-        fragment_density_map_attachment: crate::data::AttachmentReference,
-    };
-    struct SubpassFragmentDensityMapOffsetEndInfoQCOM {
-        s_type: crate::data::StructureType = crate::data::StructureType::SUBPASS_FRAGMENT_DENSITY_MAP_OFFSET_END_INFO_QCOM,
-        p_next: *const c_void,
-        fragment_density_offset_count: u32,
-        p_fragment_density_offsets: *const crate::data::Offset2D,
-    };
-    struct PhysicalDeviceScalarBlockLayoutFeatures {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SCALAR_BLOCK_LAYOUT_FEATURES,
-        p_next: *mut c_void,
-        scalar_block_layout: crate::data::Bool32,
-    };
-    struct SurfaceProtectedCapabilitiesKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::SURFACE_PROTECTED_CAPABILITIES_KHR,
-        p_next: *const c_void,
-        supports_protected: crate::data::Bool32,
-    };
-    struct PhysicalDeviceUniformBufferStandardLayoutFeatures {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_UNIFORM_BUFFER_STANDARD_LAYOUT_FEATURES,
-        p_next: *mut c_void,
-        uniform_buffer_standard_layout: crate::data::Bool32,
-    };
-    struct PhysicalDeviceDepthClipEnableFeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_DEPTH_CLIP_ENABLE_FEATURES_EXT,
-        p_next: *mut c_void,
-        depth_clip_enable: crate::data::Bool32,
-    };
-    struct PipelineRasterizationDepthClipStateCreateInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_RASTERIZATION_DEPTH_CLIP_STATE_CREATE_INFO_EXT,
-        p_next: *const c_void,
-        flags: crate::data::PipelineRasterizationDepthClipStateCreateFlagsEXT,
-        depth_clip_enable: crate::data::Bool32,
-    };
-    struct PhysicalDeviceMemoryBudgetPropertiesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_MEMORY_BUDGET_PROPERTIES_EXT,
-        p_next: *mut c_void,
-        heap_budget: [crate::data::DeviceSize; 16],
-        heap_usage: [crate::data::DeviceSize; 16],
-    };
-    struct PhysicalDeviceMemoryPriorityFeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_MEMORY_PRIORITY_FEATURES_EXT,
-        p_next: *mut c_void,
-        memory_priority: crate::data::Bool32,
-    };
-    struct MemoryPriorityAllocateInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::MEMORY_PRIORITY_ALLOCATE_INFO_EXT,
-        p_next: *const c_void,
-        priority: c_float,
-    };
-    struct PhysicalDevicePageableDeviceLocalMemoryFeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PAGEABLE_DEVICE_LOCAL_MEMORY_FEATURES_EXT,
-        p_next: *mut c_void,
-        pageable_device_local_memory: crate::data::Bool32,
-    };
-    struct PhysicalDeviceBufferDeviceAddressFeatures {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES,
-        p_next: *mut c_void,
-        buffer_device_address: crate::data::Bool32,
-        buffer_device_address_capture_replay: crate::data::Bool32,
-        buffer_device_address_multi_device: crate::data::Bool32,
-    };
-    struct PhysicalDeviceBufferDeviceAddressFeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES_EXT,
-        p_next: *mut c_void,
-        buffer_device_address: crate::data::Bool32,
-        buffer_device_address_capture_replay: crate::data::Bool32,
-        buffer_device_address_multi_device: crate::data::Bool32,
-    };
-    struct BufferDeviceAddressInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::BUFFER_DEVICE_ADDRESS_INFO,
-        p_next: *const c_void,
-        buffer: crate::data::Buffer,
-    };
-    struct BufferOpaqueCaptureAddressCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::BUFFER_OPAQUE_CAPTURE_ADDRESS_CREATE_INFO,
-        p_next: *const c_void,
-        opaque_capture_address: u64,
-    };
-    struct BufferDeviceAddressCreateInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::BUFFER_DEVICE_ADDRESS_CREATE_INFO_EXT,
-        p_next: *const c_void,
-        device_address: crate::data::DeviceAddress,
-    };
-    struct PhysicalDeviceImageViewImageFormatInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_IMAGE_VIEW_IMAGE_FORMAT_INFO_EXT,
-        p_next: *mut c_void,
-        image_view_type: crate::data::ImageViewType,
-    };
-    struct FilterCubicImageViewImageFormatPropertiesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::FILTER_CUBIC_IMAGE_VIEW_IMAGE_FORMAT_PROPERTIES_EXT,
-        p_next: *mut c_void,
-        filter_cubic: crate::data::Bool32,
-        filter_cubic_minmax: crate::data::Bool32,
-    };
-    struct PhysicalDeviceImagelessFramebufferFeatures {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_IMAGELESS_FRAMEBUFFER_FEATURES,
-        p_next: *mut c_void,
-        imageless_framebuffer: crate::data::Bool32,
-    };
-    struct FramebufferAttachmentsCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::FRAMEBUFFER_ATTACHMENTS_CREATE_INFO,
-        p_next: *const c_void,
-        attachment_image_info_count: u32,
-        p_attachment_image_infos: *const crate::data::FramebufferAttachmentImageInfo,
-    };
-    struct FramebufferAttachmentImageInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::FRAMEBUFFER_ATTACHMENT_IMAGE_INFO,
-        p_next: *const c_void,
-        flags: crate::data::ImageCreateFlags,
-        usage: crate::data::ImageUsageFlags,
-        width: u32,
-        height: u32,
-        layer_count: u32,
-        view_format_count: u32,
-        p_view_formats: *const crate::data::Format,
-    };
-    struct RenderPassAttachmentBeginInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::RENDER_PASS_ATTACHMENT_BEGIN_INFO,
-        p_next: *const c_void,
-        attachment_count: u32,
-        p_attachments: *const crate::data::ImageView,
-    };
-    struct PhysicalDeviceTextureCompressionASTCHDRFeatures {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_TEXTURE_COMPRESSION_ASTC_HDR_FEATURES,
-        p_next: *mut c_void,
-        texture_compression_astc_hdr: crate::data::Bool32,
-    };
-    struct PhysicalDeviceCooperativeMatrixFeaturesNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_COOPERATIVE_MATRIX_FEATURES_NV,
-        p_next: *mut c_void,
-        cooperative_matrix: crate::data::Bool32,
-        cooperative_matrix_robust_buffer_access: crate::data::Bool32,
-    };
-    struct PhysicalDeviceCooperativeMatrixPropertiesNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_COOPERATIVE_MATRIX_PROPERTIES_NV,
-        p_next: *mut c_void,
-        cooperative_matrix_supported_stages: crate::data::ShaderStageFlags,
-    };
-    struct CooperativeMatrixPropertiesNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::COOPERATIVE_MATRIX_PROPERTIES_NV,
-        p_next: *mut c_void,
-        m_size: u32,
-        n_size: u32,
-        k_size: u32,
-        a_type: crate::data::ComponentTypeNV,
-        b_type: crate::data::ComponentTypeNV,
-        c_type: crate::data::ComponentTypeNV,
-        d_type: crate::data::ComponentTypeNV,
-        scope: crate::data::ScopeNV,
-    };
-    struct PhysicalDeviceYcbcrImageArraysFeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_YCBCR_IMAGE_ARRAYS_FEATURES_EXT,
-        p_next: *mut c_void,
-        ycbcr_image_arrays: crate::data::Bool32,
-    };
-    struct ImageViewHandleInfoNVX {
-        s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_VIEW_HANDLE_INFO_NVX,
-        p_next: *const c_void,
-        image_view: crate::data::ImageView,
-        descriptor_type: crate::data::DescriptorType,
-        sampler: crate::data::Sampler,
-    };
-    struct ImageViewAddressPropertiesNVX {
-        s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_VIEW_ADDRESS_PROPERTIES_NVX,
-        p_next: *mut c_void,
-        device_address: crate::data::DeviceAddress,
-        size: crate::data::DeviceSize,
-    };
-    struct PipelineCreationFeedback {
-        flags: crate::data::PipelineCreationFeedbackFlags,
-        duration: u64,
-    };
-    struct PipelineCreationFeedbackCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_CREATION_FEEDBACK_CREATE_INFO,
-        p_next: *const c_void,
-        p_pipeline_creation_feedback: *mut crate::data::PipelineCreationFeedback,
-        pipeline_stage_creation_feedback_count: u32,
-        p_pipeline_stage_creation_feedbacks: *mut crate::data::PipelineCreationFeedback,
-    };
-    struct SurfaceFullScreenExclusiveInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::SURFACE_FULL_SCREEN_EXCLUSIVE_INFO_EXT,
-        p_next: *mut c_void,
-        full_screen_exclusive: crate::data::FullScreenExclusiveEXT,
-    };
-    struct SurfaceCapabilitiesFullScreenExclusiveEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::SURFACE_CAPABILITIES_FULL_SCREEN_EXCLUSIVE_EXT,
-        p_next: *mut c_void,
-        full_screen_exclusive_supported: crate::data::Bool32,
-    };
-    struct PhysicalDevicePresentBarrierFeaturesNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PRESENT_BARRIER_FEATURES_NV,
-        p_next: *mut c_void,
-        present_barrier: crate::data::Bool32,
-    };
-    struct SurfaceCapabilitiesPresentBarrierNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::SURFACE_CAPABILITIES_PRESENT_BARRIER_NV,
-        p_next: *mut c_void,
-        present_barrier_supported: crate::data::Bool32,
-    };
-    struct SwapchainPresentBarrierCreateInfoNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::SWAPCHAIN_PRESENT_BARRIER_CREATE_INFO_NV,
-        p_next: *mut c_void,
-        present_barrier_enable: crate::data::Bool32,
-    };
-    struct PhysicalDevicePerformanceQueryFeaturesKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PERFORMANCE_QUERY_FEATURES_KHR,
-        p_next: *mut c_void,
-        performance_counter_query_pools: crate::data::Bool32,
-        performance_counter_multiple_query_pools: crate::data::Bool32,
-    };
-    struct PhysicalDevicePerformanceQueryPropertiesKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PERFORMANCE_QUERY_PROPERTIES_KHR,
-        p_next: *mut c_void,
-        allow_command_buffer_query_copies: crate::data::Bool32,
-    };
-    struct PerformanceCounterKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::PERFORMANCE_COUNTER_KHR,
-        p_next: *mut c_void,
-        unit: crate::data::PerformanceCounterUnitKHR,
-        scope: crate::data::PerformanceCounterScopeKHR,
-        storage: crate::data::PerformanceCounterStorageKHR,
-        uuid: [u8; 16],
-    };
-    struct PerformanceCounterDescriptionKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::PERFORMANCE_COUNTER_DESCRIPTION_KHR,
-        p_next: *mut c_void,
-        flags: crate::data::PerformanceCounterDescriptionFlagsKHR,
-        name: [c_char; 256],
-        category: [c_char; 256],
-        description: [c_char; 256],
-    };
-    struct QueryPoolPerformanceCreateInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::QUERY_POOL_PERFORMANCE_CREATE_INFO_KHR,
-        p_next: *const c_void,
-        queue_family_index: u32,
-        counter_index_count: u32,
-        p_counter_indices: *const u32,
-    };
-    union PerformanceCounterResultKHR {
-        int_32: i32,
-        int_64: i64,
-        uint_32: u32,
-        uint_64: u64,
-        float_32: c_float,
-        float_64: c_double,
-    };
-    struct AcquireProfilingLockInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::ACQUIRE_PROFILING_LOCK_INFO_KHR,
-        p_next: *const c_void,
-        flags: crate::data::AcquireProfilingLockFlagsKHR,
-        timeout: u64,
-    };
-    struct PerformanceQuerySubmitInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::PERFORMANCE_QUERY_SUBMIT_INFO_KHR,
-        p_next: *const c_void,
-        counter_pass_index: u32,
-    };
-    struct HeadlessSurfaceCreateInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::HEADLESS_SURFACE_CREATE_INFO_EXT,
-        p_next: *const c_void,
-        flags: crate::data::HeadlessSurfaceCreateFlagsEXT,
-    };
-    struct PhysicalDeviceCoverageReductionModeFeaturesNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_COVERAGE_REDUCTION_MODE_FEATURES_NV,
-        p_next: *mut c_void,
-        coverage_reduction_mode: crate::data::Bool32,
-    };
-    struct PipelineCoverageReductionStateCreateInfoNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_COVERAGE_REDUCTION_STATE_CREATE_INFO_NV,
-        p_next: *const c_void,
-        flags: crate::data::PipelineCoverageReductionStateCreateFlagsNV,
-        coverage_reduction_mode: crate::data::CoverageReductionModeNV,
-    };
-    struct FramebufferMixedSamplesCombinationNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::FRAMEBUFFER_MIXED_SAMPLES_COMBINATION_NV,
-        p_next: *mut c_void,
-        coverage_reduction_mode: crate::data::CoverageReductionModeNV,
-        rasterization_samples: crate::data::SampleCountFlagBits,
-        depth_stencil_samples: crate::data::SampleCountFlags,
-        color_samples: crate::data::SampleCountFlags,
-    };
-    struct PhysicalDeviceShaderIntegerFunctions2FeaturesINTEL {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SHADER_INTEGER_FUNCTIONS_2_FEATURES_INTEL,
-        p_next: *mut c_void,
-        shader_integer_functions_2: crate::data::Bool32,
-    };
-    union PerformanceValueDataINTEL {
-        value_32: u32,
-        value_64: u64,
-        value_float: c_float,
-        value_bool: crate::data::Bool32,
-        value_string: *const c_char,
-    };
-    struct PerformanceValueINTEL {
-        ty: crate::data::PerformanceValueTypeINTEL,
-        data: crate::data::PerformanceValueDataINTEL,
-    };
-    struct InitializePerformanceApiInfoINTEL {
-        s_type: crate::data::StructureType = crate::data::StructureType::INITIALIZE_PERFORMANCE_API_INFO_INTEL,
-        p_next: *const c_void,
-        p_user_data: *mut c_void,
-    };
-    struct QueryPoolPerformanceQueryCreateInfoINTEL {
-        s_type: crate::data::StructureType = crate::data::StructureType::QUERY_POOL_PERFORMANCE_QUERY_CREATE_INFO_INTEL,
-        p_next: *const c_void,
-        performance_counters_sampling: crate::data::QueryPoolSamplingModeINTEL,
-    };
-    struct PerformanceMarkerInfoINTEL {
-        s_type: crate::data::StructureType = crate::data::StructureType::PERFORMANCE_MARKER_INFO_INTEL,
-        p_next: *const c_void,
-        marker: u64,
-    };
-    struct PerformanceStreamMarkerInfoINTEL {
-        s_type: crate::data::StructureType = crate::data::StructureType::PERFORMANCE_STREAM_MARKER_INFO_INTEL,
-        p_next: *const c_void,
-        marker: u32,
-    };
-    struct PerformanceOverrideInfoINTEL {
-        s_type: crate::data::StructureType = crate::data::StructureType::PERFORMANCE_OVERRIDE_INFO_INTEL,
-        p_next: *const c_void,
-        ty: crate::data::PerformanceOverrideTypeINTEL,
-        enable: crate::data::Bool32,
-        parameter: u64,
-    };
-    struct PerformanceConfigurationAcquireInfoINTEL {
-        s_type: crate::data::StructureType = crate::data::StructureType::PERFORMANCE_CONFIGURATION_ACQUIRE_INFO_INTEL,
-        p_next: *const c_void,
-        ty: crate::data::PerformanceConfigurationTypeINTEL,
-    };
-    struct PhysicalDeviceShaderClockFeaturesKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SHADER_CLOCK_FEATURES_KHR,
-        p_next: *mut c_void,
-        shader_subgroup_clock: crate::data::Bool32,
-        shader_device_clock: crate::data::Bool32,
-    };
-    struct PhysicalDeviceIndexTypeUint8FeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_INDEX_TYPE_UINT8_FEATURES_EXT,
-        p_next: *mut c_void,
-        index_type_uint_8: crate::data::Bool32,
-    };
-    struct PhysicalDeviceShaderSMBuiltinsPropertiesNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SHADER_SM_BUILTINS_PROPERTIES_NV,
-        p_next: *mut c_void,
-        shader_sm_count: u32,
-        shader_warps_per_sm: u32,
-    };
-    struct PhysicalDeviceShaderSMBuiltinsFeaturesNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SHADER_SM_BUILTINS_FEATURES_NV,
-        p_next: *mut c_void,
-        shader_sm_builtins: crate::data::Bool32,
-    };
-    struct PhysicalDeviceFragmentShaderInterlockFeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_FRAGMENT_SHADER_INTERLOCK_FEATURES_EXT,
-        p_next: *mut c_void,
-        fragment_shader_sample_interlock: crate::data::Bool32,
-        fragment_shader_pixel_interlock: crate::data::Bool32,
-        fragment_shader_shading_rate_interlock: crate::data::Bool32,
-    };
-    struct PhysicalDeviceSeparateDepthStencilLayoutsFeatures {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SEPARATE_DEPTH_STENCIL_LAYOUTS_FEATURES,
-        p_next: *mut c_void,
-        separate_depth_stencil_layouts: crate::data::Bool32,
-    };
-    struct AttachmentReferenceStencilLayout {
-        s_type: crate::data::StructureType = crate::data::StructureType::ATTACHMENT_REFERENCE_STENCIL_LAYOUT,
-        p_next: *mut c_void,
-        stencil_layout: crate::data::ImageLayout,
-    };
-    struct PhysicalDevicePrimitiveTopologyListRestartFeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PRIMITIVE_TOPOLOGY_LIST_RESTART_FEATURES_EXT,
-        p_next: *mut c_void,
-        primitive_topology_list_restart: crate::data::Bool32,
-        primitive_topology_patch_list_restart: crate::data::Bool32,
-    };
-    struct AttachmentDescriptionStencilLayout {
-        s_type: crate::data::StructureType = crate::data::StructureType::ATTACHMENT_DESCRIPTION_STENCIL_LAYOUT,
-        p_next: *mut c_void,
-        stencil_initial_layout: crate::data::ImageLayout,
-        stencil_final_layout: crate::data::ImageLayout,
-    };
-    struct PhysicalDevicePipelineExecutablePropertiesFeaturesKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PIPELINE_EXECUTABLE_PROPERTIES_FEATURES_KHR,
-        p_next: *mut c_void,
-        pipeline_executable_info: crate::data::Bool32,
-    };
-    struct PipelineInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_INFO_KHR,
-        p_next: *const c_void,
-        pipeline: crate::data::Pipeline,
-    };
-    struct PipelineExecutablePropertiesKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_EXECUTABLE_PROPERTIES_KHR,
-        p_next: *mut c_void,
-        stages: crate::data::ShaderStageFlags,
-        name: [c_char; 256],
-        description: [c_char; 256],
-        subgroup_size: u32,
-    };
-    struct PipelineExecutableInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_EXECUTABLE_INFO_KHR,
-        p_next: *const c_void,
-        pipeline: crate::data::Pipeline,
-        executable_index: u32,
-    };
-    union PipelineExecutableStatisticValueKHR {
-        b_32: crate::data::Bool32,
-        i_64: i64,
-        u_64: u64,
-        f_64: c_double,
-    };
-    struct PipelineExecutableStatisticKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_EXECUTABLE_STATISTIC_KHR,
-        p_next: *mut c_void,
-        name: [c_char; 256],
-        description: [c_char; 256],
-        format: crate::data::PipelineExecutableStatisticFormatKHR,
-        value: crate::data::PipelineExecutableStatisticValueKHR,
-    };
-    struct PipelineExecutableInternalRepresentationKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_EXECUTABLE_INTERNAL_REPRESENTATION_KHR,
-        p_next: *mut c_void,
-        name: [c_char; 256],
-        description: [c_char; 256],
-        is_text: crate::data::Bool32,
-        data_size: usize,
-        p_data: *mut c_void,
-    };
-    struct PhysicalDeviceShaderDemoteToHelperInvocationFeatures {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SHADER_DEMOTE_TO_HELPER_INVOCATION_FEATURES,
-        p_next: *mut c_void,
-        shader_demote_to_helper_invocation: crate::data::Bool32,
-    };
-    struct PhysicalDeviceTexelBufferAlignmentFeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_TEXEL_BUFFER_ALIGNMENT_FEATURES_EXT,
-        p_next: *mut c_void,
-        texel_buffer_alignment: crate::data::Bool32,
-    };
-    struct PhysicalDeviceTexelBufferAlignmentProperties {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_TEXEL_BUFFER_ALIGNMENT_PROPERTIES,
-        p_next: *mut c_void,
-        storage_texel_buffer_offset_alignment_bytes: crate::data::DeviceSize,
-        storage_texel_buffer_offset_single_texel_alignment: crate::data::Bool32,
-        uniform_texel_buffer_offset_alignment_bytes: crate::data::DeviceSize,
-        uniform_texel_buffer_offset_single_texel_alignment: crate::data::Bool32,
-    };
-    struct PhysicalDeviceSubgroupSizeControlFeatures {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SUBGROUP_SIZE_CONTROL_FEATURES,
-        p_next: *mut c_void,
-        subgroup_size_control: crate::data::Bool32,
-        compute_full_subgroups: crate::data::Bool32,
-    };
-    struct PhysicalDeviceSubgroupSizeControlProperties {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SUBGROUP_SIZE_CONTROL_PROPERTIES,
-        p_next: *mut c_void,
-        min_subgroup_size: u32,
-        max_subgroup_size: u32,
-        max_compute_workgroup_subgroups: u32,
-        required_subgroup_size_stages: crate::data::ShaderStageFlags,
-    };
-    struct PipelineShaderStageRequiredSubgroupSizeCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_SHADER_STAGE_REQUIRED_SUBGROUP_SIZE_CREATE_INFO,
-        p_next: *mut c_void,
-        required_subgroup_size: u32,
-    };
-    struct SubpassShadingPipelineCreateInfoHUAWEI {
-        s_type: crate::data::StructureType = crate::data::StructureType::SUBPASS_SHADING_PIPELINE_CREATE_INFO_HUAWEI,
-        p_next: *mut c_void,
-        render_pass: crate::data::RenderPass,
-        subpass: u32,
-    };
-    struct PhysicalDeviceSubpassShadingPropertiesHUAWEI {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SUBPASS_SHADING_PROPERTIES_HUAWEI,
-        p_next: *mut c_void,
-        max_subpass_shading_workgroup_size_aspect_ratio: u32,
-    };
-    struct MemoryOpaqueCaptureAddressAllocateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::MEMORY_OPAQUE_CAPTURE_ADDRESS_ALLOCATE_INFO,
-        p_next: *const c_void,
-        opaque_capture_address: u64,
-    };
-    struct DeviceMemoryOpaqueCaptureAddressInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_MEMORY_OPAQUE_CAPTURE_ADDRESS_INFO,
-        p_next: *const c_void,
-        memory: crate::data::DeviceMemory,
-    };
-    struct PhysicalDeviceLineRasterizationFeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_LINE_RASTERIZATION_FEATURES_EXT,
-        p_next: *mut c_void,
-        rectangular_lines: crate::data::Bool32,
-        bresenham_lines: crate::data::Bool32,
-        smooth_lines: crate::data::Bool32,
-        stippled_rectangular_lines: crate::data::Bool32,
-        stippled_bresenham_lines: crate::data::Bool32,
-        stippled_smooth_lines: crate::data::Bool32,
-    };
-    struct PhysicalDeviceLineRasterizationPropertiesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_LINE_RASTERIZATION_PROPERTIES_EXT,
-        p_next: *mut c_void,
-        line_sub_pixel_precision_bits: u32,
-    };
-    struct PipelineRasterizationLineStateCreateInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_RASTERIZATION_LINE_STATE_CREATE_INFO_EXT,
-        p_next: *const c_void,
-        line_rasterization_mode: crate::data::LineRasterizationModeEXT,
-        stippled_line_enable: crate::data::Bool32,
-        line_stipple_factor: u32,
-        line_stipple_pattern: u16,
-    };
-    struct PhysicalDevicePipelineCreationCacheControlFeatures {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PIPELINE_CREATION_CACHE_CONTROL_FEATURES,
-        p_next: *mut c_void,
-        pipeline_creation_cache_control: crate::data::Bool32,
-    };
-    struct PhysicalDeviceVulkan11Features {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_VULKAN_1_1_FEATURES,
-        p_next: *mut c_void,
-        storage_buffer_16_bit_access: crate::data::Bool32,
-        uniform_and_storage_buffer_16_bit_access: crate::data::Bool32,
-        storage_push_constant_16: crate::data::Bool32,
-        storage_input_output_16: crate::data::Bool32,
-        multiview: crate::data::Bool32,
-        multiview_geometry_shader: crate::data::Bool32,
-        multiview_tessellation_shader: crate::data::Bool32,
-        variable_pointers_storage_buffer: crate::data::Bool32,
-        variable_pointers: crate::data::Bool32,
-        protected_memory: crate::data::Bool32,
-        sampler_ycbcr_conversion: crate::data::Bool32,
-        shader_draw_parameters: crate::data::Bool32,
-    };
-    struct PhysicalDeviceVulkan11Properties {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_VULKAN_1_1_PROPERTIES,
-        p_next: *mut c_void,
-        device_uuid: [u8; 16],
-        driver_uuid: [u8; 16],
-        device_luid: [u8; 8],
-        device_node_mask: u32,
-        device_luid_valid: crate::data::Bool32,
-        subgroup_size: u32,
-        subgroup_supported_stages: crate::data::ShaderStageFlags,
-        subgroup_supported_operations: crate::data::SubgroupFeatureFlags,
-        subgroup_quad_operations_in_all_stages: crate::data::Bool32,
-        point_clipping_behavior: crate::data::PointClippingBehavior,
-        max_multiview_view_count: u32,
-        max_multiview_instance_index: u32,
-        protected_no_fault: crate::data::Bool32,
-        max_per_set_descriptors: u32,
-        max_memory_allocation_size: crate::data::DeviceSize,
-    };
-    struct PhysicalDeviceVulkan12Features {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_VULKAN_1_2_FEATURES,
-        p_next: *mut c_void,
-        sampler_mirror_clamp_to_edge: crate::data::Bool32,
-        draw_indirect_count: crate::data::Bool32,
-        storage_buffer_8_bit_access: crate::data::Bool32,
-        uniform_and_storage_buffer_8_bit_access: crate::data::Bool32,
-        storage_push_constant_8: crate::data::Bool32,
-        shader_buffer_int_64_atomics: crate::data::Bool32,
-        shader_shared_int_64_atomics: crate::data::Bool32,
-        shader_float_16: crate::data::Bool32,
-        shader_int_8: crate::data::Bool32,
-        descriptor_indexing: crate::data::Bool32,
-        shader_input_attachment_array_dynamic_indexing: crate::data::Bool32,
-        shader_uniform_texel_buffer_array_dynamic_indexing: crate::data::Bool32,
-        shader_storage_texel_buffer_array_dynamic_indexing: crate::data::Bool32,
-        shader_uniform_buffer_array_non_uniform_indexing: crate::data::Bool32,
-        shader_sampled_image_array_non_uniform_indexing: crate::data::Bool32,
-        shader_storage_buffer_array_non_uniform_indexing: crate::data::Bool32,
-        shader_storage_image_array_non_uniform_indexing: crate::data::Bool32,
-        shader_input_attachment_array_non_uniform_indexing: crate::data::Bool32,
-        shader_uniform_texel_buffer_array_non_uniform_indexing: crate::data::Bool32,
-        shader_storage_texel_buffer_array_non_uniform_indexing: crate::data::Bool32,
-        descriptor_binding_uniform_buffer_update_after_bind: crate::data::Bool32,
-        descriptor_binding_sampled_image_update_after_bind: crate::data::Bool32,
-        descriptor_binding_storage_image_update_after_bind: crate::data::Bool32,
-        descriptor_binding_storage_buffer_update_after_bind: crate::data::Bool32,
-        descriptor_binding_uniform_texel_buffer_update_after_bind: crate::data::Bool32,
-        descriptor_binding_storage_texel_buffer_update_after_bind: crate::data::Bool32,
-        descriptor_binding_update_unused_while_pending: crate::data::Bool32,
-        descriptor_binding_partially_bound: crate::data::Bool32,
-        descriptor_binding_variable_descriptor_count: crate::data::Bool32,
-        runtime_descriptor_array: crate::data::Bool32,
-        sampler_filter_minmax: crate::data::Bool32,
-        scalar_block_layout: crate::data::Bool32,
-        imageless_framebuffer: crate::data::Bool32,
-        uniform_buffer_standard_layout: crate::data::Bool32,
-        shader_subgroup_extended_types: crate::data::Bool32,
-        separate_depth_stencil_layouts: crate::data::Bool32,
-        host_query_reset: crate::data::Bool32,
-        timeline_semaphore: crate::data::Bool32,
-        buffer_device_address: crate::data::Bool32,
-        buffer_device_address_capture_replay: crate::data::Bool32,
-        buffer_device_address_multi_device: crate::data::Bool32,
-        vulkan_memory_model: crate::data::Bool32,
-        vulkan_memory_model_device_scope: crate::data::Bool32,
-        vulkan_memory_model_availability_visibility_chains: crate::data::Bool32,
-        shader_output_viewport_index: crate::data::Bool32,
-        shader_output_layer: crate::data::Bool32,
-        subgroup_broadcast_dynamic_id: crate::data::Bool32,
-    };
-    struct PhysicalDeviceVulkan12Properties {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_VULKAN_1_2_PROPERTIES,
-        p_next: *mut c_void,
-        driver_id: crate::data::DriverId,
-        driver_name: [c_char; 256],
-        driver_info: [c_char; 256],
-        conformance_version: crate::data::ConformanceVersion,
-        denorm_behavior_independence: crate::data::ShaderFloatControlsIndependence,
-        rounding_mode_independence: crate::data::ShaderFloatControlsIndependence,
-        shader_signed_zero_inf_nan_preserve_float_16: crate::data::Bool32,
-        shader_signed_zero_inf_nan_preserve_float_32: crate::data::Bool32,
-        shader_signed_zero_inf_nan_preserve_float_64: crate::data::Bool32,
-        shader_denorm_preserve_float_16: crate::data::Bool32,
-        shader_denorm_preserve_float_32: crate::data::Bool32,
-        shader_denorm_preserve_float_64: crate::data::Bool32,
-        shader_denorm_flush_to_zero_float_16: crate::data::Bool32,
-        shader_denorm_flush_to_zero_float_32: crate::data::Bool32,
-        shader_denorm_flush_to_zero_float_64: crate::data::Bool32,
-        shader_rounding_mode_rte_float_16: crate::data::Bool32,
-        shader_rounding_mode_rte_float_32: crate::data::Bool32,
-        shader_rounding_mode_rte_float_64: crate::data::Bool32,
-        shader_rounding_mode_rtz_float_16: crate::data::Bool32,
-        shader_rounding_mode_rtz_float_32: crate::data::Bool32,
-        shader_rounding_mode_rtz_float_64: crate::data::Bool32,
-        max_update_after_bind_descriptors_in_all_pools: u32,
-        shader_uniform_buffer_array_non_uniform_indexing_native: crate::data::Bool32,
-        shader_sampled_image_array_non_uniform_indexing_native: crate::data::Bool32,
-        shader_storage_buffer_array_non_uniform_indexing_native: crate::data::Bool32,
-        shader_storage_image_array_non_uniform_indexing_native: crate::data::Bool32,
-        shader_input_attachment_array_non_uniform_indexing_native: crate::data::Bool32,
-        robust_buffer_access_update_after_bind: crate::data::Bool32,
-        quad_divergent_implicit_lod: crate::data::Bool32,
-        max_per_stage_descriptor_update_after_bind_samplers: u32,
-        max_per_stage_descriptor_update_after_bind_uniform_buffers: u32,
-        max_per_stage_descriptor_update_after_bind_storage_buffers: u32,
-        max_per_stage_descriptor_update_after_bind_sampled_images: u32,
-        max_per_stage_descriptor_update_after_bind_storage_images: u32,
-        max_per_stage_descriptor_update_after_bind_input_attachments: u32,
-        max_per_stage_update_after_bind_resources: u32,
-        max_descriptor_set_update_after_bind_samplers: u32,
-        max_descriptor_set_update_after_bind_uniform_buffers: u32,
-        max_descriptor_set_update_after_bind_uniform_buffers_dynamic: u32,
-        max_descriptor_set_update_after_bind_storage_buffers: u32,
-        max_descriptor_set_update_after_bind_storage_buffers_dynamic: u32,
-        max_descriptor_set_update_after_bind_sampled_images: u32,
-        max_descriptor_set_update_after_bind_storage_images: u32,
-        max_descriptor_set_update_after_bind_input_attachments: u32,
-        supported_depth_resolve_modes: crate::data::ResolveModeFlags,
-        supported_stencil_resolve_modes: crate::data::ResolveModeFlags,
-        independent_resolve_none: crate::data::Bool32,
-        independent_resolve: crate::data::Bool32,
-        filter_minmax_single_component_formats: crate::data::Bool32,
-        filter_minmax_image_component_mapping: crate::data::Bool32,
-        max_timeline_semaphore_value_difference: u64,
-        framebuffer_integer_color_sample_counts: crate::data::SampleCountFlags,
-    };
-    struct PhysicalDeviceVulkan13Features {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_VULKAN_1_3_FEATURES,
-        p_next: *mut c_void,
-        robust_image_access: crate::data::Bool32,
-        inline_uniform_block: crate::data::Bool32,
-        descriptor_binding_inline_uniform_block_update_after_bind: crate::data::Bool32,
-        pipeline_creation_cache_control: crate::data::Bool32,
-        private_data: crate::data::Bool32,
-        shader_demote_to_helper_invocation: crate::data::Bool32,
-        shader_terminate_invocation: crate::data::Bool32,
-        subgroup_size_control: crate::data::Bool32,
-        compute_full_subgroups: crate::data::Bool32,
-        synchronization_2: crate::data::Bool32,
-        texture_compression_astc_hdr: crate::data::Bool32,
-        shader_zero_initialize_workgroup_memory: crate::data::Bool32,
-        dynamic_rendering: crate::data::Bool32,
-        shader_integer_dot_product: crate::data::Bool32,
-        maintenance_4: crate::data::Bool32,
-    };
-    struct PhysicalDeviceVulkan13Properties {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_VULKAN_1_3_PROPERTIES,
-        p_next: *mut c_void,
-        min_subgroup_size: u32,
-        max_subgroup_size: u32,
-        max_compute_workgroup_subgroups: u32,
-        required_subgroup_size_stages: crate::data::ShaderStageFlags,
-        max_inline_uniform_block_size: u32,
-        max_per_stage_descriptor_inline_uniform_blocks: u32,
-        max_per_stage_descriptor_update_after_bind_inline_uniform_blocks: u32,
-        max_descriptor_set_inline_uniform_blocks: u32,
-        max_descriptor_set_update_after_bind_inline_uniform_blocks: u32,
-        max_inline_uniform_total_size: u32,
-        integer_dot_product_8_bit_unsigned_accelerated: crate::data::Bool32,
-        integer_dot_product_8_bit_signed_accelerated: crate::data::Bool32,
-        integer_dot_product_8_bit_mixed_signedness_accelerated: crate::data::Bool32,
-        integer_dot_product_4x_8_bit_packed_unsigned_accelerated: crate::data::Bool32,
-        integer_dot_product_4x_8_bit_packed_signed_accelerated: crate::data::Bool32,
-        integer_dot_product_4x_8_bit_packed_mixed_signedness_accelerated: crate::data::Bool32,
-        integer_dot_product_16_bit_unsigned_accelerated: crate::data::Bool32,
-        integer_dot_product_16_bit_signed_accelerated: crate::data::Bool32,
-        integer_dot_product_16_bit_mixed_signedness_accelerated: crate::data::Bool32,
-        integer_dot_product_32_bit_unsigned_accelerated: crate::data::Bool32,
-        integer_dot_product_32_bit_signed_accelerated: crate::data::Bool32,
-        integer_dot_product_32_bit_mixed_signedness_accelerated: crate::data::Bool32,
-        integer_dot_product_64_bit_unsigned_accelerated: crate::data::Bool32,
-        integer_dot_product_64_bit_signed_accelerated: crate::data::Bool32,
-        integer_dot_product_64_bit_mixed_signedness_accelerated: crate::data::Bool32,
-        integer_dot_product_accumulating_saturating_8_bit_unsigned_accelerated: crate::data::Bool32,
-        integer_dot_product_accumulating_saturating_8_bit_signed_accelerated: crate::data::Bool32,
-        integer_dot_product_accumulating_saturating_8_bit_mixed_signedness_accelerated: crate::data::Bool32,
-        integer_dot_product_accumulating_saturating_4x_8_bit_packed_unsigned_accelerated: crate::data::Bool32,
-        integer_dot_product_accumulating_saturating_4x_8_bit_packed_signed_accelerated: crate::data::Bool32,
-        integer_dot_product_accumulating_saturating_4x_8_bit_packed_mixed_signedness_accelerated: crate::data::Bool32,
-        integer_dot_product_accumulating_saturating_16_bit_unsigned_accelerated: crate::data::Bool32,
-        integer_dot_product_accumulating_saturating_16_bit_signed_accelerated: crate::data::Bool32,
-        integer_dot_product_accumulating_saturating_16_bit_mixed_signedness_accelerated: crate::data::Bool32,
-        integer_dot_product_accumulating_saturating_32_bit_unsigned_accelerated: crate::data::Bool32,
-        integer_dot_product_accumulating_saturating_32_bit_signed_accelerated: crate::data::Bool32,
-        integer_dot_product_accumulating_saturating_32_bit_mixed_signedness_accelerated: crate::data::Bool32,
-        integer_dot_product_accumulating_saturating_64_bit_unsigned_accelerated: crate::data::Bool32,
-        integer_dot_product_accumulating_saturating_64_bit_signed_accelerated: crate::data::Bool32,
-        integer_dot_product_accumulating_saturating_64_bit_mixed_signedness_accelerated: crate::data::Bool32,
-        storage_texel_buffer_offset_alignment_bytes: crate::data::DeviceSize,
-        storage_texel_buffer_offset_single_texel_alignment: crate::data::Bool32,
-        uniform_texel_buffer_offset_alignment_bytes: crate::data::DeviceSize,
-        uniform_texel_buffer_offset_single_texel_alignment: crate::data::Bool32,
-        max_buffer_size: crate::data::DeviceSize,
-    };
-    struct PipelineCompilerControlCreateInfoAMD {
-        s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_COMPILER_CONTROL_CREATE_INFO_AMD,
-        p_next: *const c_void,
-        compiler_control_flags: crate::data::PipelineCompilerControlFlagsAMD,
-    };
-    struct PhysicalDeviceCoherentMemoryFeaturesAMD {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_COHERENT_MEMORY_FEATURES_AMD,
-        p_next: *mut c_void,
-        device_coherent_memory: crate::data::Bool32,
-    };
-    struct PhysicalDeviceToolProperties {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_TOOL_PROPERTIES,
-        p_next: *mut c_void,
-        name: [c_char; 256],
-        version: [c_char; 256],
-        purposes: crate::data::ToolPurposeFlags,
-        description: [c_char; 256],
-        layer: [c_char; 256],
-    };
-    struct SamplerCustomBorderColorCreateInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::SAMPLER_CUSTOM_BORDER_COLOR_CREATE_INFO_EXT,
-        p_next: *const c_void,
-        custom_border_color: crate::data::ClearColorValue,
-        format: crate::data::Format,
-    };
-    struct PhysicalDeviceCustomBorderColorPropertiesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_CUSTOM_BORDER_COLOR_PROPERTIES_EXT,
-        p_next: *mut c_void,
-        max_custom_border_color_samplers: u32,
-    };
-    struct PhysicalDeviceCustomBorderColorFeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_CUSTOM_BORDER_COLOR_FEATURES_EXT,
-        p_next: *mut c_void,
-        custom_border_colors: crate::data::Bool32,
-        custom_border_color_without_format: crate::data::Bool32,
-    };
-    struct SamplerBorderColorComponentMappingCreateInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::SAMPLER_BORDER_COLOR_COMPONENT_MAPPING_CREATE_INFO_EXT,
-        p_next: *const c_void,
-        components: crate::data::ComponentMapping,
-        srgb: crate::data::Bool32,
-    };
-    struct PhysicalDeviceBorderColorSwizzleFeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_BORDER_COLOR_SWIZZLE_FEATURES_EXT,
-        p_next: *mut c_void,
-        border_color_swizzle: crate::data::Bool32,
-        border_color_swizzle_from_image: crate::data::Bool32,
-    };
-    union DeviceOrHostAddressKHR {
-        device_address: crate::data::DeviceAddress,
-        host_address: *mut c_void,
-    };
-    union DeviceOrHostAddressConstKHR {
-        device_address: crate::data::DeviceAddress,
-        host_address: *const c_void,
-    };
-    struct AccelerationStructureGeometryTrianglesDataKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR,
-        p_next: *const c_void,
-        vertex_format: crate::data::Format,
-        vertex_data: crate::data::DeviceOrHostAddressConstKHR,
-        vertex_stride: crate::data::DeviceSize,
-        max_vertex: u32,
-        index_type: crate::data::IndexType,
-        index_data: crate::data::DeviceOrHostAddressConstKHR,
-        transform_data: crate::data::DeviceOrHostAddressConstKHR,
-    };
-    struct AccelerationStructureGeometryAabbsDataKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::ACCELERATION_STRUCTURE_GEOMETRY_AABBS_DATA_KHR,
-        p_next: *const c_void,
-        data: crate::data::DeviceOrHostAddressConstKHR,
-        stride: crate::data::DeviceSize,
-    };
-    struct AccelerationStructureGeometryInstancesDataKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::ACCELERATION_STRUCTURE_GEOMETRY_INSTANCES_DATA_KHR,
-        p_next: *const c_void,
-        array_of_pointers: crate::data::Bool32,
-        data: crate::data::DeviceOrHostAddressConstKHR,
-    };
-    union AccelerationStructureGeometryDataKHR {
-        triangles: crate::data::AccelerationStructureGeometryTrianglesDataKHR,
-        aabbs: crate::data::AccelerationStructureGeometryAabbsDataKHR,
-        instances: crate::data::AccelerationStructureGeometryInstancesDataKHR,
-    };
-    struct AccelerationStructureGeometryKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::ACCELERATION_STRUCTURE_GEOMETRY_KHR,
-        p_next: *const c_void,
-        geometry_type: crate::data::GeometryTypeKHR,
-        geometry: crate::data::AccelerationStructureGeometryDataKHR,
-        flags: crate::data::GeometryFlagsKHR,
-    };
-    struct AccelerationStructureBuildGeometryInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::ACCELERATION_STRUCTURE_BUILD_GEOMETRY_INFO_KHR,
-        p_next: *const c_void,
-        ty: crate::data::AccelerationStructureTypeKHR,
-        flags: crate::data::BuildAccelerationStructureFlagsKHR,
-        mode: crate::data::BuildAccelerationStructureModeKHR,
-        src_acceleration_structure: crate::data::AccelerationStructureKHR,
-        dst_acceleration_structure: crate::data::AccelerationStructureKHR,
-        geometry_count: u32,
-        p_geometries: *const crate::data::AccelerationStructureGeometryKHR,
-        pp_geometries: *const *const crate::data::AccelerationStructureGeometryKHR,
-        scratch_data: crate::data::DeviceOrHostAddressKHR,
-    };
-    struct AccelerationStructureBuildRangeInfoKHR {
-        primitive_count: u32,
-        primitive_offset: u32,
-        first_vertex: u32,
-        transform_offset: u32,
-    };
-    struct AccelerationStructureCreateInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::ACCELERATION_STRUCTURE_CREATE_INFO_KHR,
-        p_next: *const c_void,
-        create_flags: crate::data::AccelerationStructureCreateFlagsKHR,
-        buffer: crate::data::Buffer,
-        offset: crate::data::DeviceSize,
-        size: crate::data::DeviceSize,
-        ty: crate::data::AccelerationStructureTypeKHR,
-        device_address: crate::data::DeviceAddress,
-    };
-    struct AabbPositionsKHR {
-        min_x: c_float,
-        min_y: c_float,
-        min_z: c_float,
-        max_x: c_float,
-        max_y: c_float,
-        max_z: c_float,
-    };
-    struct TransformMatrixKHR {
-        matrix: [c_float; 3],
-    };
-    struct AccelerationStructureInstanceKHR {
-        transform: crate::data::TransformMatrixKHR,
-        instance_custom_index: u32,
-        mask: u32,
-        instance_shader_binding_table_record_offset: u32,
-        flags: crate::data::GeometryInstanceFlagsKHR,
-        acceleration_structure_reference: u64,
-    };
-    struct AccelerationStructureDeviceAddressInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::ACCELERATION_STRUCTURE_DEVICE_ADDRESS_INFO_KHR,
-        p_next: *const c_void,
-        acceleration_structure: crate::data::AccelerationStructureKHR,
-    };
-    struct AccelerationStructureVersionInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::ACCELERATION_STRUCTURE_VERSION_INFO_KHR,
-        p_next: *const c_void,
-        p_version_data: *const u8,
-    };
-    struct CopyAccelerationStructureInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::COPY_ACCELERATION_STRUCTURE_INFO_KHR,
-        p_next: *const c_void,
-        src: crate::data::AccelerationStructureKHR,
-        dst: crate::data::AccelerationStructureKHR,
-        mode: crate::data::CopyAccelerationStructureModeKHR,
-    };
-    struct CopyAccelerationStructureToMemoryInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::COPY_ACCELERATION_STRUCTURE_TO_MEMORY_INFO_KHR,
-        p_next: *const c_void,
-        src: crate::data::AccelerationStructureKHR,
-        dst: crate::data::DeviceOrHostAddressKHR,
-        mode: crate::data::CopyAccelerationStructureModeKHR,
-    };
-    struct CopyMemoryToAccelerationStructureInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::COPY_MEMORY_TO_ACCELERATION_STRUCTURE_INFO_KHR,
-        p_next: *const c_void,
-        src: crate::data::DeviceOrHostAddressConstKHR,
-        dst: crate::data::AccelerationStructureKHR,
-        mode: crate::data::CopyAccelerationStructureModeKHR,
-    };
-    struct RayTracingPipelineInterfaceCreateInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::RAY_TRACING_PIPELINE_INTERFACE_CREATE_INFO_KHR,
-        p_next: *const c_void,
-        max_pipeline_ray_payload_size: u32,
-        max_pipeline_ray_hit_attribute_size: u32,
-    };
-    struct PipelineLibraryCreateInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_LIBRARY_CREATE_INFO_KHR,
-        p_next: *const c_void,
-        library_count: u32,
-        p_libraries: *const crate::data::Pipeline,
-    };
-    struct PhysicalDeviceExtendedDynamicStateFeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_EXTENDED_DYNAMIC_STATE_FEATURES_EXT,
-        p_next: *mut c_void,
-        extended_dynamic_state: crate::data::Bool32,
-    };
-    struct PhysicalDeviceExtendedDynamicState2FeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_EXTENDED_DYNAMIC_STATE_2_FEATURES_EXT,
-        p_next: *mut c_void,
-        extended_dynamic_state_2: crate::data::Bool32,
-        extended_dynamic_state_2_logic_op: crate::data::Bool32,
-        extended_dynamic_state_2_patch_control_points: crate::data::Bool32,
-    };
-    struct PhysicalDeviceExtendedDynamicState3FeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_EXTENDED_DYNAMIC_STATE_3_FEATURES_EXT,
-        p_next: *mut c_void,
-        extended_dynamic_state_3_tessellation_domain_origin: crate::data::Bool32,
-        extended_dynamic_state_3_depth_clamp_enable: crate::data::Bool32,
-        extended_dynamic_state_3_polygon_mode: crate::data::Bool32,
-        extended_dynamic_state_3_rasterization_samples: crate::data::Bool32,
-        extended_dynamic_state_3_sample_mask: crate::data::Bool32,
-        extended_dynamic_state_3_alpha_to_coverage_enable: crate::data::Bool32,
-        extended_dynamic_state_3_alpha_to_one_enable: crate::data::Bool32,
-        extended_dynamic_state_3_logic_op_enable: crate::data::Bool32,
-        extended_dynamic_state_3_color_blend_enable: crate::data::Bool32,
-        extended_dynamic_state_3_color_blend_equation: crate::data::Bool32,
-        extended_dynamic_state_3_color_write_mask: crate::data::Bool32,
-        extended_dynamic_state_3_rasterization_stream: crate::data::Bool32,
-        extended_dynamic_state_3_conservative_rasterization_mode: crate::data::Bool32,
-        extended_dynamic_state_3_extra_primitive_overestimation_size: crate::data::Bool32,
-        extended_dynamic_state_3_depth_clip_enable: crate::data::Bool32,
-        extended_dynamic_state_3_sample_locations_enable: crate::data::Bool32,
-        extended_dynamic_state_3_color_blend_advanced: crate::data::Bool32,
-        extended_dynamic_state_3_provoking_vertex_mode: crate::data::Bool32,
-        extended_dynamic_state_3_line_rasterization_mode: crate::data::Bool32,
-        extended_dynamic_state_3_line_stipple_enable: crate::data::Bool32,
-        extended_dynamic_state_3_depth_clip_negative_one_to_one: crate::data::Bool32,
-        extended_dynamic_state_3_viewport_w_scaling_enable: crate::data::Bool32,
-        extended_dynamic_state_3_viewport_swizzle: crate::data::Bool32,
-        extended_dynamic_state_3_coverage_to_color_enable: crate::data::Bool32,
-        extended_dynamic_state_3_coverage_to_color_location: crate::data::Bool32,
-        extended_dynamic_state_3_coverage_modulation_mode: crate::data::Bool32,
-        extended_dynamic_state_3_coverage_modulation_table_enable: crate::data::Bool32,
-        extended_dynamic_state_3_coverage_modulation_table: crate::data::Bool32,
-        extended_dynamic_state_3_coverage_reduction_mode: crate::data::Bool32,
-        extended_dynamic_state_3_representative_fragment_test_enable: crate::data::Bool32,
-        extended_dynamic_state_3_shading_rate_image_enable: crate::data::Bool32,
-    };
-    struct PhysicalDeviceExtendedDynamicState3PropertiesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_EXTENDED_DYNAMIC_STATE_3_PROPERTIES_EXT,
-        p_next: *mut c_void,
-        dynamic_primitive_topology_unrestricted: crate::data::Bool32,
-    };
-    struct ColorBlendEquationEXT {
-        src_color_blend_factor: crate::data::BlendFactor,
-        dst_color_blend_factor: crate::data::BlendFactor,
-        color_blend_op: crate::data::BlendOp,
-        src_alpha_blend_factor: crate::data::BlendFactor,
-        dst_alpha_blend_factor: crate::data::BlendFactor,
-        alpha_blend_op: crate::data::BlendOp,
-    };
-    struct ColorBlendAdvancedEXT {
-        advanced_blend_op: crate::data::BlendOp,
-        src_premultiplied: crate::data::Bool32,
-        dst_premultiplied: crate::data::Bool32,
-        blend_overlap: crate::data::BlendOverlapEXT,
-        clamp_results: crate::data::Bool32,
-    };
-    struct RenderPassTransformBeginInfoQCOM {
-        s_type: crate::data::StructureType = crate::data::StructureType::RENDER_PASS_TRANSFORM_BEGIN_INFO_QCOM,
-        p_next: *mut c_void,
-        transform: crate::data::SurfaceTransformFlagBitsKHR,
-    };
-    struct CopyCommandTransformInfoQCOM {
-        s_type: crate::data::StructureType = crate::data::StructureType::COPY_COMMAND_TRANSFORM_INFO_QCOM,
-        p_next: *const c_void,
-        transform: crate::data::SurfaceTransformFlagBitsKHR,
-    };
-    struct CommandBufferInheritanceRenderPassTransformInfoQCOM {
-        s_type: crate::data::StructureType = crate::data::StructureType::COMMAND_BUFFER_INHERITANCE_RENDER_PASS_TRANSFORM_INFO_QCOM,
-        p_next: *mut c_void,
-        transform: crate::data::SurfaceTransformFlagBitsKHR,
-        render_area: crate::data::Rect2D,
-    };
-    struct PhysicalDeviceDiagnosticsConfigFeaturesNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_DIAGNOSTICS_CONFIG_FEATURES_NV,
-        p_next: *mut c_void,
-        diagnostics_config: crate::data::Bool32,
-    };
-    struct DeviceDiagnosticsConfigCreateInfoNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_DIAGNOSTICS_CONFIG_CREATE_INFO_NV,
-        p_next: *const c_void,
-        flags: crate::data::DeviceDiagnosticsConfigFlagsNV,
-    };
-    struct PhysicalDeviceZeroInitializeWorkgroupMemoryFeatures {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_ZERO_INITIALIZE_WORKGROUP_MEMORY_FEATURES,
-        p_next: *mut c_void,
-        shader_zero_initialize_workgroup_memory: crate::data::Bool32,
-    };
-    struct PhysicalDeviceShaderSubgroupUniformControlFlowFeaturesKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SHADER_SUBGROUP_UNIFORM_CONTROL_FLOW_FEATURES_KHR,
-        p_next: *mut c_void,
-        shader_subgroup_uniform_control_flow: crate::data::Bool32,
-    };
-    struct PhysicalDeviceRobustness2FeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_ROBUSTNESS_2_FEATURES_EXT,
-        p_next: *mut c_void,
-        robust_buffer_access_2: crate::data::Bool32,
-        robust_image_access_2: crate::data::Bool32,
-        null_descriptor: crate::data::Bool32,
-    };
-    struct PhysicalDeviceRobustness2PropertiesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_ROBUSTNESS_2_PROPERTIES_EXT,
-        p_next: *mut c_void,
-        robust_storage_buffer_access_size_alignment: crate::data::DeviceSize,
-        robust_uniform_buffer_access_size_alignment: crate::data::DeviceSize,
-    };
-    struct PhysicalDeviceImageRobustnessFeatures {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_IMAGE_ROBUSTNESS_FEATURES,
-        p_next: *mut c_void,
-        robust_image_access: crate::data::Bool32,
-    };
-    struct PhysicalDeviceWorkgroupMemoryExplicitLayoutFeaturesKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_WORKGROUP_MEMORY_EXPLICIT_LAYOUT_FEATURES_KHR,
-        p_next: *mut c_void,
-        workgroup_memory_explicit_layout: crate::data::Bool32,
-        workgroup_memory_explicit_layout_scalar_block_layout: crate::data::Bool32,
-        workgroup_memory_explicit_layout_8_bit_access: crate::data::Bool32,
-        workgroup_memory_explicit_layout_16_bit_access: crate::data::Bool32,
-    };
-    struct PhysicalDevicePortabilitySubsetFeaturesKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PORTABILITY_SUBSET_FEATURES_KHR,
-        p_next: *mut c_void,
-        constant_alpha_color_blend_factors: crate::data::Bool32,
-        events: crate::data::Bool32,
-        image_view_format_reinterpretation: crate::data::Bool32,
-        image_view_format_swizzle: crate::data::Bool32,
-        image_view_2d_on_3d_image: crate::data::Bool32,
-        multisample_array_image: crate::data::Bool32,
-        mutable_comparison_samplers: crate::data::Bool32,
-        point_polygons: crate::data::Bool32,
-        sampler_mip_lod_bias: crate::data::Bool32,
-        separate_stencil_mask_ref: crate::data::Bool32,
-        shader_sample_rate_interpolation_functions: crate::data::Bool32,
-        tessellation_isolines: crate::data::Bool32,
-        tessellation_point_mode: crate::data::Bool32,
-        triangle_fans: crate::data::Bool32,
-        vertex_attribute_access_beyond_stride: crate::data::Bool32,
-    };
-    struct PhysicalDevicePortabilitySubsetPropertiesKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PORTABILITY_SUBSET_PROPERTIES_KHR,
-        p_next: *mut c_void,
-        min_vertex_input_binding_stride_alignment: u32,
-    };
-    struct PhysicalDevice4444FormatsFeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_4444_FORMATS_FEATURES_EXT,
-        p_next: *mut c_void,
-        format_a_4r_4g_4b_4: crate::data::Bool32,
-        format_a_4b_4g_4r_4: crate::data::Bool32,
-    };
-    struct PhysicalDeviceSubpassShadingFeaturesHUAWEI {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SUBPASS_SHADING_FEATURES_HUAWEI,
-        p_next: *mut c_void,
-        subpass_shading: crate::data::Bool32,
-    };
-    struct BufferCopy2 {
-        s_type: crate::data::StructureType = crate::data::StructureType::BUFFER_COPY_2,
-        p_next: *const c_void,
-        src_offset: crate::data::DeviceSize,
-        dst_offset: crate::data::DeviceSize,
-        size: crate::data::DeviceSize,
-    };
-    struct ImageCopy2 {
-        s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_COPY_2,
-        p_next: *const c_void,
-        src_subresource: crate::data::ImageSubresourceLayers,
-        src_offset: crate::data::Offset3D,
-        dst_subresource: crate::data::ImageSubresourceLayers,
-        dst_offset: crate::data::Offset3D,
-        extent: crate::data::Extent3D,
-    };
-    struct ImageBlit2 {
-        s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_BLIT_2,
-        p_next: *const c_void,
-        src_subresource: crate::data::ImageSubresourceLayers,
-        src_offsets: [crate::data::Offset3D; 2],
-        dst_subresource: crate::data::ImageSubresourceLayers,
-        dst_offsets: [crate::data::Offset3D; 2],
-    };
-    struct BufferImageCopy2 {
-        s_type: crate::data::StructureType = crate::data::StructureType::BUFFER_IMAGE_COPY_2,
-        p_next: *const c_void,
-        buffer_offset: crate::data::DeviceSize,
-        buffer_row_length: u32,
-        buffer_image_height: u32,
-        image_subresource: crate::data::ImageSubresourceLayers,
-        image_offset: crate::data::Offset3D,
-        image_extent: crate::data::Extent3D,
-    };
-    struct ImageResolve2 {
-        s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_RESOLVE_2,
-        p_next: *const c_void,
-        src_subresource: crate::data::ImageSubresourceLayers,
-        src_offset: crate::data::Offset3D,
-        dst_subresource: crate::data::ImageSubresourceLayers,
-        dst_offset: crate::data::Offset3D,
-        extent: crate::data::Extent3D,
-    };
-    struct CopyBufferInfo2 {
-        s_type: crate::data::StructureType = crate::data::StructureType::COPY_BUFFER_INFO_2,
-        p_next: *const c_void,
-        src_buffer: crate::data::Buffer,
-        dst_buffer: crate::data::Buffer,
-        region_count: u32,
-        p_regions: *const crate::data::BufferCopy2,
-    };
-    struct CopyImageInfo2 {
-        s_type: crate::data::StructureType = crate::data::StructureType::COPY_IMAGE_INFO_2,
-        p_next: *const c_void,
-        src_image: crate::data::Image,
-        src_image_layout: crate::data::ImageLayout,
-        dst_image: crate::data::Image,
-        dst_image_layout: crate::data::ImageLayout,
-        region_count: u32,
-        p_regions: *const crate::data::ImageCopy2,
-    };
-    struct BlitImageInfo2 {
-        s_type: crate::data::StructureType = crate::data::StructureType::BLIT_IMAGE_INFO_2,
-        p_next: *const c_void,
-        src_image: crate::data::Image,
-        src_image_layout: crate::data::ImageLayout,
-        dst_image: crate::data::Image,
-        dst_image_layout: crate::data::ImageLayout,
-        region_count: u32,
-        p_regions: *const crate::data::ImageBlit2,
-        filter: crate::data::Filter,
-    };
-    struct CopyBufferToImageInfo2 {
-        s_type: crate::data::StructureType = crate::data::StructureType::COPY_BUFFER_TO_IMAGE_INFO_2,
-        p_next: *const c_void,
-        src_buffer: crate::data::Buffer,
-        dst_image: crate::data::Image,
-        dst_image_layout: crate::data::ImageLayout,
-        region_count: u32,
-        p_regions: *const crate::data::BufferImageCopy2,
-    };
-    struct CopyImageToBufferInfo2 {
-        s_type: crate::data::StructureType = crate::data::StructureType::COPY_IMAGE_TO_BUFFER_INFO_2,
-        p_next: *const c_void,
-        src_image: crate::data::Image,
-        src_image_layout: crate::data::ImageLayout,
-        dst_buffer: crate::data::Buffer,
-        region_count: u32,
-        p_regions: *const crate::data::BufferImageCopy2,
-    };
-    struct ResolveImageInfo2 {
-        s_type: crate::data::StructureType = crate::data::StructureType::RESOLVE_IMAGE_INFO_2,
-        p_next: *const c_void,
-        src_image: crate::data::Image,
-        src_image_layout: crate::data::ImageLayout,
-        dst_image: crate::data::Image,
-        dst_image_layout: crate::data::ImageLayout,
-        region_count: u32,
-        p_regions: *const crate::data::ImageResolve2,
-    };
-    struct PhysicalDeviceShaderImageAtomicInt64FeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SHADER_IMAGE_ATOMIC_INT64_FEATURES_EXT,
-        p_next: *mut c_void,
-        shader_image_int_64_atomics: crate::data::Bool32,
-        sparse_image_int_64_atomics: crate::data::Bool32,
-    };
-    struct FragmentShadingRateAttachmentInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::FRAGMENT_SHADING_RATE_ATTACHMENT_INFO_KHR,
-        p_next: *const c_void,
-        p_fragment_shading_rate_attachment: *const crate::data::AttachmentReference2,
-        shading_rate_attachment_texel_size: crate::data::Extent2D,
-    };
-    struct PipelineFragmentShadingRateStateCreateInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_FRAGMENT_SHADING_RATE_STATE_CREATE_INFO_KHR,
-        p_next: *const c_void,
-        fragment_size: crate::data::Extent2D,
-        combiner_ops: [crate::data::FragmentShadingRateCombinerOpKHR; 2],
-    };
-    struct PhysicalDeviceFragmentShadingRateFeaturesKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_FEATURES_KHR,
-        p_next: *mut c_void,
-        pipeline_fragment_shading_rate: crate::data::Bool32,
-        primitive_fragment_shading_rate: crate::data::Bool32,
-        attachment_fragment_shading_rate: crate::data::Bool32,
-    };
-    struct PhysicalDeviceFragmentShadingRatePropertiesKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_PROPERTIES_KHR,
-        p_next: *mut c_void,
-        min_fragment_shading_rate_attachment_texel_size: crate::data::Extent2D,
-        max_fragment_shading_rate_attachment_texel_size: crate::data::Extent2D,
-        max_fragment_shading_rate_attachment_texel_size_aspect_ratio: u32,
-        primitive_fragment_shading_rate_with_multiple_viewports: crate::data::Bool32,
-        layered_shading_rate_attachments: crate::data::Bool32,
-        fragment_shading_rate_non_trivial_combiner_ops: crate::data::Bool32,
-        max_fragment_size: crate::data::Extent2D,
-        max_fragment_size_aspect_ratio: u32,
-        max_fragment_shading_rate_coverage_samples: u32,
-        max_fragment_shading_rate_rasterization_samples: crate::data::SampleCountFlagBits,
-        fragment_shading_rate_with_shader_depth_stencil_writes: crate::data::Bool32,
-        fragment_shading_rate_with_sample_mask: crate::data::Bool32,
-        fragment_shading_rate_with_shader_sample_mask: crate::data::Bool32,
-        fragment_shading_rate_with_conservative_rasterization: crate::data::Bool32,
-        fragment_shading_rate_with_fragment_shader_interlock: crate::data::Bool32,
-        fragment_shading_rate_with_custom_sample_locations: crate::data::Bool32,
-        fragment_shading_rate_strict_multiply_combiner: crate::data::Bool32,
-    };
-    struct PhysicalDeviceFragmentShadingRateKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_KHR,
-        p_next: *mut c_void,
-        sample_counts: crate::data::SampleCountFlags,
-        fragment_size: crate::data::Extent2D,
-    };
-    struct PhysicalDeviceShaderTerminateInvocationFeatures {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SHADER_TERMINATE_INVOCATION_FEATURES,
-        p_next: *mut c_void,
-        shader_terminate_invocation: crate::data::Bool32,
-    };
-    struct PhysicalDeviceFragmentShadingRateEnumsFeaturesNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_ENUMS_FEATURES_NV,
-        p_next: *mut c_void,
-        fragment_shading_rate_enums: crate::data::Bool32,
-        supersample_fragment_shading_rates: crate::data::Bool32,
-        no_invocation_fragment_shading_rates: crate::data::Bool32,
-    };
-    struct PhysicalDeviceFragmentShadingRateEnumsPropertiesNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_ENUMS_PROPERTIES_NV,
-        p_next: *mut c_void,
-        max_fragment_shading_rate_invocation_count: crate::data::SampleCountFlagBits,
-    };
-    struct PipelineFragmentShadingRateEnumStateCreateInfoNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_FRAGMENT_SHADING_RATE_ENUM_STATE_CREATE_INFO_NV,
-        p_next: *const c_void,
-        shading_rate_type: crate::data::FragmentShadingRateTypeNV,
-        shading_rate: crate::data::FragmentShadingRateNV,
-        combiner_ops: [crate::data::FragmentShadingRateCombinerOpKHR; 2],
-    };
-    struct AccelerationStructureBuildSizesInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::ACCELERATION_STRUCTURE_BUILD_SIZES_INFO_KHR,
-        p_next: *const c_void,
-        acceleration_structure_size: crate::data::DeviceSize,
-        update_scratch_size: crate::data::DeviceSize,
-        build_scratch_size: crate::data::DeviceSize,
-    };
-    struct PhysicalDeviceImage2DViewOf3DFeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_IMAGE_2D_VIEW_OF_3D_FEATURES_EXT,
-        p_next: *mut c_void,
-        image_2d_view_of_3d: crate::data::Bool32,
-        sampler_2d_view_of_3d: crate::data::Bool32,
-    };
-    struct PhysicalDeviceMutableDescriptorTypeFeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_MUTABLE_DESCRIPTOR_TYPE_FEATURES_EXT,
-        p_next: *mut c_void,
-        mutable_descriptor_type: crate::data::Bool32,
-    };
-    struct MutableDescriptorTypeListEXT {
-        descriptor_type_count: u32,
-        p_descriptor_types: *const crate::data::DescriptorType,
-    };
-    struct MutableDescriptorTypeCreateInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::MUTABLE_DESCRIPTOR_TYPE_CREATE_INFO_EXT,
-        p_next: *const c_void,
-        mutable_descriptor_type_list_count: u32,
-        p_mutable_descriptor_type_lists: *const crate::data::MutableDescriptorTypeListEXT,
-    };
-    struct PhysicalDeviceDepthClipControlFeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_DEPTH_CLIP_CONTROL_FEATURES_EXT,
-        p_next: *mut c_void,
-        depth_clip_control: crate::data::Bool32,
-    };
-    struct PipelineViewportDepthClipControlCreateInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_VIEWPORT_DEPTH_CLIP_CONTROL_CREATE_INFO_EXT,
-        p_next: *const c_void,
-        negative_one_to_one: crate::data::Bool32,
-    };
-    struct PhysicalDeviceVertexInputDynamicStateFeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_VERTEX_INPUT_DYNAMIC_STATE_FEATURES_EXT,
-        p_next: *mut c_void,
-        vertex_input_dynamic_state: crate::data::Bool32,
-    };
-    struct PhysicalDeviceExternalMemoryRDMAFeaturesNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_EXTERNAL_MEMORY_RDMA_FEATURES_NV,
-        p_next: *mut c_void,
-        external_memory_rdma: crate::data::Bool32,
-    };
-    struct VertexInputBindingDescription2EXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::VERTEX_INPUT_BINDING_DESCRIPTION_2_EXT,
-        p_next: *mut c_void,
-        binding: u32,
-        stride: u32,
-        input_rate: crate::data::VertexInputRate,
-        divisor: u32,
-    };
-    struct VertexInputAttributeDescription2EXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::VERTEX_INPUT_ATTRIBUTE_DESCRIPTION_2_EXT,
-        p_next: *mut c_void,
-        location: u32,
-        binding: u32,
-        format: crate::data::Format,
-        offset: u32,
-    };
-    struct PhysicalDeviceColorWriteEnableFeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_COLOR_WRITE_ENABLE_FEATURES_EXT,
-        p_next: *mut c_void,
-        color_write_enable: crate::data::Bool32,
-    };
-    struct PipelineColorWriteCreateInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_COLOR_WRITE_CREATE_INFO_EXT,
-        p_next: *const c_void,
-        attachment_count: u32,
-        p_color_write_enables: *const crate::data::Bool32,
-    };
-    struct MemoryBarrier2 {
-        s_type: crate::data::StructureType = crate::data::StructureType::MEMORY_BARRIER_2,
-        p_next: *const c_void,
-        src_stage_mask: crate::data::PipelineStageFlags2,
-        src_access_mask: crate::data::AccessFlags2,
-        dst_stage_mask: crate::data::PipelineStageFlags2,
-        dst_access_mask: crate::data::AccessFlags2,
-    };
-    struct ImageMemoryBarrier2 {
-        s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_MEMORY_BARRIER_2,
-        p_next: *const c_void,
-        src_stage_mask: crate::data::PipelineStageFlags2,
-        src_access_mask: crate::data::AccessFlags2,
-        dst_stage_mask: crate::data::PipelineStageFlags2,
-        dst_access_mask: crate::data::AccessFlags2,
-        old_layout: crate::data::ImageLayout,
-        new_layout: crate::data::ImageLayout,
-        src_queue_family_index: u32,
-        dst_queue_family_index: u32,
-        image: crate::data::Image,
-        subresource_range: crate::data::ImageSubresourceRange,
-    };
-    struct BufferMemoryBarrier2 {
-        s_type: crate::data::StructureType = crate::data::StructureType::BUFFER_MEMORY_BARRIER_2,
-        p_next: *const c_void,
-        src_stage_mask: crate::data::PipelineStageFlags2,
-        src_access_mask: crate::data::AccessFlags2,
-        dst_stage_mask: crate::data::PipelineStageFlags2,
-        dst_access_mask: crate::data::AccessFlags2,
-        src_queue_family_index: u32,
-        dst_queue_family_index: u32,
-        buffer: crate::data::Buffer,
-        offset: crate::data::DeviceSize,
-        size: crate::data::DeviceSize,
-    };
-    struct DependencyInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::DEPENDENCY_INFO,
-        p_next: *const c_void,
-        dependency_flags: crate::data::DependencyFlags,
-        memory_barrier_count: u32,
-        p_memory_barriers: *const crate::data::MemoryBarrier2,
-        buffer_memory_barrier_count: u32,
-        p_buffer_memory_barriers: *const crate::data::BufferMemoryBarrier2,
-        image_memory_barrier_count: u32,
-        p_image_memory_barriers: *const crate::data::ImageMemoryBarrier2,
-    };
-    struct SemaphoreSubmitInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::SEMAPHORE_SUBMIT_INFO,
-        p_next: *const c_void,
-        semaphore: crate::data::Semaphore,
-        value: u64,
-        stage_mask: crate::data::PipelineStageFlags2,
-        device_index: u32,
-    };
-    struct CommandBufferSubmitInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::COMMAND_BUFFER_SUBMIT_INFO,
-        p_next: *const c_void,
-        command_buffer: crate::data::CommandBuffer,
-        device_mask: u32,
-    };
-    struct SubmitInfo2 {
-        s_type: crate::data::StructureType = crate::data::StructureType::SUBMIT_INFO_2,
-        p_next: *const c_void,
-        flags: crate::data::SubmitFlags,
-        wait_semaphore_info_count: u32,
-        p_wait_semaphore_infos: *const crate::data::SemaphoreSubmitInfo,
-        command_buffer_info_count: u32,
-        p_command_buffer_infos: *const crate::data::CommandBufferSubmitInfo,
-        signal_semaphore_info_count: u32,
-        p_signal_semaphore_infos: *const crate::data::SemaphoreSubmitInfo,
-    };
-    struct QueueFamilyCheckpointProperties2NV {
-        s_type: crate::data::StructureType = crate::data::StructureType::QUEUE_FAMILY_CHECKPOINT_PROPERTIES_2_NV,
-        p_next: *mut c_void,
-        checkpoint_execution_stage_mask: crate::data::PipelineStageFlags2,
-    };
-    struct CheckpointData2NV {
-        s_type: crate::data::StructureType = crate::data::StructureType::CHECKPOINT_DATA_2_NV,
-        p_next: *mut c_void,
-        stage: crate::data::PipelineStageFlags2,
-        p_checkpoint_marker: *mut c_void,
-    };
-    struct PhysicalDeviceSynchronization2Features {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SYNCHRONIZATION_2_FEATURES,
-        p_next: *mut c_void,
-        synchronization_2: crate::data::Bool32,
-    };
-    struct PhysicalDevicePrimitivesGeneratedQueryFeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PRIMITIVES_GENERATED_QUERY_FEATURES_EXT,
-        p_next: *mut c_void,
-        primitives_generated_query: crate::data::Bool32,
-        primitives_generated_query_with_rasterizer_discard: crate::data::Bool32,
-        primitives_generated_query_with_non_zero_streams: crate::data::Bool32,
-    };
-    struct PhysicalDeviceLegacyDitheringFeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_LEGACY_DITHERING_FEATURES_EXT,
-        p_next: *mut c_void,
-        legacy_dithering: crate::data::Bool32,
-    };
-    struct PhysicalDeviceMultisampledRenderToSingleSampledFeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_MULTISAMPLED_RENDER_TO_SINGLE_SAMPLED_FEATURES_EXT,
-        p_next: *mut c_void,
-        multisampled_render_to_single_sampled: crate::data::Bool32,
-    };
-    struct SubpassResolvePerformanceQueryEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::SUBPASS_RESOLVE_PERFORMANCE_QUERY_EXT,
-        p_next: *mut c_void,
-        optimal: crate::data::Bool32,
-    };
-    struct MultisampledRenderToSingleSampledInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::MULTISAMPLED_RENDER_TO_SINGLE_SAMPLED_INFO_EXT,
-        p_next: *const c_void,
-        multisampled_render_to_single_sampled_enable: crate::data::Bool32,
-        rasterization_samples: crate::data::SampleCountFlagBits,
-    };
-    struct PhysicalDevicePipelineProtectedAccessFeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PIPELINE_PROTECTED_ACCESS_FEATURES_EXT,
-        p_next: *mut c_void,
-        pipeline_protected_access: crate::data::Bool32,
-    };
-    struct QueueFamilyVideoPropertiesKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::QUEUE_FAMILY_VIDEO_PROPERTIES_KHR,
-        p_next: *mut c_void,
-        video_codec_operations: crate::data::VideoCodecOperationFlagsKHR,
-    };
-    struct QueueFamilyQueryResultStatusPropertiesKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::QUEUE_FAMILY_QUERY_RESULT_STATUS_PROPERTIES_KHR,
-        p_next: *mut c_void,
-        query_result_status_support: crate::data::Bool32,
-    };
-    struct VideoProfileListInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_PROFILE_LIST_INFO_KHR,
-        p_next: *const c_void,
-        profile_count: u32,
-        p_profiles: *const crate::data::VideoProfileInfoKHR,
-    };
-    struct PhysicalDeviceVideoFormatInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_VIDEO_FORMAT_INFO_KHR,
-        p_next: *const c_void,
-        image_usage: crate::data::ImageUsageFlags,
-    };
-    struct VideoFormatPropertiesKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_FORMAT_PROPERTIES_KHR,
-        p_next: *mut c_void,
-        format: crate::data::Format,
-        component_mapping: crate::data::ComponentMapping,
-        image_create_flags: crate::data::ImageCreateFlags,
-        image_type: crate::data::ImageType,
-        image_tiling: crate::data::ImageTiling,
-        image_usage_flags: crate::data::ImageUsageFlags,
-    };
-    struct VideoProfileInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_PROFILE_INFO_KHR,
-        p_next: *const c_void,
-        video_codec_operation: crate::data::VideoCodecOperationFlagBitsKHR,
-        chroma_subsampling: crate::data::VideoChromaSubsamplingFlagsKHR,
-        luma_bit_depth: crate::data::VideoComponentBitDepthFlagsKHR,
-        chroma_bit_depth: crate::data::VideoComponentBitDepthFlagsKHR,
-    };
-    struct VideoCapabilitiesKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_CAPABILITIES_KHR,
-        p_next: *mut c_void,
-        flags: crate::data::VideoCapabilityFlagsKHR,
-        min_bitstream_buffer_offset_alignment: crate::data::DeviceSize,
-        min_bitstream_buffer_size_alignment: crate::data::DeviceSize,
-        picture_access_granularity: crate::data::Extent2D,
-        min_coded_extent: crate::data::Extent2D,
-        max_coded_extent: crate::data::Extent2D,
-        max_dpb_slots: u32,
-        max_active_reference_pictures: u32,
-        std_header_version: crate::data::ExtensionProperties,
-    };
-    struct VideoSessionMemoryRequirementsKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_SESSION_MEMORY_REQUIREMENTS_KHR,
-        p_next: *mut c_void,
-        memory_bind_index: u32,
-        memory_requirements: crate::data::MemoryRequirements,
-    };
-    struct BindVideoSessionMemoryInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::BIND_VIDEO_SESSION_MEMORY_INFO_KHR,
-        p_next: *const c_void,
-        memory_bind_index: u32,
-        memory: crate::data::DeviceMemory,
-        memory_offset: crate::data::DeviceSize,
-        memory_size: crate::data::DeviceSize,
-    };
-    struct VideoPictureResourceInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_PICTURE_RESOURCE_INFO_KHR,
-        p_next: *const c_void,
-        coded_offset: crate::data::Offset2D,
-        coded_extent: crate::data::Extent2D,
-        base_array_layer: u32,
-        image_view_binding: crate::data::ImageView,
-    };
-    struct VideoReferenceSlotInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_REFERENCE_SLOT_INFO_KHR,
-        p_next: *const c_void,
-        slot_index: i32,
-        p_picture_resource: *const crate::data::VideoPictureResourceInfoKHR,
-    };
-    struct VideoDecodeCapabilitiesKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_DECODE_CAPABILITIES_KHR,
-        p_next: *mut c_void,
-        flags: crate::data::VideoDecodeCapabilityFlagsKHR,
-    };
-    struct VideoDecodeUsageInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_DECODE_USAGE_INFO_KHR,
-        p_next: *const c_void,
-        video_usage_hints: crate::data::VideoDecodeUsageFlagsKHR,
-    };
-    struct VideoDecodeInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_DECODE_INFO_KHR,
-        p_next: *const c_void,
-        flags: crate::data::VideoDecodeFlagsKHR,
-        src_buffer: crate::data::Buffer,
-        src_buffer_offset: crate::data::DeviceSize,
-        src_buffer_range: crate::data::DeviceSize,
-        dst_picture_resource: crate::data::VideoPictureResourceInfoKHR,
-        p_setup_reference_slot: *const crate::data::VideoReferenceSlotInfoKHR,
-        reference_slot_count: u32,
-        p_reference_slots: *const crate::data::VideoReferenceSlotInfoKHR,
-    };
-    struct VideoSessionCreateInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_SESSION_CREATE_INFO_KHR,
-        p_next: *const c_void,
-        queue_family_index: u32,
-        flags: crate::data::VideoSessionCreateFlagsKHR,
-        p_video_profile: *const crate::data::VideoProfileInfoKHR,
-        picture_format: crate::data::Format,
-        max_coded_extent: crate::data::Extent2D,
-        reference_picture_format: crate::data::Format,
-        max_dpb_slots: u32,
-        max_active_reference_pictures: u32,
-        p_std_header_version: *const crate::data::ExtensionProperties,
-    };
-    struct VideoSessionParametersCreateInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_SESSION_PARAMETERS_CREATE_INFO_KHR,
-        p_next: *const c_void,
-        flags: crate::data::VideoSessionParametersCreateFlagsKHR,
-        video_session_parameters_template: crate::data::VideoSessionParametersKHR,
-        video_session: crate::data::VideoSessionKHR,
-    };
-    struct VideoSessionParametersUpdateInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_SESSION_PARAMETERS_UPDATE_INFO_KHR,
-        p_next: *const c_void,
-        update_sequence_count: u32,
-    };
-    struct VideoBeginCodingInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_BEGIN_CODING_INFO_KHR,
-        p_next: *const c_void,
-        flags: crate::data::VideoBeginCodingFlagsKHR,
-        video_session: crate::data::VideoSessionKHR,
-        video_session_parameters: crate::data::VideoSessionParametersKHR,
-        reference_slot_count: u32,
-        p_reference_slots: *const crate::data::VideoReferenceSlotInfoKHR,
-    };
-    struct VideoEndCodingInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_END_CODING_INFO_KHR,
-        p_next: *const c_void,
-        flags: crate::data::VideoEndCodingFlagsKHR,
-    };
-    struct VideoCodingControlInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_CODING_CONTROL_INFO_KHR,
-        p_next: *const c_void,
-        flags: crate::data::VideoCodingControlFlagsKHR,
-    };
-    struct VideoEncodeUsageInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_ENCODE_USAGE_INFO_KHR,
-        p_next: *const c_void,
-        video_usage_hints: crate::data::VideoEncodeUsageFlagsKHR,
-        video_content_hints: crate::data::VideoEncodeContentFlagsKHR,
-        tuning_mode: crate::data::VideoEncodeTuningModeKHR,
-    };
-    struct VideoEncodeInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_ENCODE_INFO_KHR,
-        p_next: *const c_void,
-        flags: crate::data::VideoEncodeFlagsKHR,
-        quality_level: u32,
-        dst_bitstream_buffer: crate::data::Buffer,
-        dst_bitstream_buffer_offset: crate::data::DeviceSize,
-        dst_bitstream_buffer_max_range: crate::data::DeviceSize,
-        src_picture_resource: crate::data::VideoPictureResourceInfoKHR,
-        p_setup_reference_slot: *const crate::data::VideoReferenceSlotInfoKHR,
-        reference_slot_count: u32,
-        p_reference_slots: *const crate::data::VideoReferenceSlotInfoKHR,
-        preceding_externally_encoded_bytes: u32,
-    };
-    struct VideoEncodeRateControlInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_ENCODE_RATE_CONTROL_INFO_KHR,
-        p_next: *const c_void,
-        flags: crate::data::VideoEncodeRateControlFlagsKHR,
-        rate_control_mode: crate::data::VideoEncodeRateControlModeFlagBitsKHR,
-        layer_count: u8,
-        p_layer_configs: *const crate::data::VideoEncodeRateControlLayerInfoKHR,
-    };
-    struct VideoEncodeRateControlLayerInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_ENCODE_RATE_CONTROL_LAYER_INFO_KHR,
-        p_next: *const c_void,
-        average_bitrate: u32,
-        max_bitrate: u32,
-        frame_rate_numerator: u32,
-        frame_rate_denominator: u32,
-        virtual_buffer_size_in_ms: u32,
-        initial_virtual_buffer_size_in_ms: u32,
-    };
-    struct VideoEncodeCapabilitiesKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_ENCODE_CAPABILITIES_KHR,
-        p_next: *mut c_void,
-        flags: crate::data::VideoEncodeCapabilityFlagsKHR,
-        rate_control_modes: crate::data::VideoEncodeRateControlModeFlagsKHR,
-        rate_control_layer_count: u8,
-        quality_level_count: u8,
-        input_image_data_fill_alignment: crate::data::Extent2D,
-    };
-    struct VideoEncodeH264CapabilitiesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_ENCODE_H264_CAPABILITIES_EXT,
-        p_next: *mut c_void,
-        flags: crate::data::VideoEncodeH264CapabilityFlagsEXT,
-        input_mode_flags: crate::data::VideoEncodeH264InputModeFlagsEXT,
-        output_mode_flags: crate::data::VideoEncodeH264OutputModeFlagsEXT,
-        max_p_picture_l_0_reference_count: u8,
-        max_b_picture_l_0_reference_count: u8,
-        max_l_1_reference_count: u8,
-        motion_vectors_over_pic_boundaries_flag: crate::data::Bool32,
-        max_bytes_per_pic_denom: u32,
-        max_bits_per_mb_denom: u32,
-        log_2_max_mv_length_horizontal: u32,
-        log_2_max_mv_length_vertical: u32,
-    };
-    struct VideoEncodeH264EmitPictureParametersInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_ENCODE_H264_EMIT_PICTURE_PARAMETERS_INFO_EXT,
-        p_next: *const c_void,
-        sps_id: u8,
-        emit_sps_enable: crate::data::Bool32,
-        pps_id_entry_count: u32,
-        pps_id_entries: *const u8,
-    };
-    struct VideoEncodeH264RateControlInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_ENCODE_H264_RATE_CONTROL_INFO_EXT,
-        p_next: *const c_void,
-        gop_frame_count: u32,
-        idr_period: u32,
-        consecutive_b_frame_count: u32,
-        rate_control_structure: crate::data::VideoEncodeH264RateControlStructureEXT,
-        temporal_layer_count: u8,
-    };
-    struct VideoEncodeH264QpEXT {
-        qp_i: i32,
-        qp_p: i32,
-        qp_b: i32,
-    };
-    struct VideoEncodeH264FrameSizeEXT {
-        frame_i_size: u32,
-        frame_p_size: u32,
-        frame_b_size: u32,
-    };
-    struct VideoEncodeH264RateControlLayerInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_ENCODE_H264_RATE_CONTROL_LAYER_INFO_EXT,
-        p_next: *const c_void,
-        temporal_layer_id: u8,
-        use_initial_rc_qp: crate::data::Bool32,
-        initial_rc_qp: crate::data::VideoEncodeH264QpEXT,
-        use_min_qp: crate::data::Bool32,
-        min_qp: crate::data::VideoEncodeH264QpEXT,
-        use_max_qp: crate::data::Bool32,
-        max_qp: crate::data::VideoEncodeH264QpEXT,
-        use_max_frame_size: crate::data::Bool32,
-        max_frame_size: crate::data::VideoEncodeH264FrameSizeEXT,
-    };
-    struct VideoEncodeH265CapabilitiesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_ENCODE_H265_CAPABILITIES_EXT,
-        p_next: *mut c_void,
-        flags: crate::data::VideoEncodeH265CapabilityFlagsEXT,
-        input_mode_flags: crate::data::VideoEncodeH265InputModeFlagsEXT,
-        output_mode_flags: crate::data::VideoEncodeH265OutputModeFlagsEXT,
-        ctb_sizes: crate::data::VideoEncodeH265CtbSizeFlagsEXT,
-        transform_block_sizes: crate::data::VideoEncodeH265TransformBlockSizeFlagsEXT,
-        max_p_picture_l_0_reference_count: u8,
-        max_b_picture_l_0_reference_count: u8,
-        max_l_1_reference_count: u8,
-        max_sub_layers_count: u8,
-        min_log_2_min_luma_coding_block_size_minus_3: u8,
-        max_log_2_min_luma_coding_block_size_minus_3: u8,
-        min_log_2_min_luma_transform_block_size_minus_2: u8,
-        max_log_2_min_luma_transform_block_size_minus_2: u8,
-        min_max_transform_hierarchy_depth_inter: u8,
-        max_max_transform_hierarchy_depth_inter: u8,
-        min_max_transform_hierarchy_depth_intra: u8,
-        max_max_transform_hierarchy_depth_intra: u8,
-        max_diff_cu_qp_delta_depth: u8,
-        min_max_num_merge_cand: u8,
-        max_max_num_merge_cand: u8,
-    };
-    struct VideoEncodeH265EmitPictureParametersInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_ENCODE_H265_EMIT_PICTURE_PARAMETERS_INFO_EXT,
-        p_next: *const c_void,
-        vps_id: u8,
-        sps_id: u8,
-        emit_vps_enable: crate::data::Bool32,
-        emit_sps_enable: crate::data::Bool32,
-        pps_id_entry_count: u32,
-        pps_id_entries: *const u8,
-    };
-    struct VideoEncodeH265RateControlInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_ENCODE_H265_RATE_CONTROL_INFO_EXT,
-        p_next: *const c_void,
-        gop_frame_count: u32,
-        idr_period: u32,
-        consecutive_b_frame_count: u32,
-        rate_control_structure: crate::data::VideoEncodeH265RateControlStructureEXT,
-        sub_layer_count: u8,
-    };
-    struct VideoEncodeH265QpEXT {
-        qp_i: i32,
-        qp_p: i32,
-        qp_b: i32,
-    };
-    struct VideoEncodeH265FrameSizeEXT {
-        frame_i_size: u32,
-        frame_p_size: u32,
-        frame_b_size: u32,
-    };
-    struct VideoEncodeH265RateControlLayerInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_ENCODE_H265_RATE_CONTROL_LAYER_INFO_EXT,
-        p_next: *const c_void,
-        temporal_id: u8,
-        use_initial_rc_qp: crate::data::Bool32,
-        initial_rc_qp: crate::data::VideoEncodeH265QpEXT,
-        use_min_qp: crate::data::Bool32,
-        min_qp: crate::data::VideoEncodeH265QpEXT,
-        use_max_qp: crate::data::Bool32,
-        max_qp: crate::data::VideoEncodeH265QpEXT,
-        use_max_frame_size: crate::data::Bool32,
-        max_frame_size: crate::data::VideoEncodeH265FrameSizeEXT,
-    };
-    struct PhysicalDeviceInheritedViewportScissorFeaturesNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_INHERITED_VIEWPORT_SCISSOR_FEATURES_NV,
-        p_next: *mut c_void,
-        inherited_viewport_scissor_2d: crate::data::Bool32,
-    };
-    struct CommandBufferInheritanceViewportScissorInfoNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::COMMAND_BUFFER_INHERITANCE_VIEWPORT_SCISSOR_INFO_NV,
-        p_next: *const c_void,
-        viewport_scissor_2d: crate::data::Bool32,
-        viewport_depth_count: u32,
-        p_viewport_depths: *const crate::data::Viewport,
-    };
-    struct PhysicalDeviceYcbcr2Plane444FormatsFeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_YCBCR_2_PLANE_444_FORMATS_FEATURES_EXT,
-        p_next: *mut c_void,
-        ycbcr_2plane_444_formats: crate::data::Bool32,
-    };
-    struct PhysicalDeviceProvokingVertexFeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PROVOKING_VERTEX_FEATURES_EXT,
-        p_next: *mut c_void,
-        provoking_vertex_last: crate::data::Bool32,
-        transform_feedback_preserves_provoking_vertex: crate::data::Bool32,
-    };
-    struct PhysicalDeviceProvokingVertexPropertiesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PROVOKING_VERTEX_PROPERTIES_EXT,
-        p_next: *mut c_void,
-        provoking_vertex_mode_per_pipeline: crate::data::Bool32,
-        transform_feedback_preserves_triangle_fan_provoking_vertex: crate::data::Bool32,
-    };
-    struct PipelineRasterizationProvokingVertexStateCreateInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_RASTERIZATION_PROVOKING_VERTEX_STATE_CREATE_INFO_EXT,
-        p_next: *const c_void,
-        provoking_vertex_mode: crate::data::ProvokingVertexModeEXT,
-    };
-    struct CuModuleCreateInfoNVX {
-        s_type: crate::data::StructureType = crate::data::StructureType::CU_MODULE_CREATE_INFO_NVX,
-        p_next: *const c_void,
-        data_size: usize,
-        p_data: *const c_void,
-    };
-    struct CuFunctionCreateInfoNVX {
-        s_type: crate::data::StructureType = crate::data::StructureType::CU_FUNCTION_CREATE_INFO_NVX,
-        p_next: *const c_void,
-        module: crate::data::CuModuleNVX,
-        p_name: *const c_char,
-    };
-    struct CuLaunchInfoNVX {
-        s_type: crate::data::StructureType = crate::data::StructureType::CU_LAUNCH_INFO_NVX,
-        p_next: *const c_void,
-        function: crate::data::CuFunctionNVX,
-        grid_dim_x: u32,
-        grid_dim_y: u32,
-        grid_dim_z: u32,
-        block_dim_x: u32,
-        block_dim_y: u32,
-        block_dim_z: u32,
-        shared_mem_bytes: u32,
-        param_count: usize,
-        p_params: *const *const c_void,
-        extra_count: usize,
-        p_extras: *const *const c_void,
-    };
-    struct PhysicalDeviceShaderIntegerDotProductFeatures {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SHADER_INTEGER_DOT_PRODUCT_FEATURES,
-        p_next: *mut c_void,
-        shader_integer_dot_product: crate::data::Bool32,
-    };
-    struct PhysicalDeviceShaderIntegerDotProductProperties {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SHADER_INTEGER_DOT_PRODUCT_PROPERTIES,
-        p_next: *mut c_void,
-        integer_dot_product_8_bit_unsigned_accelerated: crate::data::Bool32,
-        integer_dot_product_8_bit_signed_accelerated: crate::data::Bool32,
-        integer_dot_product_8_bit_mixed_signedness_accelerated: crate::data::Bool32,
-        integer_dot_product_4x_8_bit_packed_unsigned_accelerated: crate::data::Bool32,
-        integer_dot_product_4x_8_bit_packed_signed_accelerated: crate::data::Bool32,
-        integer_dot_product_4x_8_bit_packed_mixed_signedness_accelerated: crate::data::Bool32,
-        integer_dot_product_16_bit_unsigned_accelerated: crate::data::Bool32,
-        integer_dot_product_16_bit_signed_accelerated: crate::data::Bool32,
-        integer_dot_product_16_bit_mixed_signedness_accelerated: crate::data::Bool32,
-        integer_dot_product_32_bit_unsigned_accelerated: crate::data::Bool32,
-        integer_dot_product_32_bit_signed_accelerated: crate::data::Bool32,
-        integer_dot_product_32_bit_mixed_signedness_accelerated: crate::data::Bool32,
-        integer_dot_product_64_bit_unsigned_accelerated: crate::data::Bool32,
-        integer_dot_product_64_bit_signed_accelerated: crate::data::Bool32,
-        integer_dot_product_64_bit_mixed_signedness_accelerated: crate::data::Bool32,
-        integer_dot_product_accumulating_saturating_8_bit_unsigned_accelerated: crate::data::Bool32,
-        integer_dot_product_accumulating_saturating_8_bit_signed_accelerated: crate::data::Bool32,
-        integer_dot_product_accumulating_saturating_8_bit_mixed_signedness_accelerated: crate::data::Bool32,
-        integer_dot_product_accumulating_saturating_4x_8_bit_packed_unsigned_accelerated: crate::data::Bool32,
-        integer_dot_product_accumulating_saturating_4x_8_bit_packed_signed_accelerated: crate::data::Bool32,
-        integer_dot_product_accumulating_saturating_4x_8_bit_packed_mixed_signedness_accelerated: crate::data::Bool32,
-        integer_dot_product_accumulating_saturating_16_bit_unsigned_accelerated: crate::data::Bool32,
-        integer_dot_product_accumulating_saturating_16_bit_signed_accelerated: crate::data::Bool32,
-        integer_dot_product_accumulating_saturating_16_bit_mixed_signedness_accelerated: crate::data::Bool32,
-        integer_dot_product_accumulating_saturating_32_bit_unsigned_accelerated: crate::data::Bool32,
-        integer_dot_product_accumulating_saturating_32_bit_signed_accelerated: crate::data::Bool32,
-        integer_dot_product_accumulating_saturating_32_bit_mixed_signedness_accelerated: crate::data::Bool32,
-        integer_dot_product_accumulating_saturating_64_bit_unsigned_accelerated: crate::data::Bool32,
-        integer_dot_product_accumulating_saturating_64_bit_signed_accelerated: crate::data::Bool32,
-        integer_dot_product_accumulating_saturating_64_bit_mixed_signedness_accelerated: crate::data::Bool32,
-    };
-    struct PhysicalDeviceDrmPropertiesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_DRM_PROPERTIES_EXT,
-        p_next: *mut c_void,
-        has_primary: crate::data::Bool32,
-        has_render: crate::data::Bool32,
-        primary_major: i64,
-        primary_minor: i64,
-        render_major: i64,
-        render_minor: i64,
-    };
-    struct PhysicalDeviceFragmentShaderBarycentricFeaturesKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_FRAGMENT_SHADER_BARYCENTRIC_FEATURES_KHR,
-        p_next: *mut c_void,
-        fragment_shader_barycentric: crate::data::Bool32,
-    };
-    struct PhysicalDeviceFragmentShaderBarycentricPropertiesKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_FRAGMENT_SHADER_BARYCENTRIC_PROPERTIES_KHR,
-        p_next: *mut c_void,
-        tri_strip_vertex_order_independent_of_provoking_vertex: crate::data::Bool32,
-    };
-    struct PhysicalDeviceRayTracingMotionBlurFeaturesNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_RAY_TRACING_MOTION_BLUR_FEATURES_NV,
-        p_next: *mut c_void,
-        ray_tracing_motion_blur: crate::data::Bool32,
-        ray_tracing_motion_blur_pipeline_trace_rays_indirect: crate::data::Bool32,
-    };
-    struct AccelerationStructureGeometryMotionTrianglesDataNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::ACCELERATION_STRUCTURE_GEOMETRY_MOTION_TRIANGLES_DATA_NV,
-        p_next: *const c_void,
-        vertex_data: crate::data::DeviceOrHostAddressConstKHR,
-    };
-    struct AccelerationStructureMotionInfoNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::ACCELERATION_STRUCTURE_MOTION_INFO_NV,
-        p_next: *const c_void,
-        max_instances: u32,
-        flags: crate::data::AccelerationStructureMotionInfoFlagsNV,
-    };
-    struct SRTDataNV {
-        sx: c_float,
-        a: c_float,
-        b: c_float,
-        pvx: c_float,
-        sy: c_float,
-        c: c_float,
-        pvy: c_float,
-        sz: c_float,
-        pvz: c_float,
-        qx: c_float,
-        qy: c_float,
-        qz: c_float,
-        qw: c_float,
-        tx: c_float,
-        ty: c_float,
-        tz: c_float,
-    };
-    struct AccelerationStructureSRTMotionInstanceNV {
-        transform_t_0: crate::data::SRTDataNV,
-        transform_t_1: crate::data::SRTDataNV,
-        instance_custom_index: u32,
-        mask: u32,
-        instance_shader_binding_table_record_offset: u32,
-        flags: crate::data::GeometryInstanceFlagsKHR,
-        acceleration_structure_reference: u64,
-    };
-    struct AccelerationStructureMatrixMotionInstanceNV {
-        transform_t_0: crate::data::TransformMatrixKHR,
-        transform_t_1: crate::data::TransformMatrixKHR,
-        instance_custom_index: u32,
-        mask: u32,
-        instance_shader_binding_table_record_offset: u32,
-        flags: crate::data::GeometryInstanceFlagsKHR,
-        acceleration_structure_reference: u64,
-    };
-    union AccelerationStructureMotionInstanceDataNV {
-        static_instance: crate::data::AccelerationStructureInstanceKHR,
-        matrix_motion_instance: crate::data::AccelerationStructureMatrixMotionInstanceNV,
-        srt_motion_instance: crate::data::AccelerationStructureSRTMotionInstanceNV,
-    };
-    struct AccelerationStructureMotionInstanceNV {
-        ty: crate::data::AccelerationStructureMotionInstanceTypeNV,
-        flags: crate::data::AccelerationStructureMotionInstanceFlagsNV,
-        data: crate::data::AccelerationStructureMotionInstanceDataNV,
-    };
-    struct MemoryGetRemoteAddressInfoNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::MEMORY_GET_REMOTE_ADDRESS_INFO_NV,
-        p_next: *const c_void,
-        memory: crate::data::DeviceMemory,
-        handle_type: crate::data::ExternalMemoryHandleTypeFlagBits,
-    };
-    struct ImportMemoryBufferCollectionFUCHSIA {
-        s_type: crate::data::StructureType = crate::data::StructureType::IMPORT_MEMORY_BUFFER_COLLECTION_FUCHSIA,
-        p_next: *const c_void,
-        collection: crate::data::BufferCollectionFUCHSIA,
-        index: u32,
-    };
-    struct BufferCollectionImageCreateInfoFUCHSIA {
-        s_type: crate::data::StructureType = crate::data::StructureType::BUFFER_COLLECTION_IMAGE_CREATE_INFO_FUCHSIA,
-        p_next: *const c_void,
-        collection: crate::data::BufferCollectionFUCHSIA,
-        index: u32,
-    };
-    struct BufferCollectionBufferCreateInfoFUCHSIA {
-        s_type: crate::data::StructureType = crate::data::StructureType::BUFFER_COLLECTION_BUFFER_CREATE_INFO_FUCHSIA,
-        p_next: *const c_void,
-        collection: crate::data::BufferCollectionFUCHSIA,
-        index: u32,
-    };
-    struct BufferCollectionPropertiesFUCHSIA {
-        s_type: crate::data::StructureType = crate::data::StructureType::BUFFER_COLLECTION_PROPERTIES_FUCHSIA,
-        p_next: *mut c_void,
-        memory_type_bits: u32,
-        buffer_count: u32,
-        create_info_index: u32,
-        sysmem_pixel_format: u64,
-        format_features: crate::data::FormatFeatureFlags,
-        sysmem_color_space_index: crate::data::SysmemColorSpaceFUCHSIA,
-        sampler_ycbcr_conversion_components: crate::data::ComponentMapping,
-        suggested_ycbcr_model: crate::data::SamplerYcbcrModelConversion,
-        suggested_ycbcr_range: crate::data::SamplerYcbcrRange,
-        suggested_x_chroma_offset: crate::data::ChromaLocation,
-        suggested_y_chroma_offset: crate::data::ChromaLocation,
-    };
-    struct BufferConstraintsInfoFUCHSIA {
-        s_type: crate::data::StructureType = crate::data::StructureType::BUFFER_CONSTRAINTS_INFO_FUCHSIA,
-        p_next: *const c_void,
-        create_info: crate::data::BufferCreateInfo,
-        required_format_features: crate::data::FormatFeatureFlags,
-        buffer_collection_constraints: crate::data::BufferCollectionConstraintsInfoFUCHSIA,
-    };
-    struct SysmemColorSpaceFUCHSIA {
-        s_type: crate::data::StructureType = crate::data::StructureType::SYSMEM_COLOR_SPACE_FUCHSIA,
-        p_next: *const c_void,
-        color_space: u32,
-    };
-    struct ImageFormatConstraintsInfoFUCHSIA {
-        s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_FORMAT_CONSTRAINTS_INFO_FUCHSIA,
-        p_next: *const c_void,
-        image_create_info: crate::data::ImageCreateInfo,
-        required_format_features: crate::data::FormatFeatureFlags,
-        flags: crate::data::ImageFormatConstraintsFlagsFUCHSIA,
-        sysmem_pixel_format: u64,
-        color_space_count: u32,
-        p_color_spaces: *const crate::data::SysmemColorSpaceFUCHSIA,
-    };
-    struct ImageConstraintsInfoFUCHSIA {
-        s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_CONSTRAINTS_INFO_FUCHSIA,
-        p_next: *const c_void,
-        format_constraints_count: u32,
-        p_format_constraints: *const crate::data::ImageFormatConstraintsInfoFUCHSIA,
-        buffer_collection_constraints: crate::data::BufferCollectionConstraintsInfoFUCHSIA,
-        flags: crate::data::ImageConstraintsInfoFlagsFUCHSIA,
-    };
-    struct BufferCollectionConstraintsInfoFUCHSIA {
-        s_type: crate::data::StructureType = crate::data::StructureType::BUFFER_COLLECTION_CONSTRAINTS_INFO_FUCHSIA,
-        p_next: *const c_void,
-        min_buffer_count: u32,
-        max_buffer_count: u32,
-        min_buffer_count_for_camping: u32,
-        min_buffer_count_for_dedicated_slack: u32,
-        min_buffer_count_for_shared_slack: u32,
-    };
-    struct PhysicalDeviceRGBA10X6FormatsFeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_RGBA10X6_FORMATS_FEATURES_EXT,
-        p_next: *mut c_void,
-        format_rgba_10x_6_without_y_cb_cr_sampler: crate::data::Bool32,
-    };
-    struct FormatProperties3 {
-        s_type: crate::data::StructureType = crate::data::StructureType::FORMAT_PROPERTIES_3,
-        p_next: *mut c_void,
-        linear_tiling_features: crate::data::FormatFeatureFlags2,
-        optimal_tiling_features: crate::data::FormatFeatureFlags2,
-        buffer_features: crate::data::FormatFeatureFlags2,
-    };
-    struct DrmFormatModifierPropertiesList2EXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::DRM_FORMAT_MODIFIER_PROPERTIES_LIST_2_EXT,
-        p_next: *mut c_void,
-        drm_format_modifier_count: u32,
-        p_drm_format_modifier_properties: *mut crate::data::DrmFormatModifierProperties2EXT,
-    };
-    struct DrmFormatModifierProperties2EXT {
-        drm_format_modifier: u64,
-        drm_format_modifier_plane_count: u32,
-        drm_format_modifier_tiling_features: crate::data::FormatFeatureFlags2,
-    };
-    struct AndroidHardwareBufferFormatProperties2ANDROID {
-        s_type: crate::data::StructureType = crate::data::StructureType::ANDROID_HARDWARE_BUFFER_FORMAT_PROPERTIES_2_ANDROID,
-        p_next: *mut c_void,
-        format: crate::data::Format,
-        external_format: u64,
-        format_features: crate::data::FormatFeatureFlags2,
-        sampler_ycbcr_conversion_components: crate::data::ComponentMapping,
-        suggested_ycbcr_model: crate::data::SamplerYcbcrModelConversion,
-        suggested_ycbcr_range: crate::data::SamplerYcbcrRange,
-        suggested_x_chroma_offset: crate::data::ChromaLocation,
-        suggested_y_chroma_offset: crate::data::ChromaLocation,
-    };
-    struct PipelineRenderingCreateInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_RENDERING_CREATE_INFO,
-        p_next: *const c_void,
-        view_mask: u32,
-        color_attachment_count: u32,
-        p_color_attachment_formats: *const crate::data::Format,
-        depth_attachment_format: crate::data::Format,
-        stencil_attachment_format: crate::data::Format,
-    };
-    struct RenderingInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::RENDERING_INFO,
-        p_next: *const c_void,
-        flags: crate::data::RenderingFlags,
-        render_area: crate::data::Rect2D,
-        layer_count: u32,
-        view_mask: u32,
-        color_attachment_count: u32,
-        p_color_attachments: *const crate::data::RenderingAttachmentInfo,
-        p_depth_attachment: *const crate::data::RenderingAttachmentInfo,
-        p_stencil_attachment: *const crate::data::RenderingAttachmentInfo,
-    };
-    struct RenderingAttachmentInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::RENDERING_ATTACHMENT_INFO,
-        p_next: *const c_void,
-        image_view: crate::data::ImageView,
-        image_layout: crate::data::ImageLayout,
-        resolve_mode: crate::data::ResolveModeFlagBits,
-        resolve_image_view: crate::data::ImageView,
-        resolve_image_layout: crate::data::ImageLayout,
-        load_op: crate::data::AttachmentLoadOp,
-        store_op: crate::data::AttachmentStoreOp,
-        clear_value: crate::data::ClearValue,
-    };
-    struct RenderingFragmentShadingRateAttachmentInfoKHR {
-        s_type: crate::data::StructureType = crate::data::StructureType::RENDERING_FRAGMENT_SHADING_RATE_ATTACHMENT_INFO_KHR,
-        p_next: *const c_void,
-        image_view: crate::data::ImageView,
-        image_layout: crate::data::ImageLayout,
-        shading_rate_attachment_texel_size: crate::data::Extent2D,
-    };
-    struct RenderingFragmentDensityMapAttachmentInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::RENDERING_FRAGMENT_DENSITY_MAP_ATTACHMENT_INFO_EXT,
-        p_next: *const c_void,
-        image_view: crate::data::ImageView,
-        image_layout: crate::data::ImageLayout,
-    };
-    struct PhysicalDeviceDynamicRenderingFeatures {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES,
-        p_next: *mut c_void,
-        dynamic_rendering: crate::data::Bool32,
-    };
-    struct CommandBufferInheritanceRenderingInfo {
-        s_type: crate::data::StructureType = crate::data::StructureType::COMMAND_BUFFER_INHERITANCE_RENDERING_INFO,
-        p_next: *const c_void,
-        flags: crate::data::RenderingFlags,
-        view_mask: u32,
-        color_attachment_count: u32,
-        p_color_attachment_formats: *const crate::data::Format,
-        depth_attachment_format: crate::data::Format,
-        stencil_attachment_format: crate::data::Format,
-        rasterization_samples: crate::data::SampleCountFlagBits,
-    };
-    struct AttachmentSampleCountInfoAMD {
-        s_type: crate::data::StructureType = crate::data::StructureType::ATTACHMENT_SAMPLE_COUNT_INFO_AMD,
-        p_next: *const c_void,
-        color_attachment_count: u32,
-        p_color_attachment_samples: *const crate::data::SampleCountFlagBits,
-        depth_stencil_attachment_samples: crate::data::SampleCountFlagBits,
-    };
-    struct MultiviewPerViewAttributesInfoNVX {
-        s_type: crate::data::StructureType = crate::data::StructureType::MULTIVIEW_PER_VIEW_ATTRIBUTES_INFO_NVX,
-        p_next: *const c_void,
-        per_view_attributes: crate::data::Bool32,
-        per_view_attributes_position_x_only: crate::data::Bool32,
-    };
-    struct PhysicalDeviceImageViewMinLodFeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_IMAGE_VIEW_MIN_LOD_FEATURES_EXT,
-        p_next: *mut c_void,
-        min_lod: crate::data::Bool32,
-    };
-    struct ImageViewMinLodCreateInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_VIEW_MIN_LOD_CREATE_INFO_EXT,
-        p_next: *const c_void,
-        min_lod: c_float,
-    };
-    struct PhysicalDeviceRasterizationOrderAttachmentAccessFeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_RASTERIZATION_ORDER_ATTACHMENT_ACCESS_FEATURES_EXT,
-        p_next: *mut c_void,
-        rasterization_order_color_attachment_access: crate::data::Bool32,
-        rasterization_order_depth_attachment_access: crate::data::Bool32,
-        rasterization_order_stencil_attachment_access: crate::data::Bool32,
-    };
-    struct PhysicalDeviceLinearColorAttachmentFeaturesNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_LINEAR_COLOR_ATTACHMENT_FEATURES_NV,
-        p_next: *mut c_void,
-        linear_color_attachment: crate::data::Bool32,
-    };
-    struct PhysicalDeviceGraphicsPipelineLibraryFeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_GRAPHICS_PIPELINE_LIBRARY_FEATURES_EXT,
-        p_next: *mut c_void,
-        graphics_pipeline_library: crate::data::Bool32,
-    };
-    struct PhysicalDeviceGraphicsPipelineLibraryPropertiesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_GRAPHICS_PIPELINE_LIBRARY_PROPERTIES_EXT,
-        p_next: *mut c_void,
-        graphics_pipeline_library_fast_linking: crate::data::Bool32,
-        graphics_pipeline_library_independent_interpolation_decoration: crate::data::Bool32,
-    };
-    struct GraphicsPipelineLibraryCreateInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::GRAPHICS_PIPELINE_LIBRARY_CREATE_INFO_EXT,
-        p_next: *mut c_void,
-        flags: crate::data::GraphicsPipelineLibraryFlagsEXT,
-    };
-    struct PhysicalDeviceDescriptorSetHostMappingFeaturesVALVE {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_DESCRIPTOR_SET_HOST_MAPPING_FEATURES_VALVE,
-        p_next: *mut c_void,
-        descriptor_set_host_mapping: crate::data::Bool32,
-    };
-    struct DescriptorSetBindingReferenceVALVE {
-        s_type: crate::data::StructureType = crate::data::StructureType::DESCRIPTOR_SET_BINDING_REFERENCE_VALVE,
-        p_next: *const c_void,
-        descriptor_set_layout: crate::data::DescriptorSetLayout,
-        binding: u32,
-    };
-    struct DescriptorSetLayoutHostMappingInfoVALVE {
-        s_type: crate::data::StructureType = crate::data::StructureType::DESCRIPTOR_SET_LAYOUT_HOST_MAPPING_INFO_VALVE,
-        p_next: *mut c_void,
-        descriptor_offset: usize,
-        descriptor_size: u32,
-    };
-    struct PhysicalDeviceShaderModuleIdentifierFeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SHADER_MODULE_IDENTIFIER_FEATURES_EXT,
-        p_next: *mut c_void,
-        shader_module_identifier: crate::data::Bool32,
-    };
-    struct PhysicalDeviceShaderModuleIdentifierPropertiesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SHADER_MODULE_IDENTIFIER_PROPERTIES_EXT,
-        p_next: *mut c_void,
-        shader_module_identifier_algorithm_uuid: [u8; 16],
-    };
-    struct PipelineShaderStageModuleIdentifierCreateInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_SHADER_STAGE_MODULE_IDENTIFIER_CREATE_INFO_EXT,
-        p_next: *const c_void,
-        identifier_size: u32,
-        p_identifier: *const u8,
-    };
-    struct ShaderModuleIdentifierEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::SHADER_MODULE_IDENTIFIER_EXT,
-        p_next: *mut c_void,
-        identifier_size: u32,
-        identifier: [u8; 32],
-    };
-    struct ImageCompressionControlEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_COMPRESSION_CONTROL_EXT,
-        p_next: *const c_void,
-        flags: crate::data::ImageCompressionFlagsEXT,
-        compression_control_plane_count: u32,
-        p_fixed_rate_flags: *mut crate::data::ImageCompressionFixedRateFlagsEXT,
-    };
-    struct PhysicalDeviceImageCompressionControlFeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_IMAGE_COMPRESSION_CONTROL_FEATURES_EXT,
-        p_next: *mut c_void,
-        image_compression_control: crate::data::Bool32,
-    };
-    struct ImageCompressionPropertiesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_COMPRESSION_PROPERTIES_EXT,
-        p_next: *mut c_void,
-        image_compression_flags: crate::data::ImageCompressionFlagsEXT,
-        image_compression_fixed_rate_flags: crate::data::ImageCompressionFixedRateFlagsEXT,
-    };
-    struct PhysicalDeviceImageCompressionControlSwapchainFeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_IMAGE_COMPRESSION_CONTROL_SWAPCHAIN_FEATURES_EXT,
-        p_next: *mut c_void,
-        image_compression_control_swapchain: crate::data::Bool32,
-    };
-    struct ImageSubresource2EXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_SUBRESOURCE_2_EXT,
-        p_next: *mut c_void,
-        image_subresource: crate::data::ImageSubresource,
-    };
-    struct SubresourceLayout2EXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::SUBRESOURCE_LAYOUT_2_EXT,
-        p_next: *mut c_void,
-        subresource_layout: crate::data::SubresourceLayout,
-    };
-    struct RenderPassCreationControlEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::RENDER_PASS_CREATION_CONTROL_EXT,
-        p_next: *const c_void,
-        disallow_merging: crate::data::Bool32,
-    };
-    struct RenderPassCreationFeedbackInfoEXT {
-        post_merge_subpass_count: u32,
-    };
-    struct RenderPassCreationFeedbackCreateInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::RENDER_PASS_CREATION_FEEDBACK_CREATE_INFO_EXT,
-        p_next: *const c_void,
-        p_render_pass_feedback: *mut crate::data::RenderPassCreationFeedbackInfoEXT,
-    };
-    struct RenderPassSubpassFeedbackInfoEXT {
-        subpass_merge_status: crate::data::SubpassMergeStatusEXT,
-        description: [c_char; 256],
-        post_merge_index: u32,
-    };
-    struct RenderPassSubpassFeedbackCreateInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::RENDER_PASS_SUBPASS_FEEDBACK_CREATE_INFO_EXT,
-        p_next: *const c_void,
-        p_subpass_feedback: *mut crate::data::RenderPassSubpassFeedbackInfoEXT,
-    };
-    struct PhysicalDeviceSubpassMergeFeedbackFeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SUBPASS_MERGE_FEEDBACK_FEATURES_EXT,
-        p_next: *mut c_void,
-        subpass_merge_feedback: crate::data::Bool32,
-    };
-    struct MicromapBuildInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::MICROMAP_BUILD_INFO_EXT,
-        p_next: *const c_void,
-        ty: crate::data::MicromapTypeEXT,
-        flags: crate::data::BuildMicromapFlagsEXT,
-        mode: crate::data::BuildMicromapModeEXT,
-        dst_micromap: crate::data::MicromapEXT,
-        usage_counts_count: u32,
-        p_usage_counts: *const crate::data::MicromapUsageEXT,
-        pp_usage_counts: *const *const crate::data::MicromapUsageEXT,
-        data: crate::data::DeviceOrHostAddressConstKHR,
-        scratch_data: crate::data::DeviceOrHostAddressKHR,
-        triangle_array: crate::data::DeviceOrHostAddressConstKHR,
-        triangle_array_stride: crate::data::DeviceSize,
-    };
-    struct MicromapCreateInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::MICROMAP_CREATE_INFO_EXT,
-        p_next: *const c_void,
-        create_flags: crate::data::MicromapCreateFlagsEXT,
-        buffer: crate::data::Buffer,
-        offset: crate::data::DeviceSize,
-        size: crate::data::DeviceSize,
-        ty: crate::data::MicromapTypeEXT,
-        device_address: crate::data::DeviceAddress,
-    };
-    struct MicromapVersionInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::MICROMAP_VERSION_INFO_EXT,
-        p_next: *const c_void,
-        p_version_data: *const u8,
-    };
-    struct CopyMicromapInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::COPY_MICROMAP_INFO_EXT,
-        p_next: *const c_void,
-        src: crate::data::MicromapEXT,
-        dst: crate::data::MicromapEXT,
-        mode: crate::data::CopyMicromapModeEXT,
-    };
-    struct CopyMicromapToMemoryInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::COPY_MICROMAP_TO_MEMORY_INFO_EXT,
-        p_next: *const c_void,
-        src: crate::data::MicromapEXT,
-        dst: crate::data::DeviceOrHostAddressKHR,
-        mode: crate::data::CopyMicromapModeEXT,
-    };
-    struct CopyMemoryToMicromapInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::COPY_MEMORY_TO_MICROMAP_INFO_EXT,
-        p_next: *const c_void,
-        src: crate::data::DeviceOrHostAddressConstKHR,
-        dst: crate::data::MicromapEXT,
-        mode: crate::data::CopyMicromapModeEXT,
-    };
-    struct MicromapBuildSizesInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::MICROMAP_BUILD_SIZES_INFO_EXT,
-        p_next: *const c_void,
-        micromap_size: crate::data::DeviceSize,
-        build_scratch_size: crate::data::DeviceSize,
-        discardable: crate::data::Bool32,
-    };
-    struct MicromapUsageEXT {
-        count: u32,
-        subdivision_level: u32,
-        format: u32,
-    };
-    struct MicromapTriangleEXT {
-        data_offset: u32,
-        subdivision_level: u16,
-        format: u16,
-    };
-    struct PhysicalDeviceOpacityMicromapFeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_OPACITY_MICROMAP_FEATURES_EXT,
-        p_next: *mut c_void,
-        micromap: crate::data::Bool32,
-        micromap_capture_replay: crate::data::Bool32,
-        micromap_host_commands: crate::data::Bool32,
-    };
-    struct PhysicalDeviceOpacityMicromapPropertiesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_OPACITY_MICROMAP_PROPERTIES_EXT,
-        p_next: *mut c_void,
-        max_opacity_2_state_subdivision_level: u32,
-        max_opacity_4_state_subdivision_level: u32,
-    };
-    struct AccelerationStructureTrianglesOpacityMicromapEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::ACCELERATION_STRUCTURE_TRIANGLES_OPACITY_MICROMAP_EXT,
-        p_next: *mut c_void,
-        index_type: crate::data::IndexType,
-        index_buffer: crate::data::DeviceOrHostAddressConstKHR,
-        index_stride: crate::data::DeviceSize,
-        base_triangle: u32,
-        usage_counts_count: u32,
-        p_usage_counts: *const crate::data::MicromapUsageEXT,
-        pp_usage_counts: *const *const crate::data::MicromapUsageEXT,
-        micromap: crate::data::MicromapEXT,
-    };
-    struct PipelinePropertiesIdentifierEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_PROPERTIES_IDENTIFIER_EXT,
-        p_next: *mut c_void,
-        pipeline_identifier: [u8; 16],
-    };
-    struct PhysicalDevicePipelinePropertiesFeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PIPELINE_PROPERTIES_FEATURES_EXT,
-        p_next: *mut c_void,
-        pipeline_properties_identifier: crate::data::Bool32,
-    };
-    struct PhysicalDeviceShaderEarlyAndLateFragmentTestsFeaturesAMD {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SHADER_EARLY_AND_LATE_FRAGMENT_TESTS_FEATURES_AMD,
-        p_next: *mut c_void,
-        shader_early_and_late_fragment_tests: crate::data::Bool32,
-    };
-    struct ExportMetalObjectCreateInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::EXPORT_METAL_OBJECT_CREATE_INFO_EXT,
-        p_next: *const c_void,
-        export_object_type: crate::data::ExportMetalObjectTypeFlagBitsEXT,
-    };
-    struct ExportMetalObjectsInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::EXPORT_METAL_OBJECTS_INFO_EXT,
-        p_next: *const c_void,
-    };
-    struct ExportMetalDeviceInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::EXPORT_METAL_DEVICE_INFO_EXT,
-        p_next: *const c_void,
-        mtl_device: MTLDevice_id,
-    };
-    struct ExportMetalCommandQueueInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::EXPORT_METAL_COMMAND_QUEUE_INFO_EXT,
-        p_next: *const c_void,
-        queue: crate::data::Queue,
-        mtl_command_queue: MTLCommandQueue_id,
-    };
-    struct ExportMetalBufferInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::EXPORT_METAL_BUFFER_INFO_EXT,
-        p_next: *const c_void,
-        memory: crate::data::DeviceMemory,
-        mtl_buffer: MTLBuffer_id,
-    };
-    struct ImportMetalBufferInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::IMPORT_METAL_BUFFER_INFO_EXT,
-        p_next: *const c_void,
-        mtl_buffer: MTLBuffer_id,
-    };
-    struct ExportMetalTextureInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::EXPORT_METAL_TEXTURE_INFO_EXT,
-        p_next: *const c_void,
-        image: crate::data::Image,
-        image_view: crate::data::ImageView,
-        buffer_view: crate::data::BufferView,
-        plane: crate::data::ImageAspectFlagBits,
-        mtl_texture: MTLTexture_id,
-    };
-    struct ImportMetalTextureInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::IMPORT_METAL_TEXTURE_INFO_EXT,
-        p_next: *const c_void,
-        plane: crate::data::ImageAspectFlagBits,
-        mtl_texture: MTLTexture_id,
-    };
-    struct ExportMetalIOSurfaceInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::EXPORT_METAL_IO_SURFACE_INFO_EXT,
-        p_next: *const c_void,
-        image: crate::data::Image,
-        io_surface: IOSurfaceRef,
-    };
-    struct ImportMetalIOSurfaceInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::IMPORT_METAL_IO_SURFACE_INFO_EXT,
-        p_next: *const c_void,
-        io_surface: IOSurfaceRef,
-    };
-    struct ExportMetalSharedEventInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::EXPORT_METAL_SHARED_EVENT_INFO_EXT,
-        p_next: *const c_void,
-        semaphore: crate::data::Semaphore,
-        event: crate::data::Event,
-        mtl_shared_event: MTLSharedEvent_id,
-    };
-    struct ImportMetalSharedEventInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::IMPORT_METAL_SHARED_EVENT_INFO_EXT,
-        p_next: *const c_void,
-        mtl_shared_event: MTLSharedEvent_id,
-    };
-    struct PhysicalDeviceNonSeamlessCubeMapFeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_NON_SEAMLESS_CUBE_MAP_FEATURES_EXT,
-        p_next: *mut c_void,
-        non_seamless_cube_map: crate::data::Bool32,
-    };
-    struct PhysicalDevicePipelineRobustnessFeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PIPELINE_ROBUSTNESS_FEATURES_EXT,
-        p_next: *mut c_void,
-        pipeline_robustness: crate::data::Bool32,
-    };
-    struct PipelineRobustnessCreateInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_ROBUSTNESS_CREATE_INFO_EXT,
-        p_next: *const c_void,
-        storage_buffers: crate::data::PipelineRobustnessBufferBehaviorEXT,
-        uniform_buffers: crate::data::PipelineRobustnessBufferBehaviorEXT,
-        vertex_inputs: crate::data::PipelineRobustnessBufferBehaviorEXT,
-        images: crate::data::PipelineRobustnessImageBehaviorEXT,
-    };
-    struct PhysicalDevicePipelineRobustnessPropertiesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PIPELINE_ROBUSTNESS_PROPERTIES_EXT,
-        p_next: *mut c_void,
-        default_robustness_storage_buffers: crate::data::PipelineRobustnessBufferBehaviorEXT,
-        default_robustness_uniform_buffers: crate::data::PipelineRobustnessBufferBehaviorEXT,
-        default_robustness_vertex_inputs: crate::data::PipelineRobustnessBufferBehaviorEXT,
-        default_robustness_images: crate::data::PipelineRobustnessImageBehaviorEXT,
-    };
-    struct ImageViewSampleWeightCreateInfoQCOM {
-        s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_VIEW_SAMPLE_WEIGHT_CREATE_INFO_QCOM,
-        p_next: *const c_void,
-        filter_center: crate::data::Offset2D,
-        filter_size: crate::data::Extent2D,
-        num_phases: u32,
-    };
-    struct PhysicalDeviceImageProcessingFeaturesQCOM {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_IMAGE_PROCESSING_FEATURES_QCOM,
-        p_next: *mut c_void,
-        texture_sample_weighted: crate::data::Bool32,
-        texture_box_filter: crate::data::Bool32,
-        texture_block_match: crate::data::Bool32,
-    };
-    struct PhysicalDeviceImageProcessingPropertiesQCOM {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_IMAGE_PROCESSING_PROPERTIES_QCOM,
-        p_next: *mut c_void,
-        max_weight_filter_phases: u32,
-        max_weight_filter_dimension: crate::data::Extent2D,
-        max_block_match_region: crate::data::Extent2D,
-        max_box_filter_block_size: crate::data::Extent2D,
-    };
-    struct PhysicalDeviceTilePropertiesFeaturesQCOM {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_TILE_PROPERTIES_FEATURES_QCOM,
-        p_next: *mut c_void,
-        tile_properties: crate::data::Bool32,
-    };
-    struct TilePropertiesQCOM {
-        s_type: crate::data::StructureType = crate::data::StructureType::TILE_PROPERTIES_QCOM,
-        p_next: *mut c_void,
-        tile_size: crate::data::Extent3D,
-        apron_size: crate::data::Extent2D,
-        origin: crate::data::Offset2D,
-    };
-    struct PhysicalDeviceAmigoProfilingFeaturesSEC {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_AMIGO_PROFILING_FEATURES_SEC,
-        p_next: *mut c_void,
-        amigo_profiling: crate::data::Bool32,
-    };
-    struct AmigoProfilingSubmitInfoSEC {
-        s_type: crate::data::StructureType = crate::data::StructureType::AMIGO_PROFILING_SUBMIT_INFO_SEC,
-        p_next: *const c_void,
-        first_draw_timestamp: u64,
-        swap_buffer_timestamp: u64,
-    };
-    struct PhysicalDeviceAttachmentFeedbackLoopLayoutFeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_ATTACHMENT_FEEDBACK_LOOP_LAYOUT_FEATURES_EXT,
-        p_next: *mut c_void,
-        attachment_feedback_loop_layout: crate::data::Bool32,
-    };
-    struct PhysicalDeviceDepthClampZeroOneFeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_DEPTH_CLAMP_ZERO_ONE_FEATURES_EXT,
-        p_next: *mut c_void,
-        depth_clamp_zero_one: crate::data::Bool32,
-    };
-    struct PhysicalDeviceAddressBindingReportFeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_ADDRESS_BINDING_REPORT_FEATURES_EXT,
-        p_next: *mut c_void,
-        report_address_binding: crate::data::Bool32,
-    };
-    struct DeviceAddressBindingCallbackDataEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_ADDRESS_BINDING_CALLBACK_DATA_EXT,
-        p_next: *mut c_void,
-        flags: crate::data::DeviceAddressBindingFlagsEXT,
-        base_address: crate::data::DeviceAddress,
-        size: crate::data::DeviceSize,
-        binding_type: crate::data::DeviceAddressBindingTypeEXT,
-    };
-    struct PhysicalDeviceOpticalFlowFeaturesNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_OPTICAL_FLOW_FEATURES_NV,
-        p_next: *mut c_void,
-        optical_flow: crate::data::Bool32,
-    };
-    struct PhysicalDeviceOpticalFlowPropertiesNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_OPTICAL_FLOW_PROPERTIES_NV,
-        p_next: *mut c_void,
-        supported_output_grid_sizes: crate::data::OpticalFlowGridSizeFlagsNV,
-        supported_hint_grid_sizes: crate::data::OpticalFlowGridSizeFlagsNV,
-        hint_supported: crate::data::Bool32,
-        cost_supported: crate::data::Bool32,
-        bidirectional_flow_supported: crate::data::Bool32,
-        global_flow_supported: crate::data::Bool32,
-        min_width: u32,
-        min_height: u32,
-        max_width: u32,
-        max_height: u32,
-        max_num_regions_of_interest: u32,
-    };
-    struct OpticalFlowImageFormatInfoNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::OPTICAL_FLOW_IMAGE_FORMAT_INFO_NV,
-        p_next: *const c_void,
-        usage: crate::data::OpticalFlowUsageFlagsNV,
-    };
-    struct OpticalFlowImageFormatPropertiesNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::OPTICAL_FLOW_IMAGE_FORMAT_PROPERTIES_NV,
-        p_next: *const c_void,
-        format: crate::data::Format,
-    };
-    struct OpticalFlowSessionCreateInfoNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::OPTICAL_FLOW_SESSION_CREATE_INFO_NV,
-        p_next: *mut c_void,
-        width: u32,
-        height: u32,
-        image_format: crate::data::Format,
-        flow_vector_format: crate::data::Format,
-        cost_format: crate::data::Format,
-        output_grid_size: crate::data::OpticalFlowGridSizeFlagsNV,
-        hint_grid_size: crate::data::OpticalFlowGridSizeFlagsNV,
-        performance_level: crate::data::OpticalFlowPerformanceLevelNV,
-        flags: crate::data::OpticalFlowSessionCreateFlagsNV,
-    };
-    struct OpticalFlowSessionCreatePrivateDataInfoNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::OPTICAL_FLOW_SESSION_CREATE_PRIVATE_DATA_INFO_NV,
-        p_next: *mut c_void,
-        id: u32,
-        size: u32,
-        p_private_data: *const c_void,
-    };
-    struct OpticalFlowExecuteInfoNV {
-        s_type: crate::data::StructureType = crate::data::StructureType::OPTICAL_FLOW_EXECUTE_INFO_NV,
-        p_next: *mut c_void,
-        flags: crate::data::OpticalFlowExecuteFlagsNV,
-        region_count: u32,
-        p_regions: *const crate::data::Rect2D,
-    };
-    struct PhysicalDeviceFaultFeaturesEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_FAULT_FEATURES_EXT,
-        p_next: *mut c_void,
-        device_fault: crate::data::Bool32,
-        device_fault_vendor_binary: crate::data::Bool32,
-    };
-    struct DeviceFaultAddressInfoEXT {
-        address_type: crate::data::DeviceFaultAddressTypeEXT,
-        reported_address: crate::data::DeviceAddress,
-        address_precision: crate::data::DeviceSize,
-    };
-    struct DeviceFaultVendorInfoEXT {
-        description: [c_char; 256],
-        vendor_fault_code: u64,
-        vendor_fault_data: u64,
-    };
-    struct DeviceFaultCountsEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_FAULT_COUNTS_EXT,
-        p_next: *mut c_void,
-        address_info_count: u32,
-        vendor_info_count: u32,
-        vendor_binary_size: crate::data::DeviceSize,
-    };
-    struct DeviceFaultInfoEXT {
-        s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_FAULT_INFO_EXT,
-        p_next: *mut c_void,
-        description: [c_char; 256],
-        p_address_infos: *mut crate::data::DeviceFaultAddressInfoEXT,
-        p_vendor_infos: *mut crate::data::DeviceFaultVendorInfoEXT,
-        p_vendor_binary_data: *mut c_void,
-    };
-    struct DeviceFaultVendorBinaryHeaderVersionOneEXT {
-        header_size: u32,
-        header_version: crate::data::DeviceFaultVendorBinaryHeaderVersionEXT,
-        vendor_id: u32,
-        device_id: u32,
-        driver_version: u32,
-        pipeline_cache_uuid: [u8; 16],
-        application_name_offset: u32,
-        application_version: u32,
-        engine_name_offset: u32,
-    };
+mod aggregates {
+    aggregate_imports!();
+    impl_aggregate! {
+        struct BaseOutStructure {
+                s_type: crate::data::StructureType,
+                p_next: *mut crate::data::BaseOutStructure,
+        }
+    }
+    impl_aggregate! {
+        struct BaseInStructure {
+                s_type: crate::data::StructureType,
+                p_next: *const crate::data::BaseInStructure,
+        }
+    }
+    impl_aggregate! {
+        struct Offset2D {
+                x: i32,
+                y: i32,
+        }
+    }
+    impl_aggregate! {
+        struct Offset3D {
+                x: i32,
+                y: i32,
+                z: i32,
+        }
+    }
+    impl_aggregate! {
+        struct Extent2D {
+                width: u32,
+                height: u32,
+        }
+    }
+    impl_aggregate! {
+        struct Extent3D {
+                width: u32,
+                height: u32,
+                depth: u32,
+        }
+    }
+    impl_aggregate! {
+        struct Viewport {
+                x: c_float,
+                y: c_float,
+                width: c_float,
+                height: c_float,
+                min_depth: c_float,
+                max_depth: c_float,
+        }
+    }
+    impl_aggregate! {
+        struct Rect2D {
+                offset: crate::data::Offset2D,
+                extent: crate::data::Extent2D,
+        }
+    }
+    impl_aggregate! {
+        struct ClearRect {
+                rect: crate::data::Rect2D,
+                base_array_layer: u32,
+                layer_count: u32,
+        }
+    }
+    impl_aggregate! {
+        struct ComponentMapping {
+                r: crate::data::ComponentSwizzle,
+                g: crate::data::ComponentSwizzle,
+                b: crate::data::ComponentSwizzle,
+                a: crate::data::ComponentSwizzle,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceProperties {
+                api_version: u32,
+                driver_version: u32,
+                vendor_id: u32,
+                device_id: u32,
+                device_type: crate::data::PhysicalDeviceType,
+                device_name: [c_char; 256],
+                pipeline_cache_uuid: [u8; 16],
+                limits: crate::data::PhysicalDeviceLimits,
+                sparse_properties: crate::data::PhysicalDeviceSparseProperties,
+        }
+    }
+    impl_aggregate! {
+        struct ExtensionProperties {
+                extension_name: [c_char; 256],
+                spec_version: u32,
+        }
+    }
+    impl_aggregate! {
+        struct LayerProperties {
+                layer_name: [c_char; 256],
+                spec_version: u32,
+                implementation_version: u32,
+                description: [c_char; 256],
+        }
+    }
+    impl_aggregate! {
+        struct ApplicationInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::APPLICATION_INFO,
+                p_next: *const c_void,
+                p_application_name: *const c_char,
+                application_version: u32,
+                p_engine_name: *const c_char,
+                engine_version: u32,
+                api_version: u32,
+        }
+    }
+    impl_aggregate! {
+        struct AllocationCallbacks {
+                p_user_data: *mut c_void,
+                pfn_allocation: crate::pfn::AllocationFunction,
+                pfn_reallocation: crate::pfn::ReallocationFunction,
+                pfn_free: crate::pfn::FreeFunction,
+                pfn_internal_allocation: crate::pfn::InternalAllocationNotification,
+                pfn_internal_free: crate::pfn::InternalFreeNotification,
+        }
+    }
+    impl_aggregate! {
+        struct DeviceQueueCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_QUEUE_CREATE_INFO,
+                p_next: *const c_void,
+                flags: crate::data::DeviceQueueCreateFlags,
+                queue_family_index: u32,
+                queue_count: u32,
+                p_queue_priorities: *const c_float,
+        }
+    }
+    impl_aggregate! {
+        struct DeviceCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_CREATE_INFO,
+                p_next: *const c_void,
+                flags: crate::data::DeviceCreateFlags,
+                queue_create_info_count: u32,
+                p_queue_create_infos: *const crate::data::DeviceQueueCreateInfo,
+                enabled_layer_count: u32,
+                pp_enabled_layer_names: *const *const c_char,
+                enabled_extension_count: u32,
+                pp_enabled_extension_names: *const *const c_char,
+                p_enabled_features: *const crate::data::PhysicalDeviceFeatures,
+        }
+    }
+    impl_aggregate! {
+        struct InstanceCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::INSTANCE_CREATE_INFO,
+                p_next: *const c_void,
+                flags: crate::data::InstanceCreateFlags,
+                p_application_info: *const crate::data::ApplicationInfo,
+                enabled_layer_count: u32,
+                pp_enabled_layer_names: *const *const c_char,
+                enabled_extension_count: u32,
+                pp_enabled_extension_names: *const *const c_char,
+        }
+    }
+    impl_aggregate! {
+        struct QueueFamilyProperties {
+                queue_flags: crate::data::QueueFlags,
+                queue_count: u32,
+                timestamp_valid_bits: u32,
+                min_image_transfer_granularity: crate::data::Extent3D,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceMemoryProperties {
+                memory_type_count: u32,
+                memory_types: [crate::data::MemoryType; 32],
+                memory_heap_count: u32,
+                memory_heaps: [crate::data::MemoryHeap; 16],
+        }
+    }
+    impl_aggregate! {
+        struct MemoryAllocateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::MEMORY_ALLOCATE_INFO,
+                p_next: *const c_void,
+                allocation_size: crate::data::DeviceSize,
+                memory_type_index: u32,
+        }
+    }
+    impl_aggregate! {
+        struct MemoryRequirements {
+                size: crate::data::DeviceSize,
+                alignment: crate::data::DeviceSize,
+                memory_type_bits: u32,
+        }
+    }
+    impl_aggregate! {
+        struct SparseImageFormatProperties {
+                aspect_mask: crate::data::ImageAspectFlags,
+                image_granularity: crate::data::Extent3D,
+                flags: crate::data::SparseImageFormatFlags,
+        }
+    }
+    impl_aggregate! {
+        struct SparseImageMemoryRequirements {
+                format_properties: crate::data::SparseImageFormatProperties,
+                image_mip_tail_first_lod: u32,
+                image_mip_tail_size: crate::data::DeviceSize,
+                image_mip_tail_offset: crate::data::DeviceSize,
+                image_mip_tail_stride: crate::data::DeviceSize,
+        }
+    }
+    impl_aggregate! {
+        struct MemoryType {
+                property_flags: crate::data::MemoryPropertyFlags,
+                heap_index: u32,
+        }
+    }
+    impl_aggregate! {
+        struct MemoryHeap {
+                size: crate::data::DeviceSize,
+                flags: crate::data::MemoryHeapFlags,
+        }
+    }
+    impl_aggregate! {
+        struct MappedMemoryRange {
+                s_type: crate::data::StructureType = crate::data::StructureType::MAPPED_MEMORY_RANGE,
+                p_next: *const c_void,
+                memory: crate::data::DeviceMemory,
+                offset: crate::data::DeviceSize,
+                size: crate::data::DeviceSize,
+        }
+    }
+    impl_aggregate! {
+        struct FormatProperties {
+                linear_tiling_features: crate::data::FormatFeatureFlags,
+                optimal_tiling_features: crate::data::FormatFeatureFlags,
+                buffer_features: crate::data::FormatFeatureFlags,
+        }
+    }
+    impl_aggregate! {
+        struct ImageFormatProperties {
+                max_extent: crate::data::Extent3D,
+                max_mip_levels: u32,
+                max_array_layers: u32,
+                sample_counts: crate::data::SampleCountFlags,
+                max_resource_size: crate::data::DeviceSize,
+        }
+    }
+    impl_aggregate! {
+        struct DescriptorBufferInfo {
+                buffer: crate::data::Buffer,
+                offset: crate::data::DeviceSize,
+                range: crate::data::DeviceSize,
+        }
+    }
+    impl_aggregate! {
+        struct DescriptorImageInfo {
+                sampler: crate::data::Sampler,
+                image_view: crate::data::ImageView,
+                image_layout: crate::data::ImageLayout,
+        }
+    }
+    impl_aggregate! {
+        struct WriteDescriptorSet {
+                s_type: crate::data::StructureType = crate::data::StructureType::WRITE_DESCRIPTOR_SET,
+                p_next: *const c_void,
+                dst_set: crate::data::DescriptorSet,
+                dst_binding: u32,
+                dst_array_element: u32,
+                descriptor_count: u32,
+                descriptor_type: crate::data::DescriptorType,
+                p_image_info: *const crate::data::DescriptorImageInfo,
+                p_buffer_info: *const crate::data::DescriptorBufferInfo,
+                p_texel_buffer_view: *const crate::data::BufferView,
+        }
+    }
+    impl_aggregate! {
+        struct CopyDescriptorSet {
+                s_type: crate::data::StructureType = crate::data::StructureType::COPY_DESCRIPTOR_SET,
+                p_next: *const c_void,
+                src_set: crate::data::DescriptorSet,
+                src_binding: u32,
+                src_array_element: u32,
+                dst_set: crate::data::DescriptorSet,
+                dst_binding: u32,
+                dst_array_element: u32,
+                descriptor_count: u32,
+        }
+    }
+    impl_aggregate! {
+        struct BufferCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::BUFFER_CREATE_INFO,
+                p_next: *const c_void,
+                flags: crate::data::BufferCreateFlags,
+                size: crate::data::DeviceSize,
+                usage: crate::data::BufferUsageFlags,
+                sharing_mode: crate::data::SharingMode,
+                queue_family_index_count: u32,
+                p_queue_family_indices: *const u32,
+        }
+    }
+    impl_aggregate! {
+        struct BufferViewCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::BUFFER_VIEW_CREATE_INFO,
+                p_next: *const c_void,
+                flags: crate::data::BufferViewCreateFlags,
+                buffer: crate::data::Buffer,
+                format: crate::data::Format,
+                offset: crate::data::DeviceSize,
+                range: crate::data::DeviceSize,
+        }
+    }
+    impl_aggregate! {
+        struct ImageSubresource {
+                aspect_mask: crate::data::ImageAspectFlags,
+                mip_level: u32,
+                array_layer: u32,
+        }
+    }
+    impl_aggregate! {
+        struct ImageSubresourceLayers {
+                aspect_mask: crate::data::ImageAspectFlags,
+                mip_level: u32,
+                base_array_layer: u32,
+                layer_count: u32,
+        }
+    }
+    impl_aggregate! {
+        struct ImageSubresourceRange {
+                aspect_mask: crate::data::ImageAspectFlags,
+                base_mip_level: u32,
+                level_count: u32,
+                base_array_layer: u32,
+                layer_count: u32,
+        }
+    }
+    impl_aggregate! {
+        struct MemoryBarrier {
+                s_type: crate::data::StructureType = crate::data::StructureType::MEMORY_BARRIER,
+                p_next: *const c_void,
+                src_access_mask: crate::data::AccessFlags,
+                dst_access_mask: crate::data::AccessFlags,
+        }
+    }
+    impl_aggregate! {
+        struct BufferMemoryBarrier {
+                s_type: crate::data::StructureType = crate::data::StructureType::BUFFER_MEMORY_BARRIER,
+                p_next: *const c_void,
+                src_access_mask: crate::data::AccessFlags,
+                dst_access_mask: crate::data::AccessFlags,
+                src_queue_family_index: u32,
+                dst_queue_family_index: u32,
+                buffer: crate::data::Buffer,
+                offset: crate::data::DeviceSize,
+                size: crate::data::DeviceSize,
+        }
+    }
+    impl_aggregate! {
+        struct ImageMemoryBarrier {
+                s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_MEMORY_BARRIER,
+                p_next: *const c_void,
+                src_access_mask: crate::data::AccessFlags,
+                dst_access_mask: crate::data::AccessFlags,
+                old_layout: crate::data::ImageLayout,
+                new_layout: crate::data::ImageLayout,
+                src_queue_family_index: u32,
+                dst_queue_family_index: u32,
+                image: crate::data::Image,
+                subresource_range: crate::data::ImageSubresourceRange,
+        }
+    }
+    impl_aggregate! {
+        struct ImageCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_CREATE_INFO,
+                p_next: *const c_void,
+                flags: crate::data::ImageCreateFlags,
+                image_type: crate::data::ImageType,
+                format: crate::data::Format,
+                extent: crate::data::Extent3D,
+                mip_levels: u32,
+                array_layers: u32,
+                samples: crate::data::SampleCountFlagBits,
+                tiling: crate::data::ImageTiling,
+                usage: crate::data::ImageUsageFlags,
+                sharing_mode: crate::data::SharingMode,
+                queue_family_index_count: u32,
+                p_queue_family_indices: *const u32,
+                initial_layout: crate::data::ImageLayout,
+        }
+    }
+    impl_aggregate! {
+        struct SubresourceLayout {
+                offset: crate::data::DeviceSize,
+                size: crate::data::DeviceSize,
+                row_pitch: crate::data::DeviceSize,
+                array_pitch: crate::data::DeviceSize,
+                depth_pitch: crate::data::DeviceSize,
+        }
+    }
+    impl_aggregate! {
+        struct ImageViewCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_VIEW_CREATE_INFO,
+                p_next: *const c_void,
+                flags: crate::data::ImageViewCreateFlags,
+                image: crate::data::Image,
+                view_type: crate::data::ImageViewType,
+                format: crate::data::Format,
+                components: crate::data::ComponentMapping,
+                subresource_range: crate::data::ImageSubresourceRange,
+        }
+    }
+    impl_aggregate! {
+        struct BufferCopy {
+                src_offset: crate::data::DeviceSize,
+                dst_offset: crate::data::DeviceSize,
+                size: crate::data::DeviceSize,
+        }
+    }
+    impl_aggregate! {
+        struct SparseMemoryBind {
+                resource_offset: crate::data::DeviceSize,
+                size: crate::data::DeviceSize,
+                memory: crate::data::DeviceMemory,
+                memory_offset: crate::data::DeviceSize,
+                flags: crate::data::SparseMemoryBindFlags,
+        }
+    }
+    impl_aggregate! {
+        struct SparseImageMemoryBind {
+                subresource: crate::data::ImageSubresource,
+                offset: crate::data::Offset3D,
+                extent: crate::data::Extent3D,
+                memory: crate::data::DeviceMemory,
+                memory_offset: crate::data::DeviceSize,
+                flags: crate::data::SparseMemoryBindFlags,
+        }
+    }
+    impl_aggregate! {
+        struct SparseBufferMemoryBindInfo {
+                buffer: crate::data::Buffer,
+                bind_count: u32,
+                p_binds: *const crate::data::SparseMemoryBind,
+        }
+    }
+    impl_aggregate! {
+        struct SparseImageOpaqueMemoryBindInfo {
+                image: crate::data::Image,
+                bind_count: u32,
+                p_binds: *const crate::data::SparseMemoryBind,
+        }
+    }
+    impl_aggregate! {
+        struct SparseImageMemoryBindInfo {
+                image: crate::data::Image,
+                bind_count: u32,
+                p_binds: *const crate::data::SparseImageMemoryBind,
+        }
+    }
+    impl_aggregate! {
+        struct BindSparseInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::BIND_SPARSE_INFO,
+                p_next: *const c_void,
+                wait_semaphore_count: u32,
+                p_wait_semaphores: *const crate::data::Semaphore,
+                buffer_bind_count: u32,
+                p_buffer_binds: *const crate::data::SparseBufferMemoryBindInfo,
+                image_opaque_bind_count: u32,
+                p_image_opaque_binds: *const crate::data::SparseImageOpaqueMemoryBindInfo,
+                image_bind_count: u32,
+                p_image_binds: *const crate::data::SparseImageMemoryBindInfo,
+                signal_semaphore_count: u32,
+                p_signal_semaphores: *const crate::data::Semaphore,
+        }
+    }
+    impl_aggregate! {
+        struct ImageCopy {
+                src_subresource: crate::data::ImageSubresourceLayers,
+                src_offset: crate::data::Offset3D,
+                dst_subresource: crate::data::ImageSubresourceLayers,
+                dst_offset: crate::data::Offset3D,
+                extent: crate::data::Extent3D,
+        }
+    }
+    impl_aggregate! {
+        struct ImageBlit {
+                src_subresource: crate::data::ImageSubresourceLayers,
+                src_offsets: [crate::data::Offset3D; 2],
+                dst_subresource: crate::data::ImageSubresourceLayers,
+                dst_offsets: [crate::data::Offset3D; 2],
+        }
+    }
+    impl_aggregate! {
+        struct BufferImageCopy {
+                buffer_offset: crate::data::DeviceSize,
+                buffer_row_length: u32,
+                buffer_image_height: u32,
+                image_subresource: crate::data::ImageSubresourceLayers,
+                image_offset: crate::data::Offset3D,
+                image_extent: crate::data::Extent3D,
+        }
+    }
+    impl_aggregate! {
+        struct ImageResolve {
+                src_subresource: crate::data::ImageSubresourceLayers,
+                src_offset: crate::data::Offset3D,
+                dst_subresource: crate::data::ImageSubresourceLayers,
+                dst_offset: crate::data::Offset3D,
+                extent: crate::data::Extent3D,
+        }
+    }
+    impl_aggregate! {
+        struct ShaderModuleCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::SHADER_MODULE_CREATE_INFO,
+                p_next: *const c_void,
+                flags: crate::data::ShaderModuleCreateFlags,
+                code_size: usize,
+                p_code: *const u32,
+        }
+    }
+    impl_aggregate! {
+        struct DescriptorSetLayoutBinding {
+                binding: u32,
+                descriptor_type: crate::data::DescriptorType,
+                descriptor_count: u32,
+                stage_flags: crate::data::ShaderStageFlags,
+                p_immutable_samplers: *const crate::data::Sampler,
+        }
+    }
+    impl_aggregate! {
+        struct DescriptorSetLayoutCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
+                p_next: *const c_void,
+                flags: crate::data::DescriptorSetLayoutCreateFlags,
+                binding_count: u32,
+                p_bindings: *const crate::data::DescriptorSetLayoutBinding,
+        }
+    }
+    impl_aggregate! {
+        struct DescriptorPoolSize {
+                ty: crate::data::DescriptorType,
+                descriptor_count: u32,
+        }
+    }
+    impl_aggregate! {
+        struct DescriptorPoolCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::DESCRIPTOR_POOL_CREATE_INFO,
+                p_next: *const c_void,
+                flags: crate::data::DescriptorPoolCreateFlags,
+                max_sets: u32,
+                pool_size_count: u32,
+                p_pool_sizes: *const crate::data::DescriptorPoolSize,
+        }
+    }
+    impl_aggregate! {
+        struct DescriptorSetAllocateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::DESCRIPTOR_SET_ALLOCATE_INFO,
+                p_next: *const c_void,
+                descriptor_pool: crate::data::DescriptorPool,
+                descriptor_set_count: u32,
+                p_set_layouts: *const crate::data::DescriptorSetLayout,
+        }
+    }
+    impl_aggregate! {
+        struct SpecializationMapEntry {
+                constant_id: u32,
+                offset: u32,
+                size: usize,
+        }
+    }
+    impl_aggregate! {
+        struct SpecializationInfo {
+                map_entry_count: u32,
+                p_map_entries: *const crate::data::SpecializationMapEntry,
+                data_size: usize,
+                p_data: *const c_void,
+        }
+    }
+    impl_aggregate! {
+        struct PipelineShaderStageCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_SHADER_STAGE_CREATE_INFO,
+                p_next: *const c_void,
+                flags: crate::data::PipelineShaderStageCreateFlags,
+                stage: crate::data::ShaderStageFlagBits,
+                module: crate::data::ShaderModule,
+                p_name: *const c_char,
+                p_specialization_info: *const crate::data::SpecializationInfo,
+        }
+    }
+    impl_aggregate! {
+        struct ComputePipelineCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::COMPUTE_PIPELINE_CREATE_INFO,
+                p_next: *const c_void,
+                flags: crate::data::PipelineCreateFlags,
+                stage: crate::data::PipelineShaderStageCreateInfo,
+                layout: crate::data::PipelineLayout,
+                base_pipeline_handle: crate::data::Pipeline,
+                base_pipeline_index: i32,
+        }
+    }
+    impl_aggregate! {
+        struct VertexInputBindingDescription {
+                binding: u32,
+                stride: u32,
+                input_rate: crate::data::VertexInputRate,
+        }
+    }
+    impl_aggregate! {
+        struct VertexInputAttributeDescription {
+                location: u32,
+                binding: u32,
+                format: crate::data::Format,
+                offset: u32,
+        }
+    }
+    impl_aggregate! {
+        struct PipelineVertexInputStateCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
+                p_next: *const c_void,
+                flags: crate::data::PipelineVertexInputStateCreateFlags,
+                vertex_binding_description_count: u32,
+                p_vertex_binding_descriptions: *const crate::data::VertexInputBindingDescription,
+                vertex_attribute_description_count: u32,
+                p_vertex_attribute_descriptions: *const crate::data::VertexInputAttributeDescription,
+        }
+    }
+    impl_aggregate! {
+        struct PipelineInputAssemblyStateCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
+                p_next: *const c_void,
+                flags: crate::data::PipelineInputAssemblyStateCreateFlags,
+                topology: crate::data::PrimitiveTopology,
+                primitive_restart_enable: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PipelineTessellationStateCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_TESSELLATION_STATE_CREATE_INFO,
+                p_next: *const c_void,
+                flags: crate::data::PipelineTessellationStateCreateFlags,
+                patch_control_points: u32,
+        }
+    }
+    impl_aggregate! {
+        struct PipelineViewportStateCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_VIEWPORT_STATE_CREATE_INFO,
+                p_next: *const c_void,
+                flags: crate::data::PipelineViewportStateCreateFlags,
+                viewport_count: u32,
+                p_viewports: *const crate::data::Viewport,
+                scissor_count: u32,
+                p_scissors: *const crate::data::Rect2D,
+        }
+    }
+    impl_aggregate! {
+        struct PipelineRasterizationStateCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_RASTERIZATION_STATE_CREATE_INFO,
+                p_next: *const c_void,
+                flags: crate::data::PipelineRasterizationStateCreateFlags,
+                depth_clamp_enable: crate::data::Bool32,
+                rasterizer_discard_enable: crate::data::Bool32,
+                polygon_mode: crate::data::PolygonMode,
+                cull_mode: crate::data::CullModeFlags,
+                front_face: crate::data::FrontFace,
+                depth_bias_enable: crate::data::Bool32,
+                depth_bias_constant_factor: c_float,
+                depth_bias_clamp: c_float,
+                depth_bias_slope_factor: c_float,
+                line_width: c_float,
+        }
+    }
+    impl_aggregate! {
+        struct PipelineMultisampleStateCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
+                p_next: *const c_void,
+                flags: crate::data::PipelineMultisampleStateCreateFlags,
+                rasterization_samples: crate::data::SampleCountFlagBits,
+                sample_shading_enable: crate::data::Bool32,
+                min_sample_shading: c_float,
+                p_sample_mask: *const crate::data::SampleMask,
+                alpha_to_coverage_enable: crate::data::Bool32,
+                alpha_to_one_enable: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PipelineColorBlendAttachmentState {
+                blend_enable: crate::data::Bool32,
+                src_color_blend_factor: crate::data::BlendFactor,
+                dst_color_blend_factor: crate::data::BlendFactor,
+                color_blend_op: crate::data::BlendOp,
+                src_alpha_blend_factor: crate::data::BlendFactor,
+                dst_alpha_blend_factor: crate::data::BlendFactor,
+                alpha_blend_op: crate::data::BlendOp,
+                color_write_mask: crate::data::ColorComponentFlags,
+        }
+    }
+    impl_aggregate! {
+        struct PipelineColorBlendStateCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
+                p_next: *const c_void,
+                flags: crate::data::PipelineColorBlendStateCreateFlags,
+                logic_op_enable: crate::data::Bool32,
+                logic_op: crate::data::LogicOp,
+                attachment_count: u32,
+                p_attachments: *const crate::data::PipelineColorBlendAttachmentState,
+                blend_constants: [c_float; 4],
+        }
+    }
+    impl_aggregate! {
+        struct PipelineDynamicStateCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_DYNAMIC_STATE_CREATE_INFO,
+                p_next: *const c_void,
+                flags: crate::data::PipelineDynamicStateCreateFlags,
+                dynamic_state_count: u32,
+                p_dynamic_states: *const crate::data::DynamicState,
+        }
+    }
+    impl_aggregate! {
+        struct StencilOpState {
+                fail_op: crate::data::StencilOp,
+                pass_op: crate::data::StencilOp,
+                depth_fail_op: crate::data::StencilOp,
+                compare_op: crate::data::CompareOp,
+                compare_mask: u32,
+                write_mask: u32,
+                reference: u32,
+        }
+    }
+    impl_aggregate! {
+        struct PipelineDepthStencilStateCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO,
+                p_next: *const c_void,
+                flags: crate::data::PipelineDepthStencilStateCreateFlags,
+                depth_test_enable: crate::data::Bool32,
+                depth_write_enable: crate::data::Bool32,
+                depth_compare_op: crate::data::CompareOp,
+                depth_bounds_test_enable: crate::data::Bool32,
+                stencil_test_enable: crate::data::Bool32,
+                front: crate::data::StencilOpState,
+                back: crate::data::StencilOpState,
+                min_depth_bounds: c_float,
+                max_depth_bounds: c_float,
+        }
+    }
+    impl_aggregate! {
+        struct GraphicsPipelineCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::GRAPHICS_PIPELINE_CREATE_INFO,
+                p_next: *const c_void,
+                flags: crate::data::PipelineCreateFlags,
+                stage_count: u32,
+                p_stages: *const crate::data::PipelineShaderStageCreateInfo,
+                p_vertex_input_state: *const crate::data::PipelineVertexInputStateCreateInfo,
+                p_input_assembly_state: *const crate::data::PipelineInputAssemblyStateCreateInfo,
+                p_tessellation_state: *const crate::data::PipelineTessellationStateCreateInfo,
+                p_viewport_state: *const crate::data::PipelineViewportStateCreateInfo,
+                p_rasterization_state: *const crate::data::PipelineRasterizationStateCreateInfo,
+                p_multisample_state: *const crate::data::PipelineMultisampleStateCreateInfo,
+                p_depth_stencil_state: *const crate::data::PipelineDepthStencilStateCreateInfo,
+                p_color_blend_state: *const crate::data::PipelineColorBlendStateCreateInfo,
+                p_dynamic_state: *const crate::data::PipelineDynamicStateCreateInfo,
+                layout: crate::data::PipelineLayout,
+                render_pass: crate::data::RenderPass,
+                subpass: u32,
+                base_pipeline_handle: crate::data::Pipeline,
+                base_pipeline_index: i32,
+        }
+    }
+    impl_aggregate! {
+        struct PipelineCacheCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_CACHE_CREATE_INFO,
+                p_next: *const c_void,
+                flags: crate::data::PipelineCacheCreateFlags,
+                initial_data_size: usize,
+                p_initial_data: *const c_void,
+        }
+    }
+    impl_aggregate! {
+        struct PipelineCacheHeaderVersionOne {
+                header_size: u32,
+                header_version: crate::data::PipelineCacheHeaderVersion,
+                vendor_id: u32,
+                device_id: u32,
+                pipeline_cache_uuid: [u8; 16],
+        }
+    }
+    impl_aggregate! {
+        struct PushConstantRange {
+                stage_flags: crate::data::ShaderStageFlags,
+                offset: u32,
+                size: u32,
+        }
+    }
+    impl_aggregate! {
+        struct PipelineLayoutCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_LAYOUT_CREATE_INFO,
+                p_next: *const c_void,
+                flags: crate::data::PipelineLayoutCreateFlags,
+                set_layout_count: u32,
+                p_set_layouts: *const crate::data::DescriptorSetLayout,
+                push_constant_range_count: u32,
+                p_push_constant_ranges: *const crate::data::PushConstantRange,
+        }
+    }
+    impl_aggregate! {
+        struct SamplerCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::SAMPLER_CREATE_INFO,
+                p_next: *const c_void,
+                flags: crate::data::SamplerCreateFlags,
+                mag_filter: crate::data::Filter,
+                min_filter: crate::data::Filter,
+                mipmap_mode: crate::data::SamplerMipmapMode,
+                address_mode_u: crate::data::SamplerAddressMode,
+                address_mode_v: crate::data::SamplerAddressMode,
+                address_mode_w: crate::data::SamplerAddressMode,
+                mip_lod_bias: c_float,
+                anisotropy_enable: crate::data::Bool32,
+                max_anisotropy: c_float,
+                compare_enable: crate::data::Bool32,
+                compare_op: crate::data::CompareOp,
+                min_lod: c_float,
+                max_lod: c_float,
+                border_color: crate::data::BorderColor,
+                unnormalized_coordinates: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct CommandPoolCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::COMMAND_POOL_CREATE_INFO,
+                p_next: *const c_void,
+                flags: crate::data::CommandPoolCreateFlags,
+                queue_family_index: u32,
+        }
+    }
+    impl_aggregate! {
+        struct CommandBufferAllocateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::COMMAND_BUFFER_ALLOCATE_INFO,
+                p_next: *const c_void,
+                command_pool: crate::data::CommandPool,
+                level: crate::data::CommandBufferLevel,
+                command_buffer_count: u32,
+        }
+    }
+    impl_aggregate! {
+        struct CommandBufferInheritanceInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::COMMAND_BUFFER_INHERITANCE_INFO,
+                p_next: *const c_void,
+                render_pass: crate::data::RenderPass,
+                subpass: u32,
+                framebuffer: crate::data::Framebuffer,
+                occlusion_query_enable: crate::data::Bool32,
+                query_flags: crate::data::QueryControlFlags,
+                pipeline_statistics: crate::data::QueryPipelineStatisticFlags,
+        }
+    }
+    impl_aggregate! {
+        struct CommandBufferBeginInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::COMMAND_BUFFER_BEGIN_INFO,
+                p_next: *const c_void,
+                flags: crate::data::CommandBufferUsageFlags,
+                p_inheritance_info: *const crate::data::CommandBufferInheritanceInfo,
+        }
+    }
+    impl_aggregate! {
+        struct RenderPassBeginInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::RENDER_PASS_BEGIN_INFO,
+                p_next: *const c_void,
+                render_pass: crate::data::RenderPass,
+                framebuffer: crate::data::Framebuffer,
+                render_area: crate::data::Rect2D,
+                clear_value_count: u32,
+                p_clear_values: *const crate::data::ClearValue,
+        }
+    }
+    impl_aggregate! {
+        union ClearColorValue {
+                float_32: [c_float; 4],
+                int_32: [i32; 4],
+                uint_32: [u32; 4],
+        }
+    }
+    impl_aggregate! {
+        struct ClearDepthStencilValue {
+                depth: c_float,
+                stencil: u32,
+        }
+    }
+    impl_aggregate! {
+        union ClearValue {
+                color: crate::data::ClearColorValue,
+                depth_stencil: crate::data::ClearDepthStencilValue,
+        }
+    }
+    impl_aggregate! {
+        struct ClearAttachment {
+                aspect_mask: crate::data::ImageAspectFlags,
+                color_attachment: u32,
+                clear_value: crate::data::ClearValue,
+        }
+    }
+    impl_aggregate! {
+        struct AttachmentDescription {
+                flags: crate::data::AttachmentDescriptionFlags,
+                format: crate::data::Format,
+                samples: crate::data::SampleCountFlagBits,
+                load_op: crate::data::AttachmentLoadOp,
+                store_op: crate::data::AttachmentStoreOp,
+                stencil_load_op: crate::data::AttachmentLoadOp,
+                stencil_store_op: crate::data::AttachmentStoreOp,
+                initial_layout: crate::data::ImageLayout,
+                final_layout: crate::data::ImageLayout,
+        }
+    }
+    impl_aggregate! {
+        struct AttachmentReference {
+                attachment: u32,
+                layout: crate::data::ImageLayout,
+        }
+    }
+    impl_aggregate! {
+        struct SubpassDescription {
+                flags: crate::data::SubpassDescriptionFlags,
+                pipeline_bind_point: crate::data::PipelineBindPoint,
+                input_attachment_count: u32,
+                p_input_attachments: *const crate::data::AttachmentReference,
+                color_attachment_count: u32,
+                p_color_attachments: *const crate::data::AttachmentReference,
+                p_resolve_attachments: *const crate::data::AttachmentReference,
+                p_depth_stencil_attachment: *const crate::data::AttachmentReference,
+                preserve_attachment_count: u32,
+                p_preserve_attachments: *const u32,
+        }
+    }
+    impl_aggregate! {
+        struct SubpassDependency {
+                src_subpass: u32,
+                dst_subpass: u32,
+                src_stage_mask: crate::data::PipelineStageFlags,
+                dst_stage_mask: crate::data::PipelineStageFlags,
+                src_access_mask: crate::data::AccessFlags,
+                dst_access_mask: crate::data::AccessFlags,
+                dependency_flags: crate::data::DependencyFlags,
+        }
+    }
+    impl_aggregate! {
+        struct RenderPassCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::RENDER_PASS_CREATE_INFO,
+                p_next: *const c_void,
+                flags: crate::data::RenderPassCreateFlags,
+                attachment_count: u32,
+                p_attachments: *const crate::data::AttachmentDescription,
+                subpass_count: u32,
+                p_subpasses: *const crate::data::SubpassDescription,
+                dependency_count: u32,
+                p_dependencies: *const crate::data::SubpassDependency,
+        }
+    }
+    impl_aggregate! {
+        struct EventCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::EVENT_CREATE_INFO,
+                p_next: *const c_void,
+                flags: crate::data::EventCreateFlags,
+        }
+    }
+    impl_aggregate! {
+        struct FenceCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::FENCE_CREATE_INFO,
+                p_next: *const c_void,
+                flags: crate::data::FenceCreateFlags,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceFeatures {
+                robust_buffer_access: crate::data::Bool32,
+                full_draw_index_uint_32: crate::data::Bool32,
+                image_cube_array: crate::data::Bool32,
+                independent_blend: crate::data::Bool32,
+                geometry_shader: crate::data::Bool32,
+                tessellation_shader: crate::data::Bool32,
+                sample_rate_shading: crate::data::Bool32,
+                dual_src_blend: crate::data::Bool32,
+                logic_op: crate::data::Bool32,
+                multi_draw_indirect: crate::data::Bool32,
+                draw_indirect_first_instance: crate::data::Bool32,
+                depth_clamp: crate::data::Bool32,
+                depth_bias_clamp: crate::data::Bool32,
+                fill_mode_non_solid: crate::data::Bool32,
+                depth_bounds: crate::data::Bool32,
+                wide_lines: crate::data::Bool32,
+                large_points: crate::data::Bool32,
+                alpha_to_one: crate::data::Bool32,
+                multi_viewport: crate::data::Bool32,
+                sampler_anisotropy: crate::data::Bool32,
+                texture_compression_etc_2: crate::data::Bool32,
+                texture_compression_astc_ldr: crate::data::Bool32,
+                texture_compression_bc: crate::data::Bool32,
+                occlusion_query_precise: crate::data::Bool32,
+                pipeline_statistics_query: crate::data::Bool32,
+                vertex_pipeline_stores_and_atomics: crate::data::Bool32,
+                fragment_stores_and_atomics: crate::data::Bool32,
+                shader_tessellation_and_geometry_point_size: crate::data::Bool32,
+                shader_image_gather_extended: crate::data::Bool32,
+                shader_storage_image_extended_formats: crate::data::Bool32,
+                shader_storage_image_multisample: crate::data::Bool32,
+                shader_storage_image_read_without_format: crate::data::Bool32,
+                shader_storage_image_write_without_format: crate::data::Bool32,
+                shader_uniform_buffer_array_dynamic_indexing: crate::data::Bool32,
+                shader_sampled_image_array_dynamic_indexing: crate::data::Bool32,
+                shader_storage_buffer_array_dynamic_indexing: crate::data::Bool32,
+                shader_storage_image_array_dynamic_indexing: crate::data::Bool32,
+                shader_clip_distance: crate::data::Bool32,
+                shader_cull_distance: crate::data::Bool32,
+                shader_float_64: crate::data::Bool32,
+                shader_int_64: crate::data::Bool32,
+                shader_int_16: crate::data::Bool32,
+                shader_resource_residency: crate::data::Bool32,
+                shader_resource_min_lod: crate::data::Bool32,
+                sparse_binding: crate::data::Bool32,
+                sparse_residency_buffer: crate::data::Bool32,
+                sparse_residency_image_2d: crate::data::Bool32,
+                sparse_residency_image_3d: crate::data::Bool32,
+                sparse_residency_2_samples: crate::data::Bool32,
+                sparse_residency_4_samples: crate::data::Bool32,
+                sparse_residency_8_samples: crate::data::Bool32,
+                sparse_residency_16_samples: crate::data::Bool32,
+                sparse_residency_aliased: crate::data::Bool32,
+                variable_multisample_rate: crate::data::Bool32,
+                inherited_queries: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceSparseProperties {
+                residency_standard_2d_block_shape: crate::data::Bool32,
+                residency_standard_2d_multisample_block_shape: crate::data::Bool32,
+                residency_standard_3d_block_shape: crate::data::Bool32,
+                residency_aligned_mip_size: crate::data::Bool32,
+                residency_non_resident_strict: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceLimits {
+                max_image_dimension_1d: u32,
+                max_image_dimension_2d: u32,
+                max_image_dimension_3d: u32,
+                max_image_dimension_cube: u32,
+                max_image_array_layers: u32,
+                max_texel_buffer_elements: u32,
+                max_uniform_buffer_range: u32,
+                max_storage_buffer_range: u32,
+                max_push_constants_size: u32,
+                max_memory_allocation_count: u32,
+                max_sampler_allocation_count: u32,
+                buffer_image_granularity: crate::data::DeviceSize,
+                sparse_address_space_size: crate::data::DeviceSize,
+                max_bound_descriptor_sets: u32,
+                max_per_stage_descriptor_samplers: u32,
+                max_per_stage_descriptor_uniform_buffers: u32,
+                max_per_stage_descriptor_storage_buffers: u32,
+                max_per_stage_descriptor_sampled_images: u32,
+                max_per_stage_descriptor_storage_images: u32,
+                max_per_stage_descriptor_input_attachments: u32,
+                max_per_stage_resources: u32,
+                max_descriptor_set_samplers: u32,
+                max_descriptor_set_uniform_buffers: u32,
+                max_descriptor_set_uniform_buffers_dynamic: u32,
+                max_descriptor_set_storage_buffers: u32,
+                max_descriptor_set_storage_buffers_dynamic: u32,
+                max_descriptor_set_sampled_images: u32,
+                max_descriptor_set_storage_images: u32,
+                max_descriptor_set_input_attachments: u32,
+                max_vertex_input_attributes: u32,
+                max_vertex_input_bindings: u32,
+                max_vertex_input_attribute_offset: u32,
+                max_vertex_input_binding_stride: u32,
+                max_vertex_output_components: u32,
+                max_tessellation_generation_level: u32,
+                max_tessellation_patch_size: u32,
+                max_tessellation_control_per_vertex_input_components: u32,
+                max_tessellation_control_per_vertex_output_components: u32,
+                max_tessellation_control_per_patch_output_components: u32,
+                max_tessellation_control_total_output_components: u32,
+                max_tessellation_evaluation_input_components: u32,
+                max_tessellation_evaluation_output_components: u32,
+                max_geometry_shader_invocations: u32,
+                max_geometry_input_components: u32,
+                max_geometry_output_components: u32,
+                max_geometry_output_vertices: u32,
+                max_geometry_total_output_components: u32,
+                max_fragment_input_components: u32,
+                max_fragment_output_attachments: u32,
+                max_fragment_dual_src_attachments: u32,
+                max_fragment_combined_output_resources: u32,
+                max_compute_shared_memory_size: u32,
+                max_compute_work_group_count: [u32; 3],
+                max_compute_work_group_invocations: u32,
+                max_compute_work_group_size: [u32; 3],
+                sub_pixel_precision_bits: u32,
+                sub_texel_precision_bits: u32,
+                mipmap_precision_bits: u32,
+                max_draw_indexed_index_value: u32,
+                max_draw_indirect_count: u32,
+                max_sampler_lod_bias: c_float,
+                max_sampler_anisotropy: c_float,
+                max_viewports: u32,
+                max_viewport_dimensions: [u32; 2],
+                viewport_bounds_range: [c_float; 2],
+                viewport_sub_pixel_bits: u32,
+                min_memory_map_alignment: usize,
+                min_texel_buffer_offset_alignment: crate::data::DeviceSize,
+                min_uniform_buffer_offset_alignment: crate::data::DeviceSize,
+                min_storage_buffer_offset_alignment: crate::data::DeviceSize,
+                min_texel_offset: i32,
+                max_texel_offset: u32,
+                min_texel_gather_offset: i32,
+                max_texel_gather_offset: u32,
+                min_interpolation_offset: c_float,
+                max_interpolation_offset: c_float,
+                sub_pixel_interpolation_offset_bits: u32,
+                max_framebuffer_width: u32,
+                max_framebuffer_height: u32,
+                max_framebuffer_layers: u32,
+                framebuffer_color_sample_counts: crate::data::SampleCountFlags,
+                framebuffer_depth_sample_counts: crate::data::SampleCountFlags,
+                framebuffer_stencil_sample_counts: crate::data::SampleCountFlags,
+                framebuffer_no_attachments_sample_counts: crate::data::SampleCountFlags,
+                max_color_attachments: u32,
+                sampled_image_color_sample_counts: crate::data::SampleCountFlags,
+                sampled_image_integer_sample_counts: crate::data::SampleCountFlags,
+                sampled_image_depth_sample_counts: crate::data::SampleCountFlags,
+                sampled_image_stencil_sample_counts: crate::data::SampleCountFlags,
+                storage_image_sample_counts: crate::data::SampleCountFlags,
+                max_sample_mask_words: u32,
+                timestamp_compute_and_graphics: crate::data::Bool32,
+                timestamp_period: c_float,
+                max_clip_distances: u32,
+                max_cull_distances: u32,
+                max_combined_clip_and_cull_distances: u32,
+                discrete_queue_priorities: u32,
+                point_size_range: [c_float; 2],
+                line_width_range: [c_float; 2],
+                point_size_granularity: c_float,
+                line_width_granularity: c_float,
+                strict_lines: crate::data::Bool32,
+                standard_sample_locations: crate::data::Bool32,
+                optimal_buffer_copy_offset_alignment: crate::data::DeviceSize,
+                optimal_buffer_copy_row_pitch_alignment: crate::data::DeviceSize,
+                non_coherent_atom_size: crate::data::DeviceSize,
+        }
+    }
+    impl_aggregate! {
+        struct SemaphoreCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::SEMAPHORE_CREATE_INFO,
+                p_next: *const c_void,
+                flags: crate::data::SemaphoreCreateFlags,
+        }
+    }
+    impl_aggregate! {
+        struct QueryPoolCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::QUERY_POOL_CREATE_INFO,
+                p_next: *const c_void,
+                flags: crate::data::QueryPoolCreateFlags,
+                query_type: crate::data::QueryType,
+                query_count: u32,
+                pipeline_statistics: crate::data::QueryPipelineStatisticFlags,
+        }
+    }
+    impl_aggregate! {
+        struct FramebufferCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::FRAMEBUFFER_CREATE_INFO,
+                p_next: *const c_void,
+                flags: crate::data::FramebufferCreateFlags,
+                render_pass: crate::data::RenderPass,
+                attachment_count: u32,
+                p_attachments: *const crate::data::ImageView,
+                width: u32,
+                height: u32,
+                layers: u32,
+        }
+    }
+    impl_aggregate! {
+        struct DrawIndirectCommand {
+                vertex_count: u32,
+                instance_count: u32,
+                first_vertex: u32,
+                first_instance: u32,
+        }
+    }
+    impl_aggregate! {
+        struct DrawIndexedIndirectCommand {
+                index_count: u32,
+                instance_count: u32,
+                first_index: u32,
+                vertex_offset: i32,
+                first_instance: u32,
+        }
+    }
+    impl_aggregate! {
+        struct DispatchIndirectCommand {
+                x: u32,
+                y: u32,
+                z: u32,
+        }
+    }
+    impl_aggregate! {
+        struct MultiDrawInfoEXT {
+                first_vertex: u32,
+                vertex_count: u32,
+        }
+    }
+    impl_aggregate! {
+        struct MultiDrawIndexedInfoEXT {
+                first_index: u32,
+                index_count: u32,
+                vertex_offset: i32,
+        }
+    }
+    impl_aggregate! {
+        struct SubmitInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::SUBMIT_INFO,
+                p_next: *const c_void,
+                wait_semaphore_count: u32,
+                p_wait_semaphores: *const crate::data::Semaphore,
+                p_wait_dst_stage_mask: *const crate::data::PipelineStageFlags,
+                command_buffer_count: u32,
+                p_command_buffers: *const crate::data::CommandBuffer,
+                signal_semaphore_count: u32,
+                p_signal_semaphores: *const crate::data::Semaphore,
+        }
+    }
+    impl_aggregate! {
+        struct DisplayPropertiesKHR {
+                display: crate::data::DisplayKHR,
+                display_name: *const c_char,
+                physical_dimensions: crate::data::Extent2D,
+                physical_resolution: crate::data::Extent2D,
+                supported_transforms: crate::data::SurfaceTransformFlagsKHR,
+                plane_reorder_possible: crate::data::Bool32,
+                persistent_content: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct DisplayPlanePropertiesKHR {
+                current_display: crate::data::DisplayKHR,
+                current_stack_index: u32,
+        }
+    }
+    impl_aggregate! {
+        struct DisplayModeParametersKHR {
+                visible_region: crate::data::Extent2D,
+                refresh_rate: u32,
+        }
+    }
+    impl_aggregate! {
+        struct DisplayModePropertiesKHR {
+                display_mode: crate::data::DisplayModeKHR,
+                parameters: crate::data::DisplayModeParametersKHR,
+        }
+    }
+    impl_aggregate! {
+        struct DisplayModeCreateInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::DISPLAY_MODE_CREATE_INFO_KHR,
+                p_next: *const c_void,
+                flags: crate::data::DisplayModeCreateFlagsKHR,
+                parameters: crate::data::DisplayModeParametersKHR,
+        }
+    }
+    impl_aggregate! {
+        struct DisplayPlaneCapabilitiesKHR {
+                supported_alpha: crate::data::DisplayPlaneAlphaFlagsKHR,
+                min_src_position: crate::data::Offset2D,
+                max_src_position: crate::data::Offset2D,
+                min_src_extent: crate::data::Extent2D,
+                max_src_extent: crate::data::Extent2D,
+                min_dst_position: crate::data::Offset2D,
+                max_dst_position: crate::data::Offset2D,
+                min_dst_extent: crate::data::Extent2D,
+                max_dst_extent: crate::data::Extent2D,
+        }
+    }
+    impl_aggregate! {
+        struct DisplaySurfaceCreateInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::DISPLAY_SURFACE_CREATE_INFO_KHR,
+                p_next: *const c_void,
+                flags: crate::data::DisplaySurfaceCreateFlagsKHR,
+                display_mode: crate::data::DisplayModeKHR,
+                plane_index: u32,
+                plane_stack_index: u32,
+                transform: crate::data::SurfaceTransformFlagBitsKHR,
+                global_alpha: c_float,
+                alpha_mode: crate::data::DisplayPlaneAlphaFlagBitsKHR,
+                image_extent: crate::data::Extent2D,
+        }
+    }
+    impl_aggregate! {
+        struct DisplayPresentInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::DISPLAY_PRESENT_INFO_KHR,
+                p_next: *const c_void,
+                src_rect: crate::data::Rect2D,
+                dst_rect: crate::data::Rect2D,
+                persistent: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct SurfaceCapabilitiesKHR {
+                min_image_count: u32,
+                max_image_count: u32,
+                current_extent: crate::data::Extent2D,
+                min_image_extent: crate::data::Extent2D,
+                max_image_extent: crate::data::Extent2D,
+                max_image_array_layers: u32,
+                supported_transforms: crate::data::SurfaceTransformFlagsKHR,
+                current_transform: crate::data::SurfaceTransformFlagBitsKHR,
+                supported_composite_alpha: crate::data::CompositeAlphaFlagsKHR,
+                supported_usage_flags: crate::data::ImageUsageFlags,
+        }
+    }
+    impl_aggregate! {
+        struct AndroidSurfaceCreateInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::ANDROID_SURFACE_CREATE_INFO_KHR,
+                p_next: *const c_void,
+                flags: crate::data::AndroidSurfaceCreateFlagsKHR,
+                window: *mut ANativeWindow,
+        }
+    }
+    impl_aggregate! {
+        struct ViSurfaceCreateInfoNN {
+                s_type: crate::data::StructureType = crate::data::StructureType::VI_SURFACE_CREATE_INFO_NN,
+                p_next: *const c_void,
+                flags: crate::data::ViSurfaceCreateFlagsNN,
+                window: *mut c_void,
+        }
+    }
+    impl_aggregate! {
+        struct XlibSurfaceCreateInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::XLIB_SURFACE_CREATE_INFO_KHR,
+                p_next: *const c_void,
+                flags: crate::data::XlibSurfaceCreateFlagsKHR,
+                dpy: *mut Display,
+                window: Window,
+        }
+    }
+    impl_aggregate! {
+        struct SurfaceFormatKHR {
+                format: crate::data::Format,
+                color_space: crate::data::ColorSpaceKHR,
+        }
+    }
+    impl_aggregate! {
+        struct SwapchainCreateInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::SWAPCHAIN_CREATE_INFO_KHR,
+                p_next: *const c_void,
+                flags: crate::data::SwapchainCreateFlagsKHR,
+                surface: crate::data::SurfaceKHR,
+                min_image_count: u32,
+                image_format: crate::data::Format,
+                image_color_space: crate::data::ColorSpaceKHR,
+                image_extent: crate::data::Extent2D,
+                image_array_layers: u32,
+                image_usage: crate::data::ImageUsageFlags,
+                image_sharing_mode: crate::data::SharingMode,
+                queue_family_index_count: u32,
+                p_queue_family_indices: *const u32,
+                pre_transform: crate::data::SurfaceTransformFlagBitsKHR,
+                composite_alpha: crate::data::CompositeAlphaFlagBitsKHR,
+                present_mode: crate::data::PresentModeKHR,
+                clipped: crate::data::Bool32,
+                old_swapchain: crate::data::SwapchainKHR,
+        }
+    }
+    impl_aggregate! {
+        struct PresentInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::PRESENT_INFO_KHR,
+                p_next: *const c_void,
+                wait_semaphore_count: u32,
+                p_wait_semaphores: *const crate::data::Semaphore,
+                swapchain_count: u32,
+                p_swapchains: *const crate::data::SwapchainKHR,
+                p_image_indices: *const u32,
+                p_results: *mut crate::data::Result,
+        }
+    }
+    impl_aggregate! {
+        struct DebugReportCallbackCreateInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT,
+                p_next: *const c_void,
+                flags: crate::data::DebugReportFlagsEXT,
+                pfn_callback: crate::pfn::DebugReportCallbackEXT,
+                p_user_data: *mut c_void,
+        }
+    }
+    impl_aggregate! {
+        struct ValidationFlagsEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::VALIDATION_FLAGS_EXT,
+                p_next: *const c_void,
+                disabled_validation_check_count: u32,
+                p_disabled_validation_checks: *const crate::data::ValidationCheckEXT,
+        }
+    }
+    impl_aggregate! {
+        struct ValidationFeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::VALIDATION_FEATURES_EXT,
+                p_next: *const c_void,
+                enabled_validation_feature_count: u32,
+                p_enabled_validation_features: *const crate::data::ValidationFeatureEnableEXT,
+                disabled_validation_feature_count: u32,
+                p_disabled_validation_features: *const crate::data::ValidationFeatureDisableEXT,
+        }
+    }
+    impl_aggregate! {
+        struct PipelineRasterizationStateRasterizationOrderAMD {
+                s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_RASTERIZATION_STATE_RASTERIZATION_ORDER_AMD,
+                p_next: *const c_void,
+                rasterization_order: crate::data::RasterizationOrderAMD,
+        }
+    }
+    impl_aggregate! {
+        struct DebugMarkerObjectNameInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::DEBUG_MARKER_OBJECT_NAME_INFO_EXT,
+                p_next: *const c_void,
+                object_type: crate::data::DebugReportObjectTypeEXT,
+                object: u64,
+                p_object_name: *const c_char,
+        }
+    }
+    impl_aggregate! {
+        struct DebugMarkerObjectTagInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::DEBUG_MARKER_OBJECT_TAG_INFO_EXT,
+                p_next: *const c_void,
+                object_type: crate::data::DebugReportObjectTypeEXT,
+                object: u64,
+                tag_name: u64,
+                tag_size: usize,
+                p_tag: *const c_void,
+        }
+    }
+    impl_aggregate! {
+        struct DebugMarkerMarkerInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::DEBUG_MARKER_MARKER_INFO_EXT,
+                p_next: *const c_void,
+                p_marker_name: *const c_char,
+                color: [c_float; 4],
+        }
+    }
+    impl_aggregate! {
+        struct DedicatedAllocationImageCreateInfoNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::DEDICATED_ALLOCATION_IMAGE_CREATE_INFO_NV,
+                p_next: *const c_void,
+                dedicated_allocation: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct DedicatedAllocationBufferCreateInfoNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::DEDICATED_ALLOCATION_BUFFER_CREATE_INFO_NV,
+                p_next: *const c_void,
+                dedicated_allocation: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct DedicatedAllocationMemoryAllocateInfoNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::DEDICATED_ALLOCATION_MEMORY_ALLOCATE_INFO_NV,
+                p_next: *const c_void,
+                image: crate::data::Image,
+                buffer: crate::data::Buffer,
+        }
+    }
+    impl_aggregate! {
+        struct ExternalImageFormatPropertiesNV {
+                image_format_properties: crate::data::ImageFormatProperties,
+                external_memory_features: crate::data::ExternalMemoryFeatureFlagsNV,
+                export_from_imported_handle_types: crate::data::ExternalMemoryHandleTypeFlagsNV,
+                compatible_handle_types: crate::data::ExternalMemoryHandleTypeFlagsNV,
+        }
+    }
+    impl_aggregate! {
+        struct ExternalMemoryImageCreateInfoNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::EXTERNAL_MEMORY_IMAGE_CREATE_INFO_NV,
+                p_next: *const c_void,
+                handle_types: crate::data::ExternalMemoryHandleTypeFlagsNV,
+        }
+    }
+    impl_aggregate! {
+        struct ExportMemoryAllocateInfoNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::EXPORT_MEMORY_ALLOCATE_INFO_NV,
+                p_next: *const c_void,
+                handle_types: crate::data::ExternalMemoryHandleTypeFlagsNV,
+        }
+    }
+    impl_aggregate! {
+        struct Win32KeyedMutexAcquireReleaseInfoNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::WIN32_KEYED_MUTEX_ACQUIRE_RELEASE_INFO_NV,
+                p_next: *const c_void,
+                acquire_count: u32,
+                p_acquire_syncs: *const crate::data::DeviceMemory,
+                p_acquire_keys: *const u64,
+                p_acquire_timeout_milliseconds: *const u32,
+                release_count: u32,
+                p_release_syncs: *const crate::data::DeviceMemory,
+                p_release_keys: *const u64,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceDeviceGeneratedCommandsFeaturesNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_DEVICE_GENERATED_COMMANDS_FEATURES_NV,
+                p_next: *mut c_void,
+                device_generated_commands: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct DevicePrivateDataCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_PRIVATE_DATA_CREATE_INFO,
+                p_next: *const c_void,
+                private_data_slot_request_count: u32,
+        }
+    }
+    impl_aggregate! {
+        struct PrivateDataSlotCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::PRIVATE_DATA_SLOT_CREATE_INFO,
+                p_next: *const c_void,
+                flags: crate::data::PrivateDataSlotCreateFlags,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDevicePrivateDataFeatures {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PRIVATE_DATA_FEATURES,
+                p_next: *mut c_void,
+                private_data: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceDeviceGeneratedCommandsPropertiesNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_DEVICE_GENERATED_COMMANDS_PROPERTIES_NV,
+                p_next: *mut c_void,
+                max_graphics_shader_group_count: u32,
+                max_indirect_sequence_count: u32,
+                max_indirect_commands_token_count: u32,
+                max_indirect_commands_stream_count: u32,
+                max_indirect_commands_token_offset: u32,
+                max_indirect_commands_stream_stride: u32,
+                min_sequences_count_buffer_offset_alignment: u32,
+                min_sequences_index_buffer_offset_alignment: u32,
+                min_indirect_commands_buffer_offset_alignment: u32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceMultiDrawPropertiesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_MULTI_DRAW_PROPERTIES_EXT,
+                p_next: *mut c_void,
+                max_multi_draw_count: u32,
+        }
+    }
+    impl_aggregate! {
+        struct GraphicsShaderGroupCreateInfoNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::GRAPHICS_SHADER_GROUP_CREATE_INFO_NV,
+                p_next: *const c_void,
+                stage_count: u32,
+                p_stages: *const crate::data::PipelineShaderStageCreateInfo,
+                p_vertex_input_state: *const crate::data::PipelineVertexInputStateCreateInfo,
+                p_tessellation_state: *const crate::data::PipelineTessellationStateCreateInfo,
+        }
+    }
+    impl_aggregate! {
+        struct GraphicsPipelineShaderGroupsCreateInfoNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::GRAPHICS_PIPELINE_SHADER_GROUPS_CREATE_INFO_NV,
+                p_next: *const c_void,
+                group_count: u32,
+                p_groups: *const crate::data::GraphicsShaderGroupCreateInfoNV,
+                pipeline_count: u32,
+                p_pipelines: *const crate::data::Pipeline,
+        }
+    }
+    impl_aggregate! {
+        struct BindShaderGroupIndirectCommandNV {
+                group_index: u32,
+        }
+    }
+    impl_aggregate! {
+        struct BindIndexBufferIndirectCommandNV {
+                buffer_address: crate::data::DeviceAddress,
+                size: u32,
+                index_type: crate::data::IndexType,
+        }
+    }
+    impl_aggregate! {
+        struct BindVertexBufferIndirectCommandNV {
+                buffer_address: crate::data::DeviceAddress,
+                size: u32,
+                stride: u32,
+        }
+    }
+    impl_aggregate! {
+        struct SetStateFlagsIndirectCommandNV {
+                data: u32,
+        }
+    }
+    impl_aggregate! {
+        struct IndirectCommandsStreamNV {
+                buffer: crate::data::Buffer,
+                offset: crate::data::DeviceSize,
+        }
+    }
+    impl_aggregate! {
+        struct IndirectCommandsLayoutTokenNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::INDIRECT_COMMANDS_LAYOUT_TOKEN_NV,
+                p_next: *const c_void,
+                token_type: crate::data::IndirectCommandsTokenTypeNV,
+                stream: u32,
+                offset: u32,
+                vertex_binding_unit: u32,
+                vertex_dynamic_stride: crate::data::Bool32,
+                pushconstant_pipeline_layout: crate::data::PipelineLayout,
+                pushconstant_shader_stage_flags: crate::data::ShaderStageFlags,
+                pushconstant_offset: u32,
+                pushconstant_size: u32,
+                indirect_state_flags: crate::data::IndirectStateFlagsNV,
+                index_type_count: u32,
+                p_index_types: *const crate::data::IndexType,
+                p_index_type_values: *const u32,
+        }
+    }
+    impl_aggregate! {
+        struct IndirectCommandsLayoutCreateInfoNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::INDIRECT_COMMANDS_LAYOUT_CREATE_INFO_NV,
+                p_next: *const c_void,
+                flags: crate::data::IndirectCommandsLayoutUsageFlagsNV,
+                pipeline_bind_point: crate::data::PipelineBindPoint,
+                token_count: u32,
+                p_tokens: *const crate::data::IndirectCommandsLayoutTokenNV,
+                stream_count: u32,
+                p_stream_strides: *const u32,
+        }
+    }
+    impl_aggregate! {
+        struct GeneratedCommandsInfoNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::GENERATED_COMMANDS_INFO_NV,
+                p_next: *const c_void,
+                pipeline_bind_point: crate::data::PipelineBindPoint,
+                pipeline: crate::data::Pipeline,
+                indirect_commands_layout: crate::data::IndirectCommandsLayoutNV,
+                stream_count: u32,
+                p_streams: *const crate::data::IndirectCommandsStreamNV,
+                sequences_count: u32,
+                preprocess_buffer: crate::data::Buffer,
+                preprocess_offset: crate::data::DeviceSize,
+                preprocess_size: crate::data::DeviceSize,
+                sequences_count_buffer: crate::data::Buffer,
+                sequences_count_offset: crate::data::DeviceSize,
+                sequences_index_buffer: crate::data::Buffer,
+                sequences_index_offset: crate::data::DeviceSize,
+        }
+    }
+    impl_aggregate! {
+        struct GeneratedCommandsMemoryRequirementsInfoNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::GENERATED_COMMANDS_MEMORY_REQUIREMENTS_INFO_NV,
+                p_next: *const c_void,
+                pipeline_bind_point: crate::data::PipelineBindPoint,
+                pipeline: crate::data::Pipeline,
+                indirect_commands_layout: crate::data::IndirectCommandsLayoutNV,
+                max_sequences_count: u32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceFeatures2 {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_FEATURES_2,
+                p_next: *mut c_void,
+                features: crate::data::PhysicalDeviceFeatures,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceProperties2 {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PROPERTIES_2,
+                p_next: *mut c_void,
+                properties: crate::data::PhysicalDeviceProperties,
+        }
+    }
+    impl_aggregate! {
+        struct FormatProperties2 {
+                s_type: crate::data::StructureType = crate::data::StructureType::FORMAT_PROPERTIES_2,
+                p_next: *mut c_void,
+                format_properties: crate::data::FormatProperties,
+        }
+    }
+    impl_aggregate! {
+        struct ImageFormatProperties2 {
+                s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_FORMAT_PROPERTIES_2,
+                p_next: *mut c_void,
+                image_format_properties: crate::data::ImageFormatProperties,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceImageFormatInfo2 {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_IMAGE_FORMAT_INFO_2,
+                p_next: *const c_void,
+                format: crate::data::Format,
+                ty: crate::data::ImageType,
+                tiling: crate::data::ImageTiling,
+                usage: crate::data::ImageUsageFlags,
+                flags: crate::data::ImageCreateFlags,
+        }
+    }
+    impl_aggregate! {
+        struct QueueFamilyProperties2 {
+                s_type: crate::data::StructureType = crate::data::StructureType::QUEUE_FAMILY_PROPERTIES_2,
+                p_next: *mut c_void,
+                queue_family_properties: crate::data::QueueFamilyProperties,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceMemoryProperties2 {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_MEMORY_PROPERTIES_2,
+                p_next: *mut c_void,
+                memory_properties: crate::data::PhysicalDeviceMemoryProperties,
+        }
+    }
+    impl_aggregate! {
+        struct SparseImageFormatProperties2 {
+                s_type: crate::data::StructureType = crate::data::StructureType::SPARSE_IMAGE_FORMAT_PROPERTIES_2,
+                p_next: *mut c_void,
+                properties: crate::data::SparseImageFormatProperties,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceSparseImageFormatInfo2 {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SPARSE_IMAGE_FORMAT_INFO_2,
+                p_next: *const c_void,
+                format: crate::data::Format,
+                ty: crate::data::ImageType,
+                samples: crate::data::SampleCountFlagBits,
+                usage: crate::data::ImageUsageFlags,
+                tiling: crate::data::ImageTiling,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDevicePushDescriptorPropertiesKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PUSH_DESCRIPTOR_PROPERTIES_KHR,
+                p_next: *mut c_void,
+                max_push_descriptors: u32,
+        }
+    }
+    impl_aggregate! {
+        struct ConformanceVersion {
+                major: u8,
+                minor: u8,
+                subminor: u8,
+                patch: u8,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceDriverProperties {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_DRIVER_PROPERTIES,
+                p_next: *mut c_void,
+                driver_id: crate::data::DriverId,
+                driver_name: [c_char; 256],
+                driver_info: [c_char; 256],
+                conformance_version: crate::data::ConformanceVersion,
+        }
+    }
+    impl_aggregate! {
+        struct PresentRegionsKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::PRESENT_REGIONS_KHR,
+                p_next: *const c_void,
+                swapchain_count: u32,
+                p_regions: *const crate::data::PresentRegionKHR,
+        }
+    }
+    impl_aggregate! {
+        struct PresentRegionKHR {
+                rectangle_count: u32,
+                p_rectangles: *const crate::data::RectLayerKHR,
+        }
+    }
+    impl_aggregate! {
+        struct RectLayerKHR {
+                offset: crate::data::Offset2D,
+                extent: crate::data::Extent2D,
+                layer: u32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceVariablePointersFeatures {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_VARIABLE_POINTERS_FEATURES,
+                p_next: *mut c_void,
+                variable_pointers_storage_buffer: crate::data::Bool32,
+                variable_pointers: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct ExternalMemoryProperties {
+                external_memory_features: crate::data::ExternalMemoryFeatureFlags,
+                export_from_imported_handle_types: crate::data::ExternalMemoryHandleTypeFlags,
+                compatible_handle_types: crate::data::ExternalMemoryHandleTypeFlags,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceExternalImageFormatInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_EXTERNAL_IMAGE_FORMAT_INFO,
+                p_next: *const c_void,
+                handle_type: crate::data::ExternalMemoryHandleTypeFlagBits,
+        }
+    }
+    impl_aggregate! {
+        struct ExternalImageFormatProperties {
+                s_type: crate::data::StructureType = crate::data::StructureType::EXTERNAL_IMAGE_FORMAT_PROPERTIES,
+                p_next: *mut c_void,
+                external_memory_properties: crate::data::ExternalMemoryProperties,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceExternalBufferInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_EXTERNAL_BUFFER_INFO,
+                p_next: *const c_void,
+                flags: crate::data::BufferCreateFlags,
+                usage: crate::data::BufferUsageFlags,
+                handle_type: crate::data::ExternalMemoryHandleTypeFlagBits,
+        }
+    }
+    impl_aggregate! {
+        struct ExternalBufferProperties {
+                s_type: crate::data::StructureType = crate::data::StructureType::EXTERNAL_BUFFER_PROPERTIES,
+                p_next: *mut c_void,
+                external_memory_properties: crate::data::ExternalMemoryProperties,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceIDProperties {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_ID_PROPERTIES,
+                p_next: *mut c_void,
+                device_uuid: [u8; 16],
+                driver_uuid: [u8; 16],
+                device_luid: [u8; 8],
+                device_node_mask: u32,
+                device_luid_valid: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct ExternalMemoryImageCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::EXTERNAL_MEMORY_IMAGE_CREATE_INFO,
+                p_next: *const c_void,
+                handle_types: crate::data::ExternalMemoryHandleTypeFlags,
+        }
+    }
+    impl_aggregate! {
+        struct ExternalMemoryBufferCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::EXTERNAL_MEMORY_BUFFER_CREATE_INFO,
+                p_next: *const c_void,
+                handle_types: crate::data::ExternalMemoryHandleTypeFlags,
+        }
+    }
+    impl_aggregate! {
+        struct ExportMemoryAllocateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::EXPORT_MEMORY_ALLOCATE_INFO,
+                p_next: *const c_void,
+                handle_types: crate::data::ExternalMemoryHandleTypeFlags,
+        }
+    }
+    impl_aggregate! {
+        struct MemoryZirconHandlePropertiesFUCHSIA {
+                s_type: crate::data::StructureType = crate::data::StructureType::MEMORY_ZIRCON_HANDLE_PROPERTIES_FUCHSIA,
+                p_next: *mut c_void,
+                memory_type_bits: u32,
+        }
+    }
+    impl_aggregate! {
+        struct MemoryGetZirconHandleInfoFUCHSIA {
+                s_type: crate::data::StructureType = crate::data::StructureType::MEMORY_GET_ZIRCON_HANDLE_INFO_FUCHSIA,
+                p_next: *const c_void,
+                memory: crate::data::DeviceMemory,
+                handle_type: crate::data::ExternalMemoryHandleTypeFlagBits,
+        }
+    }
+    impl_aggregate! {
+        struct MemoryWin32HandlePropertiesKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::MEMORY_WIN32_HANDLE_PROPERTIES_KHR,
+                p_next: *mut c_void,
+                memory_type_bits: u32,
+        }
+    }
+    impl_aggregate! {
+        struct MemoryGetWin32HandleInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::MEMORY_GET_WIN32_HANDLE_INFO_KHR,
+                p_next: *const c_void,
+                memory: crate::data::DeviceMemory,
+                handle_type: crate::data::ExternalMemoryHandleTypeFlagBits,
+        }
+    }
+    impl_aggregate! {
+        struct ImportMemoryFdInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::IMPORT_MEMORY_FD_INFO_KHR,
+                p_next: *const c_void,
+                handle_type: crate::data::ExternalMemoryHandleTypeFlagBits,
+                fd: c_int,
+        }
+    }
+    impl_aggregate! {
+        struct MemoryFdPropertiesKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::MEMORY_FD_PROPERTIES_KHR,
+                p_next: *mut c_void,
+                memory_type_bits: u32,
+        }
+    }
+    impl_aggregate! {
+        struct MemoryGetFdInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::MEMORY_GET_FD_INFO_KHR,
+                p_next: *const c_void,
+                memory: crate::data::DeviceMemory,
+                handle_type: crate::data::ExternalMemoryHandleTypeFlagBits,
+        }
+    }
+    impl_aggregate! {
+        struct Win32KeyedMutexAcquireReleaseInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::WIN32_KEYED_MUTEX_ACQUIRE_RELEASE_INFO_KHR,
+                p_next: *const c_void,
+                acquire_count: u32,
+                p_acquire_syncs: *const crate::data::DeviceMemory,
+                p_acquire_keys: *const u64,
+                p_acquire_timeouts: *const u32,
+                release_count: u32,
+                p_release_syncs: *const crate::data::DeviceMemory,
+                p_release_keys: *const u64,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceExternalSemaphoreInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_EXTERNAL_SEMAPHORE_INFO,
+                p_next: *const c_void,
+                handle_type: crate::data::ExternalSemaphoreHandleTypeFlagBits,
+        }
+    }
+    impl_aggregate! {
+        struct ExternalSemaphoreProperties {
+                s_type: crate::data::StructureType = crate::data::StructureType::EXTERNAL_SEMAPHORE_PROPERTIES,
+                p_next: *mut c_void,
+                export_from_imported_handle_types: crate::data::ExternalSemaphoreHandleTypeFlags,
+                compatible_handle_types: crate::data::ExternalSemaphoreHandleTypeFlags,
+                external_semaphore_features: crate::data::ExternalSemaphoreFeatureFlags,
+        }
+    }
+    impl_aggregate! {
+        struct ExportSemaphoreCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::EXPORT_SEMAPHORE_CREATE_INFO,
+                p_next: *const c_void,
+                handle_types: crate::data::ExternalSemaphoreHandleTypeFlags,
+        }
+    }
+    impl_aggregate! {
+        struct D3D12FenceSubmitInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::D3D12_FENCE_SUBMIT_INFO_KHR,
+                p_next: *const c_void,
+                wait_semaphore_values_count: u32,
+                p_wait_semaphore_values: *const u64,
+                signal_semaphore_values_count: u32,
+                p_signal_semaphore_values: *const u64,
+        }
+    }
+    impl_aggregate! {
+        struct SemaphoreGetWin32HandleInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::SEMAPHORE_GET_WIN32_HANDLE_INFO_KHR,
+                p_next: *const c_void,
+                semaphore: crate::data::Semaphore,
+                handle_type: crate::data::ExternalSemaphoreHandleTypeFlagBits,
+        }
+    }
+    impl_aggregate! {
+        struct ImportSemaphoreFdInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::IMPORT_SEMAPHORE_FD_INFO_KHR,
+                p_next: *const c_void,
+                semaphore: crate::data::Semaphore,
+                flags: crate::data::SemaphoreImportFlags,
+                handle_type: crate::data::ExternalSemaphoreHandleTypeFlagBits,
+                fd: c_int,
+        }
+    }
+    impl_aggregate! {
+        struct SemaphoreGetFdInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::SEMAPHORE_GET_FD_INFO_KHR,
+                p_next: *const c_void,
+                semaphore: crate::data::Semaphore,
+                handle_type: crate::data::ExternalSemaphoreHandleTypeFlagBits,
+        }
+    }
+    impl_aggregate! {
+        struct SemaphoreGetZirconHandleInfoFUCHSIA {
+                s_type: crate::data::StructureType = crate::data::StructureType::SEMAPHORE_GET_ZIRCON_HANDLE_INFO_FUCHSIA,
+                p_next: *const c_void,
+                semaphore: crate::data::Semaphore,
+                handle_type: crate::data::ExternalSemaphoreHandleTypeFlagBits,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceExternalFenceInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_EXTERNAL_FENCE_INFO,
+                p_next: *const c_void,
+                handle_type: crate::data::ExternalFenceHandleTypeFlagBits,
+        }
+    }
+    impl_aggregate! {
+        struct ExternalFenceProperties {
+                s_type: crate::data::StructureType = crate::data::StructureType::EXTERNAL_FENCE_PROPERTIES,
+                p_next: *mut c_void,
+                export_from_imported_handle_types: crate::data::ExternalFenceHandleTypeFlags,
+                compatible_handle_types: crate::data::ExternalFenceHandleTypeFlags,
+                external_fence_features: crate::data::ExternalFenceFeatureFlags,
+        }
+    }
+    impl_aggregate! {
+        struct ExportFenceCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::EXPORT_FENCE_CREATE_INFO,
+                p_next: *const c_void,
+                handle_types: crate::data::ExternalFenceHandleTypeFlags,
+        }
+    }
+    impl_aggregate! {
+        struct FenceGetWin32HandleInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::FENCE_GET_WIN32_HANDLE_INFO_KHR,
+                p_next: *const c_void,
+                fence: crate::data::Fence,
+                handle_type: crate::data::ExternalFenceHandleTypeFlagBits,
+        }
+    }
+    impl_aggregate! {
+        struct ImportFenceFdInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::IMPORT_FENCE_FD_INFO_KHR,
+                p_next: *const c_void,
+                fence: crate::data::Fence,
+                flags: crate::data::FenceImportFlags,
+                handle_type: crate::data::ExternalFenceHandleTypeFlagBits,
+                fd: c_int,
+        }
+    }
+    impl_aggregate! {
+        struct FenceGetFdInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::FENCE_GET_FD_INFO_KHR,
+                p_next: *const c_void,
+                fence: crate::data::Fence,
+                handle_type: crate::data::ExternalFenceHandleTypeFlagBits,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceMultiviewFeatures {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_MULTIVIEW_FEATURES,
+                p_next: *mut c_void,
+                multiview: crate::data::Bool32,
+                multiview_geometry_shader: crate::data::Bool32,
+                multiview_tessellation_shader: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceMultiviewProperties {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_MULTIVIEW_PROPERTIES,
+                p_next: *mut c_void,
+                max_multiview_view_count: u32,
+                max_multiview_instance_index: u32,
+        }
+    }
+    impl_aggregate! {
+        struct RenderPassMultiviewCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::RENDER_PASS_MULTIVIEW_CREATE_INFO,
+                p_next: *const c_void,
+                subpass_count: u32,
+                p_view_masks: *const u32,
+                dependency_count: u32,
+                p_view_offsets: *const i32,
+                correlation_mask_count: u32,
+                p_correlation_masks: *const u32,
+        }
+    }
+    impl_aggregate! {
+        struct SurfaceCapabilities2EXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::SURFACE_CAPABILITIES_2_EXT,
+                p_next: *mut c_void,
+                min_image_count: u32,
+                max_image_count: u32,
+                current_extent: crate::data::Extent2D,
+                min_image_extent: crate::data::Extent2D,
+                max_image_extent: crate::data::Extent2D,
+                max_image_array_layers: u32,
+                supported_transforms: crate::data::SurfaceTransformFlagsKHR,
+                current_transform: crate::data::SurfaceTransformFlagBitsKHR,
+                supported_composite_alpha: crate::data::CompositeAlphaFlagsKHR,
+                supported_usage_flags: crate::data::ImageUsageFlags,
+                supported_surface_counters: crate::data::SurfaceCounterFlagsEXT,
+        }
+    }
+    impl_aggregate! {
+        struct DisplayPowerInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::DISPLAY_POWER_INFO_EXT,
+                p_next: *const c_void,
+                power_state: crate::data::DisplayPowerStateEXT,
+        }
+    }
+    impl_aggregate! {
+        struct DeviceEventInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_EVENT_INFO_EXT,
+                p_next: *const c_void,
+                device_event: crate::data::DeviceEventTypeEXT,
+        }
+    }
+    impl_aggregate! {
+        struct DisplayEventInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::DISPLAY_EVENT_INFO_EXT,
+                p_next: *const c_void,
+                display_event: crate::data::DisplayEventTypeEXT,
+        }
+    }
+    impl_aggregate! {
+        struct SwapchainCounterCreateInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::SWAPCHAIN_COUNTER_CREATE_INFO_EXT,
+                p_next: *const c_void,
+                surface_counters: crate::data::SurfaceCounterFlagsEXT,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceGroupProperties {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_GROUP_PROPERTIES,
+                p_next: *mut c_void,
+                physical_device_count: u32,
+                physical_devices: [crate::data::PhysicalDevice; 32],
+                subset_allocation: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct MemoryAllocateFlagsInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::MEMORY_ALLOCATE_FLAGS_INFO,
+                p_next: *const c_void,
+                flags: crate::data::MemoryAllocateFlags,
+                device_mask: u32,
+        }
+    }
+    impl_aggregate! {
+        struct BindBufferMemoryInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::BIND_BUFFER_MEMORY_INFO,
+                p_next: *const c_void,
+                buffer: crate::data::Buffer,
+                memory: crate::data::DeviceMemory,
+                memory_offset: crate::data::DeviceSize,
+        }
+    }
+    impl_aggregate! {
+        struct BindBufferMemoryDeviceGroupInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::BIND_BUFFER_MEMORY_DEVICE_GROUP_INFO,
+                p_next: *const c_void,
+                device_index_count: u32,
+                p_device_indices: *const u32,
+        }
+    }
+    impl_aggregate! {
+        struct BindImageMemoryInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::BIND_IMAGE_MEMORY_INFO,
+                p_next: *const c_void,
+                image: crate::data::Image,
+                memory: crate::data::DeviceMemory,
+                memory_offset: crate::data::DeviceSize,
+        }
+    }
+    impl_aggregate! {
+        struct BindImageMemoryDeviceGroupInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::BIND_IMAGE_MEMORY_DEVICE_GROUP_INFO,
+                p_next: *const c_void,
+                device_index_count: u32,
+                p_device_indices: *const u32,
+                split_instance_bind_region_count: u32,
+                p_split_instance_bind_regions: *const crate::data::Rect2D,
+        }
+    }
+    impl_aggregate! {
+        struct DeviceGroupRenderPassBeginInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_GROUP_RENDER_PASS_BEGIN_INFO,
+                p_next: *const c_void,
+                device_mask: u32,
+                device_render_area_count: u32,
+                p_device_render_areas: *const crate::data::Rect2D,
+        }
+    }
+    impl_aggregate! {
+        struct DeviceGroupCommandBufferBeginInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_GROUP_COMMAND_BUFFER_BEGIN_INFO,
+                p_next: *const c_void,
+                device_mask: u32,
+        }
+    }
+    impl_aggregate! {
+        struct DeviceGroupSubmitInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_GROUP_SUBMIT_INFO,
+                p_next: *const c_void,
+                wait_semaphore_count: u32,
+                p_wait_semaphore_device_indices: *const u32,
+                command_buffer_count: u32,
+                p_command_buffer_device_masks: *const u32,
+                signal_semaphore_count: u32,
+                p_signal_semaphore_device_indices: *const u32,
+        }
+    }
+    impl_aggregate! {
+        struct DeviceGroupBindSparseInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_GROUP_BIND_SPARSE_INFO,
+                p_next: *const c_void,
+                resource_device_index: u32,
+                memory_device_index: u32,
+        }
+    }
+    impl_aggregate! {
+        struct DeviceGroupPresentCapabilitiesKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_GROUP_PRESENT_CAPABILITIES_KHR,
+                p_next: *mut c_void,
+                present_mask: [u32; 32],
+                modes: crate::data::DeviceGroupPresentModeFlagsKHR,
+        }
+    }
+    impl_aggregate! {
+        struct ImageSwapchainCreateInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_SWAPCHAIN_CREATE_INFO_KHR,
+                p_next: *const c_void,
+                swapchain: crate::data::SwapchainKHR,
+        }
+    }
+    impl_aggregate! {
+        struct BindImageMemorySwapchainInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::BIND_IMAGE_MEMORY_SWAPCHAIN_INFO_KHR,
+                p_next: *const c_void,
+                swapchain: crate::data::SwapchainKHR,
+                image_index: u32,
+        }
+    }
+    impl_aggregate! {
+        struct AcquireNextImageInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::ACQUIRE_NEXT_IMAGE_INFO_KHR,
+                p_next: *const c_void,
+                swapchain: crate::data::SwapchainKHR,
+                timeout: u64,
+                semaphore: crate::data::Semaphore,
+                fence: crate::data::Fence,
+                device_mask: u32,
+        }
+    }
+    impl_aggregate! {
+        struct DeviceGroupPresentInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_GROUP_PRESENT_INFO_KHR,
+                p_next: *const c_void,
+                swapchain_count: u32,
+                p_device_masks: *const u32,
+                mode: crate::data::DeviceGroupPresentModeFlagBitsKHR,
+        }
+    }
+    impl_aggregate! {
+        struct DeviceGroupDeviceCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_GROUP_DEVICE_CREATE_INFO,
+                p_next: *const c_void,
+                physical_device_count: u32,
+                p_physical_devices: *const crate::data::PhysicalDevice,
+        }
+    }
+    impl_aggregate! {
+        struct DeviceGroupSwapchainCreateInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_GROUP_SWAPCHAIN_CREATE_INFO_KHR,
+                p_next: *const c_void,
+                modes: crate::data::DeviceGroupPresentModeFlagsKHR,
+        }
+    }
+    impl_aggregate! {
+        struct DescriptorUpdateTemplateEntry {
+                dst_binding: u32,
+                dst_array_element: u32,
+                descriptor_count: u32,
+                descriptor_type: crate::data::DescriptorType,
+                offset: usize,
+                stride: usize,
+        }
+    }
+    impl_aggregate! {
+        struct DescriptorUpdateTemplateCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::DESCRIPTOR_UPDATE_TEMPLATE_CREATE_INFO,
+                p_next: *const c_void,
+                flags: crate::data::DescriptorUpdateTemplateCreateFlags,
+                descriptor_update_entry_count: u32,
+                p_descriptor_update_entries: *const crate::data::DescriptorUpdateTemplateEntry,
+                template_type: crate::data::DescriptorUpdateTemplateType,
+                descriptor_set_layout: crate::data::DescriptorSetLayout,
+                pipeline_bind_point: crate::data::PipelineBindPoint,
+                pipeline_layout: crate::data::PipelineLayout,
+                set: u32,
+        }
+    }
+    impl_aggregate! {
+        struct XYColorEXT {
+                x: c_float,
+                y: c_float,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDevicePresentIdFeaturesKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PRESENT_ID_FEATURES_KHR,
+                p_next: *mut c_void,
+                present_id: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PresentIdKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::PRESENT_ID_KHR,
+                p_next: *const c_void,
+                swapchain_count: u32,
+                p_present_ids: *const u64,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDevicePresentWaitFeaturesKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PRESENT_WAIT_FEATURES_KHR,
+                p_next: *mut c_void,
+                present_wait: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct HdrMetadataEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::HDR_METADATA_EXT,
+                p_next: *const c_void,
+                display_primary_red: crate::data::XYColorEXT,
+                display_primary_green: crate::data::XYColorEXT,
+                display_primary_blue: crate::data::XYColorEXT,
+                white_point: crate::data::XYColorEXT,
+                max_luminance: c_float,
+                min_luminance: c_float,
+                max_content_light_level: c_float,
+                max_frame_average_light_level: c_float,
+        }
+    }
+    impl_aggregate! {
+        struct DisplayNativeHdrSurfaceCapabilitiesAMD {
+                s_type: crate::data::StructureType = crate::data::StructureType::DISPLAY_NATIVE_HDR_SURFACE_CAPABILITIES_AMD,
+                p_next: *mut c_void,
+                local_dimming_support: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct SwapchainDisplayNativeHdrCreateInfoAMD {
+                s_type: crate::data::StructureType = crate::data::StructureType::SWAPCHAIN_DISPLAY_NATIVE_HDR_CREATE_INFO_AMD,
+                p_next: *const c_void,
+                local_dimming_enable: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct RefreshCycleDurationGOOGLE {
+                refresh_duration: u64,
+        }
+    }
+    impl_aggregate! {
+        struct PastPresentationTimingGOOGLE {
+                present_id: u32,
+                desired_present_time: u64,
+                actual_present_time: u64,
+                earliest_present_time: u64,
+                present_margin: u64,
+        }
+    }
+    impl_aggregate! {
+        struct PresentTimesInfoGOOGLE {
+                s_type: crate::data::StructureType = crate::data::StructureType::PRESENT_TIMES_INFO_GOOGLE,
+                p_next: *const c_void,
+                swapchain_count: u32,
+                p_times: *const crate::data::PresentTimeGOOGLE,
+        }
+    }
+    impl_aggregate! {
+        struct PresentTimeGOOGLE {
+                present_id: u32,
+                desired_present_time: u64,
+        }
+    }
+    impl_aggregate! {
+        struct IOSSurfaceCreateInfoMVK {
+                s_type: crate::data::StructureType = crate::data::StructureType::IOS_SURFACE_CREATE_INFO_MVK,
+                p_next: *const c_void,
+                flags: crate::data::IOSSurfaceCreateFlagsMVK,
+                p_view: *const c_void,
+        }
+    }
+    impl_aggregate! {
+        struct MacOSSurfaceCreateInfoMVK {
+                s_type: crate::data::StructureType = crate::data::StructureType::MACOS_SURFACE_CREATE_INFO_MVK,
+                p_next: *const c_void,
+                flags: crate::data::MacOSSurfaceCreateFlagsMVK,
+                p_view: *const c_void,
+        }
+    }
+    impl_aggregate! {
+        struct MetalSurfaceCreateInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::METAL_SURFACE_CREATE_INFO_EXT,
+                p_next: *const c_void,
+                flags: crate::data::MetalSurfaceCreateFlagsEXT,
+                p_layer: *const CAMetalLayer,
+        }
+    }
+    impl_aggregate! {
+        struct ViewportWScalingNV {
+                xcoeff: c_float,
+                ycoeff: c_float,
+        }
+    }
+    impl_aggregate! {
+        struct PipelineViewportWScalingStateCreateInfoNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_VIEWPORT_W_SCALING_STATE_CREATE_INFO_NV,
+                p_next: *const c_void,
+                viewport_w_scaling_enable: crate::data::Bool32,
+                viewport_count: u32,
+                p_viewport_w_scalings: *const crate::data::ViewportWScalingNV,
+        }
+    }
+    impl_aggregate! {
+        struct ViewportSwizzleNV {
+                x: crate::data::ViewportCoordinateSwizzleNV,
+                y: crate::data::ViewportCoordinateSwizzleNV,
+                z: crate::data::ViewportCoordinateSwizzleNV,
+                w: crate::data::ViewportCoordinateSwizzleNV,
+        }
+    }
+    impl_aggregate! {
+        struct PipelineViewportSwizzleStateCreateInfoNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_VIEWPORT_SWIZZLE_STATE_CREATE_INFO_NV,
+                p_next: *const c_void,
+                flags: crate::data::PipelineViewportSwizzleStateCreateFlagsNV,
+                viewport_count: u32,
+                p_viewport_swizzles: *const crate::data::ViewportSwizzleNV,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceDiscardRectanglePropertiesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_DISCARD_RECTANGLE_PROPERTIES_EXT,
+                p_next: *mut c_void,
+                max_discard_rectangles: u32,
+        }
+    }
+    impl_aggregate! {
+        struct PipelineDiscardRectangleStateCreateInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_DISCARD_RECTANGLE_STATE_CREATE_INFO_EXT,
+                p_next: *const c_void,
+                flags: crate::data::PipelineDiscardRectangleStateCreateFlagsEXT,
+                discard_rectangle_mode: crate::data::DiscardRectangleModeEXT,
+                discard_rectangle_count: u32,
+                p_discard_rectangles: *const crate::data::Rect2D,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceMultiviewPerViewAttributesPropertiesNVX {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_MULTIVIEW_PER_VIEW_ATTRIBUTES_PROPERTIES_NVX,
+                p_next: *mut c_void,
+                per_view_position_all_components: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct InputAttachmentAspectReference {
+                subpass: u32,
+                input_attachment_index: u32,
+                aspect_mask: crate::data::ImageAspectFlags,
+        }
+    }
+    impl_aggregate! {
+        struct RenderPassInputAttachmentAspectCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::RENDER_PASS_INPUT_ATTACHMENT_ASPECT_CREATE_INFO,
+                p_next: *const c_void,
+                aspect_reference_count: u32,
+                p_aspect_references: *const crate::data::InputAttachmentAspectReference,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceSurfaceInfo2KHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SURFACE_INFO_2_KHR,
+                p_next: *const c_void,
+                surface: crate::data::SurfaceKHR,
+        }
+    }
+    impl_aggregate! {
+        struct SurfaceCapabilities2KHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::SURFACE_CAPABILITIES_2_KHR,
+                p_next: *mut c_void,
+                surface_capabilities: crate::data::SurfaceCapabilitiesKHR,
+        }
+    }
+    impl_aggregate! {
+        struct SurfaceFormat2KHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::SURFACE_FORMAT_2_KHR,
+                p_next: *mut c_void,
+                surface_format: crate::data::SurfaceFormatKHR,
+        }
+    }
+    impl_aggregate! {
+        struct DisplayProperties2KHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::DISPLAY_PROPERTIES_2_KHR,
+                p_next: *mut c_void,
+                display_properties: crate::data::DisplayPropertiesKHR,
+        }
+    }
+    impl_aggregate! {
+        struct DisplayPlaneProperties2KHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::DISPLAY_PLANE_PROPERTIES_2_KHR,
+                p_next: *mut c_void,
+                display_plane_properties: crate::data::DisplayPlanePropertiesKHR,
+        }
+    }
+    impl_aggregate! {
+        struct DisplayModeProperties2KHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::DISPLAY_MODE_PROPERTIES_2_KHR,
+                p_next: *mut c_void,
+                display_mode_properties: crate::data::DisplayModePropertiesKHR,
+        }
+    }
+    impl_aggregate! {
+        struct DisplayPlaneInfo2KHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::DISPLAY_PLANE_INFO_2_KHR,
+                p_next: *const c_void,
+                mode: crate::data::DisplayModeKHR,
+                plane_index: u32,
+        }
+    }
+    impl_aggregate! {
+        struct DisplayPlaneCapabilities2KHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::DISPLAY_PLANE_CAPABILITIES_2_KHR,
+                p_next: *mut c_void,
+                capabilities: crate::data::DisplayPlaneCapabilitiesKHR,
+        }
+    }
+    impl_aggregate! {
+        struct SharedPresentSurfaceCapabilitiesKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::SHARED_PRESENT_SURFACE_CAPABILITIES_KHR,
+                p_next: *mut c_void,
+                shared_present_supported_usage_flags: crate::data::ImageUsageFlags,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDevice16BitStorageFeatures {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_16BIT_STORAGE_FEATURES,
+                p_next: *mut c_void,
+                storage_buffer_16_bit_access: crate::data::Bool32,
+                uniform_and_storage_buffer_16_bit_access: crate::data::Bool32,
+                storage_push_constant_16: crate::data::Bool32,
+                storage_input_output_16: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceSubgroupProperties {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SUBGROUP_PROPERTIES,
+                p_next: *mut c_void,
+                subgroup_size: u32,
+                supported_stages: crate::data::ShaderStageFlags,
+                supported_operations: crate::data::SubgroupFeatureFlags,
+                quad_operations_in_all_stages: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceShaderSubgroupExtendedTypesFeatures {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SHADER_SUBGROUP_EXTENDED_TYPES_FEATURES,
+                p_next: *mut c_void,
+                shader_subgroup_extended_types: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct BufferMemoryRequirementsInfo2 {
+                s_type: crate::data::StructureType = crate::data::StructureType::BUFFER_MEMORY_REQUIREMENTS_INFO_2,
+                p_next: *const c_void,
+                buffer: crate::data::Buffer,
+        }
+    }
+    impl_aggregate! {
+        struct DeviceBufferMemoryRequirements {
+                s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_BUFFER_MEMORY_REQUIREMENTS,
+                p_next: *const c_void,
+                p_create_info: *const crate::data::BufferCreateInfo,
+        }
+    }
+    impl_aggregate! {
+        struct ImageMemoryRequirementsInfo2 {
+                s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_MEMORY_REQUIREMENTS_INFO_2,
+                p_next: *const c_void,
+                image: crate::data::Image,
+        }
+    }
+    impl_aggregate! {
+        struct ImageSparseMemoryRequirementsInfo2 {
+                s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_SPARSE_MEMORY_REQUIREMENTS_INFO_2,
+                p_next: *const c_void,
+                image: crate::data::Image,
+        }
+    }
+    impl_aggregate! {
+        struct DeviceImageMemoryRequirements {
+                s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_IMAGE_MEMORY_REQUIREMENTS,
+                p_next: *const c_void,
+                p_create_info: *const crate::data::ImageCreateInfo,
+                plane_aspect: crate::data::ImageAspectFlagBits,
+        }
+    }
+    impl_aggregate! {
+        struct MemoryRequirements2 {
+                s_type: crate::data::StructureType = crate::data::StructureType::MEMORY_REQUIREMENTS_2,
+                p_next: *mut c_void,
+                memory_requirements: crate::data::MemoryRequirements,
+        }
+    }
+    impl_aggregate! {
+        struct SparseImageMemoryRequirements2 {
+                s_type: crate::data::StructureType = crate::data::StructureType::SPARSE_IMAGE_MEMORY_REQUIREMENTS_2,
+                p_next: *mut c_void,
+                memory_requirements: crate::data::SparseImageMemoryRequirements,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDevicePointClippingProperties {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_POINT_CLIPPING_PROPERTIES,
+                p_next: *mut c_void,
+                point_clipping_behavior: crate::data::PointClippingBehavior,
+        }
+    }
+    impl_aggregate! {
+        struct MemoryDedicatedRequirements {
+                s_type: crate::data::StructureType = crate::data::StructureType::MEMORY_DEDICATED_REQUIREMENTS,
+                p_next: *mut c_void,
+                prefers_dedicated_allocation: crate::data::Bool32,
+                requires_dedicated_allocation: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct MemoryDedicatedAllocateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::MEMORY_DEDICATED_ALLOCATE_INFO,
+                p_next: *const c_void,
+                image: crate::data::Image,
+                buffer: crate::data::Buffer,
+        }
+    }
+    impl_aggregate! {
+        struct ImageViewUsageCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_VIEW_USAGE_CREATE_INFO,
+                p_next: *const c_void,
+                usage: crate::data::ImageUsageFlags,
+        }
+    }
+    impl_aggregate! {
+        struct PipelineTessellationDomainOriginStateCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_TESSELLATION_DOMAIN_ORIGIN_STATE_CREATE_INFO,
+                p_next: *const c_void,
+                domain_origin: crate::data::TessellationDomainOrigin,
+        }
+    }
+    impl_aggregate! {
+        struct SamplerYcbcrConversionInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::SAMPLER_YCBCR_CONVERSION_INFO,
+                p_next: *const c_void,
+                conversion: crate::data::SamplerYcbcrConversion,
+        }
+    }
+    impl_aggregate! {
+        struct SamplerYcbcrConversionCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::SAMPLER_YCBCR_CONVERSION_CREATE_INFO,
+                p_next: *const c_void,
+                format: crate::data::Format,
+                ycbcr_model: crate::data::SamplerYcbcrModelConversion,
+                ycbcr_range: crate::data::SamplerYcbcrRange,
+                components: crate::data::ComponentMapping,
+                x_chroma_offset: crate::data::ChromaLocation,
+                y_chroma_offset: crate::data::ChromaLocation,
+                chroma_filter: crate::data::Filter,
+                force_explicit_reconstruction: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct BindImagePlaneMemoryInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::BIND_IMAGE_PLANE_MEMORY_INFO,
+                p_next: *const c_void,
+                plane_aspect: crate::data::ImageAspectFlagBits,
+        }
+    }
+    impl_aggregate! {
+        struct ImagePlaneMemoryRequirementsInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_PLANE_MEMORY_REQUIREMENTS_INFO,
+                p_next: *const c_void,
+                plane_aspect: crate::data::ImageAspectFlagBits,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceSamplerYcbcrConversionFeatures {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES,
+                p_next: *mut c_void,
+                sampler_ycbcr_conversion: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct SamplerYcbcrConversionImageFormatProperties {
+                s_type: crate::data::StructureType = crate::data::StructureType::SAMPLER_YCBCR_CONVERSION_IMAGE_FORMAT_PROPERTIES,
+                p_next: *mut c_void,
+                combined_image_sampler_descriptor_count: u32,
+        }
+    }
+    impl_aggregate! {
+        struct TextureLODGatherFormatPropertiesAMD {
+                s_type: crate::data::StructureType = crate::data::StructureType::TEXTURE_LOD_GATHER_FORMAT_PROPERTIES_AMD,
+                p_next: *mut c_void,
+                supports_texture_gather_lod_bias_amd: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct ConditionalRenderingBeginInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::CONDITIONAL_RENDERING_BEGIN_INFO_EXT,
+                p_next: *const c_void,
+                buffer: crate::data::Buffer,
+                offset: crate::data::DeviceSize,
+                flags: crate::data::ConditionalRenderingFlagsEXT,
+        }
+    }
+    impl_aggregate! {
+        struct ProtectedSubmitInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::PROTECTED_SUBMIT_INFO,
+                p_next: *const c_void,
+                protected_submit: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceProtectedMemoryFeatures {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PROTECTED_MEMORY_FEATURES,
+                p_next: *mut c_void,
+                protected_memory: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceProtectedMemoryProperties {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PROTECTED_MEMORY_PROPERTIES,
+                p_next: *mut c_void,
+                protected_no_fault: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct DeviceQueueInfo2 {
+                s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_QUEUE_INFO_2,
+                p_next: *const c_void,
+                flags: crate::data::DeviceQueueCreateFlags,
+                queue_family_index: u32,
+                queue_index: u32,
+        }
+    }
+    impl_aggregate! {
+        struct PipelineCoverageToColorStateCreateInfoNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_COVERAGE_TO_COLOR_STATE_CREATE_INFO_NV,
+                p_next: *const c_void,
+                flags: crate::data::PipelineCoverageToColorStateCreateFlagsNV,
+                coverage_to_color_enable: crate::data::Bool32,
+                coverage_to_color_location: u32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceSamplerFilterMinmaxProperties {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SAMPLER_FILTER_MINMAX_PROPERTIES,
+                p_next: *mut c_void,
+                filter_minmax_single_component_formats: crate::data::Bool32,
+                filter_minmax_image_component_mapping: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct SampleLocationEXT {
+                x: c_float,
+                y: c_float,
+        }
+    }
+    impl_aggregate! {
+        struct SampleLocationsInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::SAMPLE_LOCATIONS_INFO_EXT,
+                p_next: *const c_void,
+                sample_locations_per_pixel: crate::data::SampleCountFlagBits,
+                sample_location_grid_size: crate::data::Extent2D,
+                sample_locations_count: u32,
+                p_sample_locations: *const crate::data::SampleLocationEXT,
+        }
+    }
+    impl_aggregate! {
+        struct AttachmentSampleLocationsEXT {
+                attachment_index: u32,
+                sample_locations_info: crate::data::SampleLocationsInfoEXT,
+        }
+    }
+    impl_aggregate! {
+        struct SubpassSampleLocationsEXT {
+                subpass_index: u32,
+                sample_locations_info: crate::data::SampleLocationsInfoEXT,
+        }
+    }
+    impl_aggregate! {
+        struct RenderPassSampleLocationsBeginInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::RENDER_PASS_SAMPLE_LOCATIONS_BEGIN_INFO_EXT,
+                p_next: *const c_void,
+                attachment_initial_sample_locations_count: u32,
+                p_attachment_initial_sample_locations: *const crate::data::AttachmentSampleLocationsEXT,
+                post_subpass_sample_locations_count: u32,
+                p_post_subpass_sample_locations: *const crate::data::SubpassSampleLocationsEXT,
+        }
+    }
+    impl_aggregate! {
+        struct PipelineSampleLocationsStateCreateInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_SAMPLE_LOCATIONS_STATE_CREATE_INFO_EXT,
+                p_next: *const c_void,
+                sample_locations_enable: crate::data::Bool32,
+                sample_locations_info: crate::data::SampleLocationsInfoEXT,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceSampleLocationsPropertiesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SAMPLE_LOCATIONS_PROPERTIES_EXT,
+                p_next: *mut c_void,
+                sample_location_sample_counts: crate::data::SampleCountFlags,
+                max_sample_location_grid_size: crate::data::Extent2D,
+                sample_location_coordinate_range: [c_float; 2],
+                sample_location_sub_pixel_bits: u32,
+                variable_sample_locations: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct MultisamplePropertiesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::MULTISAMPLE_PROPERTIES_EXT,
+                p_next: *mut c_void,
+                max_sample_location_grid_size: crate::data::Extent2D,
+        }
+    }
+    impl_aggregate! {
+        struct SamplerReductionModeCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::SAMPLER_REDUCTION_MODE_CREATE_INFO,
+                p_next: *const c_void,
+                reduction_mode: crate::data::SamplerReductionMode,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceBlendOperationAdvancedFeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_FEATURES_EXT,
+                p_next: *mut c_void,
+                advanced_blend_coherent_operations: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceMultiDrawFeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_MULTI_DRAW_FEATURES_EXT,
+                p_next: *mut c_void,
+                multi_draw: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceBlendOperationAdvancedPropertiesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_PROPERTIES_EXT,
+                p_next: *mut c_void,
+                advanced_blend_max_color_attachments: u32,
+                advanced_blend_independent_blend: crate::data::Bool32,
+                advanced_blend_non_premultiplied_src_color: crate::data::Bool32,
+                advanced_blend_non_premultiplied_dst_color: crate::data::Bool32,
+                advanced_blend_correlated_overlap: crate::data::Bool32,
+                advanced_blend_all_operations: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PipelineColorBlendAdvancedStateCreateInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_COLOR_BLEND_ADVANCED_STATE_CREATE_INFO_EXT,
+                p_next: *const c_void,
+                src_premultiplied: crate::data::Bool32,
+                dst_premultiplied: crate::data::Bool32,
+                blend_overlap: crate::data::BlendOverlapEXT,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceInlineUniformBlockFeatures {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_INLINE_UNIFORM_BLOCK_FEATURES,
+                p_next: *mut c_void,
+                inline_uniform_block: crate::data::Bool32,
+                descriptor_binding_inline_uniform_block_update_after_bind: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceInlineUniformBlockProperties {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_INLINE_UNIFORM_BLOCK_PROPERTIES,
+                p_next: *mut c_void,
+                max_inline_uniform_block_size: u32,
+                max_per_stage_descriptor_inline_uniform_blocks: u32,
+                max_per_stage_descriptor_update_after_bind_inline_uniform_blocks: u32,
+                max_descriptor_set_inline_uniform_blocks: u32,
+                max_descriptor_set_update_after_bind_inline_uniform_blocks: u32,
+        }
+    }
+    impl_aggregate! {
+        struct WriteDescriptorSetInlineUniformBlock {
+                s_type: crate::data::StructureType = crate::data::StructureType::WRITE_DESCRIPTOR_SET_INLINE_UNIFORM_BLOCK,
+                p_next: *const c_void,
+                data_size: u32,
+                p_data: *const c_void,
+        }
+    }
+    impl_aggregate! {
+        struct DescriptorPoolInlineUniformBlockCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::DESCRIPTOR_POOL_INLINE_UNIFORM_BLOCK_CREATE_INFO,
+                p_next: *const c_void,
+                max_inline_uniform_block_bindings: u32,
+        }
+    }
+    impl_aggregate! {
+        struct PipelineCoverageModulationStateCreateInfoNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_COVERAGE_MODULATION_STATE_CREATE_INFO_NV,
+                p_next: *const c_void,
+                flags: crate::data::PipelineCoverageModulationStateCreateFlagsNV,
+                coverage_modulation_mode: crate::data::CoverageModulationModeNV,
+                coverage_modulation_table_enable: crate::data::Bool32,
+                coverage_modulation_table_count: u32,
+                p_coverage_modulation_table: *const c_float,
+        }
+    }
+    impl_aggregate! {
+        struct ImageFormatListCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_FORMAT_LIST_CREATE_INFO,
+                p_next: *const c_void,
+                view_format_count: u32,
+                p_view_formats: *const crate::data::Format,
+        }
+    }
+    impl_aggregate! {
+        struct ValidationCacheCreateInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::VALIDATION_CACHE_CREATE_INFO_EXT,
+                p_next: *const c_void,
+                flags: crate::data::ValidationCacheCreateFlagsEXT,
+                initial_data_size: usize,
+                p_initial_data: *const c_void,
+        }
+    }
+    impl_aggregate! {
+        struct ShaderModuleValidationCacheCreateInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::SHADER_MODULE_VALIDATION_CACHE_CREATE_INFO_EXT,
+                p_next: *const c_void,
+                validation_cache: crate::data::ValidationCacheEXT,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceMaintenance3Properties {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_MAINTENANCE_3_PROPERTIES,
+                p_next: *mut c_void,
+                max_per_set_descriptors: u32,
+                max_memory_allocation_size: crate::data::DeviceSize,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceMaintenance4Features {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_MAINTENANCE_4_FEATURES,
+                p_next: *mut c_void,
+                maintenance_4: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceMaintenance4Properties {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_MAINTENANCE_4_PROPERTIES,
+                p_next: *mut c_void,
+                max_buffer_size: crate::data::DeviceSize,
+        }
+    }
+    impl_aggregate! {
+        struct DescriptorSetLayoutSupport {
+                s_type: crate::data::StructureType = crate::data::StructureType::DESCRIPTOR_SET_LAYOUT_SUPPORT,
+                p_next: *mut c_void,
+                supported: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceShaderDrawParametersFeatures {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SHADER_DRAW_PARAMETERS_FEATURES,
+                p_next: *mut c_void,
+                shader_draw_parameters: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceShaderFloat16Int8Features {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SHADER_FLOAT16_INT8_FEATURES,
+                p_next: *mut c_void,
+                shader_float_16: crate::data::Bool32,
+                shader_int_8: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceFloatControlsProperties {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_FLOAT_CONTROLS_PROPERTIES,
+                p_next: *mut c_void,
+                denorm_behavior_independence: crate::data::ShaderFloatControlsIndependence,
+                rounding_mode_independence: crate::data::ShaderFloatControlsIndependence,
+                shader_signed_zero_inf_nan_preserve_float_16: crate::data::Bool32,
+                shader_signed_zero_inf_nan_preserve_float_32: crate::data::Bool32,
+                shader_signed_zero_inf_nan_preserve_float_64: crate::data::Bool32,
+                shader_denorm_preserve_float_16: crate::data::Bool32,
+                shader_denorm_preserve_float_32: crate::data::Bool32,
+                shader_denorm_preserve_float_64: crate::data::Bool32,
+                shader_denorm_flush_to_zero_float_16: crate::data::Bool32,
+                shader_denorm_flush_to_zero_float_32: crate::data::Bool32,
+                shader_denorm_flush_to_zero_float_64: crate::data::Bool32,
+                shader_rounding_mode_rte_float_16: crate::data::Bool32,
+                shader_rounding_mode_rte_float_32: crate::data::Bool32,
+                shader_rounding_mode_rte_float_64: crate::data::Bool32,
+                shader_rounding_mode_rtz_float_16: crate::data::Bool32,
+                shader_rounding_mode_rtz_float_32: crate::data::Bool32,
+                shader_rounding_mode_rtz_float_64: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceHostQueryResetFeatures {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_HOST_QUERY_RESET_FEATURES,
+                p_next: *mut c_void,
+                host_query_reset: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct NativeBufferUsage2ANDROID {
+                consumer: u64,
+                producer: u64,
+        }
+    }
+    impl_aggregate! {
+        struct NativeBufferANDROID {
+                s_type: crate::data::StructureType = crate::data::StructureType::NATIVE_BUFFER_ANDROID,
+                p_next: *const c_void,
+                handle: *const c_void,
+                stride: c_int,
+                format: c_int,
+                usage: c_int,
+                usage_2: crate::data::NativeBufferUsage2ANDROID,
+        }
+    }
+    impl_aggregate! {
+        struct SwapchainImageCreateInfoANDROID {
+                s_type: crate::data::StructureType = crate::data::StructureType::SWAPCHAIN_IMAGE_CREATE_INFO_ANDROID,
+                p_next: *const c_void,
+                usage: crate::data::SwapchainImageUsageFlagsANDROID,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDevicePresentationPropertiesANDROID {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PRESENTATION_PROPERTIES_ANDROID,
+                p_next: *const c_void,
+                shared_image: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct ShaderResourceUsageAMD {
+                num_used_vgprs: u32,
+                num_used_sgprs: u32,
+                lds_size_per_local_work_group: u32,
+                lds_usage_size_in_bytes: usize,
+                scratch_mem_usage_in_bytes: usize,
+        }
+    }
+    impl_aggregate! {
+        struct ShaderStatisticsInfoAMD {
+                shader_stage_mask: crate::data::ShaderStageFlags,
+                resource_usage: crate::data::ShaderResourceUsageAMD,
+                num_physical_vgprs: u32,
+                num_physical_sgprs: u32,
+                num_available_vgprs: u32,
+                num_available_sgprs: u32,
+                compute_work_group_size: [u32; 3],
+        }
+    }
+    impl_aggregate! {
+        struct DeviceQueueGlobalPriorityCreateInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_QUEUE_GLOBAL_PRIORITY_CREATE_INFO_KHR,
+                p_next: *const c_void,
+                global_priority: crate::data::QueueGlobalPriorityKHR,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceGlobalPriorityQueryFeaturesKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_GLOBAL_PRIORITY_QUERY_FEATURES_KHR,
+                p_next: *mut c_void,
+                global_priority_query: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct QueueFamilyGlobalPriorityPropertiesKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::QUEUE_FAMILY_GLOBAL_PRIORITY_PROPERTIES_KHR,
+                p_next: *mut c_void,
+                priority_count: u32,
+                priorities: [crate::data::QueueGlobalPriorityKHR; 16],
+        }
+    }
+    impl_aggregate! {
+        struct DebugUtilsObjectNameInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::DEBUG_UTILS_OBJECT_NAME_INFO_EXT,
+                p_next: *const c_void,
+                object_type: crate::data::ObjectType,
+                object_handle: u64,
+                p_object_name: *const c_char,
+        }
+    }
+    impl_aggregate! {
+        struct DebugUtilsObjectTagInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::DEBUG_UTILS_OBJECT_TAG_INFO_EXT,
+                p_next: *const c_void,
+                object_type: crate::data::ObjectType,
+                object_handle: u64,
+                tag_name: u64,
+                tag_size: usize,
+                p_tag: *const c_void,
+        }
+    }
+    impl_aggregate! {
+        struct DebugUtilsLabelEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::DEBUG_UTILS_LABEL_EXT,
+                p_next: *const c_void,
+                p_label_name: *const c_char,
+                color: [c_float; 4],
+        }
+    }
+    impl_aggregate! {
+        struct DebugUtilsMessengerCreateInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
+                p_next: *const c_void,
+                flags: crate::data::DebugUtilsMessengerCreateFlagsEXT,
+                message_severity: crate::data::DebugUtilsMessageSeverityFlagsEXT,
+                message_type: crate::data::DebugUtilsMessageTypeFlagsEXT,
+                pfn_user_callback: crate::pfn::DebugUtilsMessengerCallbackEXT,
+                p_user_data: *mut c_void,
+        }
+    }
+    impl_aggregate! {
+        struct DebugUtilsMessengerCallbackDataEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::DEBUG_UTILS_MESSENGER_CALLBACK_DATA_EXT,
+                p_next: *const c_void,
+                flags: crate::data::DebugUtilsMessengerCallbackDataFlagsEXT,
+                p_message_id_name: *const c_char,
+                message_id_number: i32,
+                p_message: *const c_char,
+                queue_label_count: u32,
+                p_queue_labels: *const crate::data::DebugUtilsLabelEXT,
+                cmd_buf_label_count: u32,
+                p_cmd_buf_labels: *const crate::data::DebugUtilsLabelEXT,
+                object_count: u32,
+                p_objects: *const crate::data::DebugUtilsObjectNameInfoEXT,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceDeviceMemoryReportFeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_DEVICE_MEMORY_REPORT_FEATURES_EXT,
+                p_next: *mut c_void,
+                device_memory_report: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct DeviceDeviceMemoryReportCreateInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_DEVICE_MEMORY_REPORT_CREATE_INFO_EXT,
+                p_next: *const c_void,
+                flags: crate::data::DeviceMemoryReportFlagsEXT,
+                pfn_user_callback: crate::pfn::DeviceMemoryReportCallbackEXT,
+                p_user_data: *mut c_void,
+        }
+    }
+    impl_aggregate! {
+        struct DeviceMemoryReportCallbackDataEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_MEMORY_REPORT_CALLBACK_DATA_EXT,
+                p_next: *mut c_void,
+                flags: crate::data::DeviceMemoryReportFlagsEXT,
+                ty: crate::data::DeviceMemoryReportEventTypeEXT,
+                memory_object_id: u64,
+                size: crate::data::DeviceSize,
+                object_type: crate::data::ObjectType,
+                object_handle: u64,
+                heap_index: u32,
+        }
+    }
+    impl_aggregate! {
+        struct ImportMemoryHostPointerInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::IMPORT_MEMORY_HOST_POINTER_INFO_EXT,
+                p_next: *const c_void,
+                handle_type: crate::data::ExternalMemoryHandleTypeFlagBits,
+                p_host_pointer: *mut c_void,
+        }
+    }
+    impl_aggregate! {
+        struct MemoryHostPointerPropertiesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::MEMORY_HOST_POINTER_PROPERTIES_EXT,
+                p_next: *mut c_void,
+                memory_type_bits: u32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceExternalMemoryHostPropertiesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_EXTERNAL_MEMORY_HOST_PROPERTIES_EXT,
+                p_next: *mut c_void,
+                min_imported_host_pointer_alignment: crate::data::DeviceSize,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceConservativeRasterizationPropertiesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_CONSERVATIVE_RASTERIZATION_PROPERTIES_EXT,
+                p_next: *mut c_void,
+                primitive_overestimation_size: c_float,
+                max_extra_primitive_overestimation_size: c_float,
+                extra_primitive_overestimation_size_granularity: c_float,
+                primitive_underestimation: crate::data::Bool32,
+                conservative_point_and_line_rasterization: crate::data::Bool32,
+                degenerate_triangles_rasterized: crate::data::Bool32,
+                degenerate_lines_rasterized: crate::data::Bool32,
+                fully_covered_fragment_shader_input_variable: crate::data::Bool32,
+                conservative_rasterization_post_depth_coverage: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct CalibratedTimestampInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::CALIBRATED_TIMESTAMP_INFO_EXT,
+                p_next: *const c_void,
+                time_domain: crate::data::TimeDomainEXT,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceShaderCorePropertiesAMD {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SHADER_CORE_PROPERTIES_AMD,
+                p_next: *mut c_void,
+                shader_engine_count: u32,
+                shader_arrays_per_engine_count: u32,
+                compute_units_per_shader_array: u32,
+                simd_per_compute_unit: u32,
+                wavefronts_per_simd: u32,
+                wavefront_size: u32,
+                sgprs_per_simd: u32,
+                min_sgpr_allocation: u32,
+                max_sgpr_allocation: u32,
+                sgpr_allocation_granularity: u32,
+                vgprs_per_simd: u32,
+                min_vgpr_allocation: u32,
+                max_vgpr_allocation: u32,
+                vgpr_allocation_granularity: u32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceShaderCoreProperties2AMD {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SHADER_CORE_PROPERTIES_2_AMD,
+                p_next: *mut c_void,
+                shader_core_features: crate::data::ShaderCorePropertiesFlagsAMD,
+                active_compute_unit_count: u32,
+        }
+    }
+    impl_aggregate! {
+        struct PipelineRasterizationConservativeStateCreateInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_RASTERIZATION_CONSERVATIVE_STATE_CREATE_INFO_EXT,
+                p_next: *const c_void,
+                flags: crate::data::PipelineRasterizationConservativeStateCreateFlagsEXT,
+                conservative_rasterization_mode: crate::data::ConservativeRasterizationModeEXT,
+                extra_primitive_overestimation_size: c_float,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceDescriptorIndexingFeatures {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES,
+                p_next: *mut c_void,
+                shader_input_attachment_array_dynamic_indexing: crate::data::Bool32,
+                shader_uniform_texel_buffer_array_dynamic_indexing: crate::data::Bool32,
+                shader_storage_texel_buffer_array_dynamic_indexing: crate::data::Bool32,
+                shader_uniform_buffer_array_non_uniform_indexing: crate::data::Bool32,
+                shader_sampled_image_array_non_uniform_indexing: crate::data::Bool32,
+                shader_storage_buffer_array_non_uniform_indexing: crate::data::Bool32,
+                shader_storage_image_array_non_uniform_indexing: crate::data::Bool32,
+                shader_input_attachment_array_non_uniform_indexing: crate::data::Bool32,
+                shader_uniform_texel_buffer_array_non_uniform_indexing: crate::data::Bool32,
+                shader_storage_texel_buffer_array_non_uniform_indexing: crate::data::Bool32,
+                descriptor_binding_uniform_buffer_update_after_bind: crate::data::Bool32,
+                descriptor_binding_sampled_image_update_after_bind: crate::data::Bool32,
+                descriptor_binding_storage_image_update_after_bind: crate::data::Bool32,
+                descriptor_binding_storage_buffer_update_after_bind: crate::data::Bool32,
+                descriptor_binding_uniform_texel_buffer_update_after_bind: crate::data::Bool32,
+                descriptor_binding_storage_texel_buffer_update_after_bind: crate::data::Bool32,
+                descriptor_binding_update_unused_while_pending: crate::data::Bool32,
+                descriptor_binding_partially_bound: crate::data::Bool32,
+                descriptor_binding_variable_descriptor_count: crate::data::Bool32,
+                runtime_descriptor_array: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceDescriptorIndexingProperties {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_PROPERTIES,
+                p_next: *mut c_void,
+                max_update_after_bind_descriptors_in_all_pools: u32,
+                shader_uniform_buffer_array_non_uniform_indexing_native: crate::data::Bool32,
+                shader_sampled_image_array_non_uniform_indexing_native: crate::data::Bool32,
+                shader_storage_buffer_array_non_uniform_indexing_native: crate::data::Bool32,
+                shader_storage_image_array_non_uniform_indexing_native: crate::data::Bool32,
+                shader_input_attachment_array_non_uniform_indexing_native: crate::data::Bool32,
+                robust_buffer_access_update_after_bind: crate::data::Bool32,
+                quad_divergent_implicit_lod: crate::data::Bool32,
+                max_per_stage_descriptor_update_after_bind_samplers: u32,
+                max_per_stage_descriptor_update_after_bind_uniform_buffers: u32,
+                max_per_stage_descriptor_update_after_bind_storage_buffers: u32,
+                max_per_stage_descriptor_update_after_bind_sampled_images: u32,
+                max_per_stage_descriptor_update_after_bind_storage_images: u32,
+                max_per_stage_descriptor_update_after_bind_input_attachments: u32,
+                max_per_stage_update_after_bind_resources: u32,
+                max_descriptor_set_update_after_bind_samplers: u32,
+                max_descriptor_set_update_after_bind_uniform_buffers: u32,
+                max_descriptor_set_update_after_bind_uniform_buffers_dynamic: u32,
+                max_descriptor_set_update_after_bind_storage_buffers: u32,
+                max_descriptor_set_update_after_bind_storage_buffers_dynamic: u32,
+                max_descriptor_set_update_after_bind_sampled_images: u32,
+                max_descriptor_set_update_after_bind_storage_images: u32,
+                max_descriptor_set_update_after_bind_input_attachments: u32,
+        }
+    }
+    impl_aggregate! {
+        struct DescriptorSetLayoutBindingFlagsCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO,
+                p_next: *const c_void,
+                binding_count: u32,
+                p_binding_flags: *const crate::data::DescriptorBindingFlags,
+        }
+    }
+    impl_aggregate! {
+        struct DescriptorSetVariableDescriptorCountAllocateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_ALLOCATE_INFO,
+                p_next: *const c_void,
+                descriptor_set_count: u32,
+                p_descriptor_counts: *const u32,
+        }
+    }
+    impl_aggregate! {
+        struct DescriptorSetVariableDescriptorCountLayoutSupport {
+                s_type: crate::data::StructureType = crate::data::StructureType::DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_LAYOUT_SUPPORT,
+                p_next: *mut c_void,
+                max_variable_descriptor_count: u32,
+        }
+    }
+    impl_aggregate! {
+        struct AttachmentDescription2 {
+                s_type: crate::data::StructureType = crate::data::StructureType::ATTACHMENT_DESCRIPTION_2,
+                p_next: *const c_void,
+                flags: crate::data::AttachmentDescriptionFlags,
+                format: crate::data::Format,
+                samples: crate::data::SampleCountFlagBits,
+                load_op: crate::data::AttachmentLoadOp,
+                store_op: crate::data::AttachmentStoreOp,
+                stencil_load_op: crate::data::AttachmentLoadOp,
+                stencil_store_op: crate::data::AttachmentStoreOp,
+                initial_layout: crate::data::ImageLayout,
+                final_layout: crate::data::ImageLayout,
+        }
+    }
+    impl_aggregate! {
+        struct AttachmentReference2 {
+                s_type: crate::data::StructureType = crate::data::StructureType::ATTACHMENT_REFERENCE_2,
+                p_next: *const c_void,
+                attachment: u32,
+                layout: crate::data::ImageLayout,
+                aspect_mask: crate::data::ImageAspectFlags,
+        }
+    }
+    impl_aggregate! {
+        struct SubpassDescription2 {
+                s_type: crate::data::StructureType = crate::data::StructureType::SUBPASS_DESCRIPTION_2,
+                p_next: *const c_void,
+                flags: crate::data::SubpassDescriptionFlags,
+                pipeline_bind_point: crate::data::PipelineBindPoint,
+                view_mask: u32,
+                input_attachment_count: u32,
+                p_input_attachments: *const crate::data::AttachmentReference2,
+                color_attachment_count: u32,
+                p_color_attachments: *const crate::data::AttachmentReference2,
+                p_resolve_attachments: *const crate::data::AttachmentReference2,
+                p_depth_stencil_attachment: *const crate::data::AttachmentReference2,
+                preserve_attachment_count: u32,
+                p_preserve_attachments: *const u32,
+        }
+    }
+    impl_aggregate! {
+        struct SubpassDependency2 {
+                s_type: crate::data::StructureType = crate::data::StructureType::SUBPASS_DEPENDENCY_2,
+                p_next: *const c_void,
+                src_subpass: u32,
+                dst_subpass: u32,
+                src_stage_mask: crate::data::PipelineStageFlags,
+                dst_stage_mask: crate::data::PipelineStageFlags,
+                src_access_mask: crate::data::AccessFlags,
+                dst_access_mask: crate::data::AccessFlags,
+                dependency_flags: crate::data::DependencyFlags,
+                view_offset: i32,
+        }
+    }
+    impl_aggregate! {
+        struct RenderPassCreateInfo2 {
+                s_type: crate::data::StructureType = crate::data::StructureType::RENDER_PASS_CREATE_INFO_2,
+                p_next: *const c_void,
+                flags: crate::data::RenderPassCreateFlags,
+                attachment_count: u32,
+                p_attachments: *const crate::data::AttachmentDescription2,
+                subpass_count: u32,
+                p_subpasses: *const crate::data::SubpassDescription2,
+                dependency_count: u32,
+                p_dependencies: *const crate::data::SubpassDependency2,
+                correlated_view_mask_count: u32,
+                p_correlated_view_masks: *const u32,
+        }
+    }
+    impl_aggregate! {
+        struct SubpassBeginInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::SUBPASS_BEGIN_INFO,
+                p_next: *const c_void,
+                contents: crate::data::SubpassContents,
+        }
+    }
+    impl_aggregate! {
+        struct SubpassEndInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::SUBPASS_END_INFO,
+                p_next: *const c_void,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceTimelineSemaphoreFeatures {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES,
+                p_next: *mut c_void,
+                timeline_semaphore: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceTimelineSemaphoreProperties {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_PROPERTIES,
+                p_next: *mut c_void,
+                max_timeline_semaphore_value_difference: u64,
+        }
+    }
+    impl_aggregate! {
+        struct SemaphoreTypeCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::SEMAPHORE_TYPE_CREATE_INFO,
+                p_next: *const c_void,
+                semaphore_type: crate::data::SemaphoreType,
+                initial_value: u64,
+        }
+    }
+    impl_aggregate! {
+        struct TimelineSemaphoreSubmitInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::TIMELINE_SEMAPHORE_SUBMIT_INFO,
+                p_next: *const c_void,
+                wait_semaphore_value_count: u32,
+                p_wait_semaphore_values: *const u64,
+                signal_semaphore_value_count: u32,
+                p_signal_semaphore_values: *const u64,
+        }
+    }
+    impl_aggregate! {
+        struct SemaphoreWaitInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::SEMAPHORE_WAIT_INFO,
+                p_next: *const c_void,
+                flags: crate::data::SemaphoreWaitFlags,
+                semaphore_count: u32,
+                p_semaphores: *const crate::data::Semaphore,
+                p_values: *const u64,
+        }
+    }
+    impl_aggregate! {
+        struct SemaphoreSignalInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::SEMAPHORE_SIGNAL_INFO,
+                p_next: *const c_void,
+                semaphore: crate::data::Semaphore,
+                value: u64,
+        }
+    }
+    impl_aggregate! {
+        struct VertexInputBindingDivisorDescriptionEXT {
+                binding: u32,
+                divisor: u32,
+        }
+    }
+    impl_aggregate! {
+        struct PipelineVertexInputDivisorStateCreateInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_VERTEX_INPUT_DIVISOR_STATE_CREATE_INFO_EXT,
+                p_next: *const c_void,
+                vertex_binding_divisor_count: u32,
+                p_vertex_binding_divisors: *const crate::data::VertexInputBindingDivisorDescriptionEXT,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceVertexAttributeDivisorPropertiesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_PROPERTIES_EXT,
+                p_next: *mut c_void,
+                max_vertex_attrib_divisor: u32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDevicePCIBusInfoPropertiesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PCI_BUS_INFO_PROPERTIES_EXT,
+                p_next: *mut c_void,
+                pci_domain: u32,
+                pci_bus: u32,
+                pci_device: u32,
+                pci_function: u32,
+        }
+    }
+    impl_aggregate! {
+        struct ImportAndroidHardwareBufferInfoANDROID {
+                s_type: crate::data::StructureType = crate::data::StructureType::IMPORT_ANDROID_HARDWARE_BUFFER_INFO_ANDROID,
+                p_next: *const c_void,
+                buffer: *mut AHardwareBuffer,
+        }
+    }
+    impl_aggregate! {
+        struct AndroidHardwareBufferUsageANDROID {
+                s_type: crate::data::StructureType = crate::data::StructureType::ANDROID_HARDWARE_BUFFER_USAGE_ANDROID,
+                p_next: *mut c_void,
+                android_hardware_buffer_usage: u64,
+        }
+    }
+    impl_aggregate! {
+        struct AndroidHardwareBufferPropertiesANDROID {
+                s_type: crate::data::StructureType = crate::data::StructureType::ANDROID_HARDWARE_BUFFER_PROPERTIES_ANDROID,
+                p_next: *mut c_void,
+                allocation_size: crate::data::DeviceSize,
+                memory_type_bits: u32,
+        }
+    }
+    impl_aggregate! {
+        struct MemoryGetAndroidHardwareBufferInfoANDROID {
+                s_type: crate::data::StructureType = crate::data::StructureType::MEMORY_GET_ANDROID_HARDWARE_BUFFER_INFO_ANDROID,
+                p_next: *const c_void,
+                memory: crate::data::DeviceMemory,
+        }
+    }
+    impl_aggregate! {
+        struct AndroidHardwareBufferFormatPropertiesANDROID {
+                s_type: crate::data::StructureType = crate::data::StructureType::ANDROID_HARDWARE_BUFFER_FORMAT_PROPERTIES_ANDROID,
+                p_next: *mut c_void,
+                format: crate::data::Format,
+                external_format: u64,
+                format_features: crate::data::FormatFeatureFlags,
+                sampler_ycbcr_conversion_components: crate::data::ComponentMapping,
+                suggested_ycbcr_model: crate::data::SamplerYcbcrModelConversion,
+                suggested_ycbcr_range: crate::data::SamplerYcbcrRange,
+                suggested_x_chroma_offset: crate::data::ChromaLocation,
+                suggested_y_chroma_offset: crate::data::ChromaLocation,
+        }
+    }
+    impl_aggregate! {
+        struct CommandBufferInheritanceConditionalRenderingInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::COMMAND_BUFFER_INHERITANCE_CONDITIONAL_RENDERING_INFO_EXT,
+                p_next: *const c_void,
+                conditional_rendering_enable: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct ExternalFormatANDROID {
+                s_type: crate::data::StructureType = crate::data::StructureType::EXTERNAL_FORMAT_ANDROID,
+                p_next: *mut c_void,
+                external_format: u64,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDevice8BitStorageFeatures {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_8BIT_STORAGE_FEATURES,
+                p_next: *mut c_void,
+                storage_buffer_8_bit_access: crate::data::Bool32,
+                uniform_and_storage_buffer_8_bit_access: crate::data::Bool32,
+                storage_push_constant_8: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceConditionalRenderingFeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_CONDITIONAL_RENDERING_FEATURES_EXT,
+                p_next: *mut c_void,
+                conditional_rendering: crate::data::Bool32,
+                inherited_conditional_rendering: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceVulkanMemoryModelFeatures {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_VULKAN_MEMORY_MODEL_FEATURES,
+                p_next: *mut c_void,
+                vulkan_memory_model: crate::data::Bool32,
+                vulkan_memory_model_device_scope: crate::data::Bool32,
+                vulkan_memory_model_availability_visibility_chains: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceShaderAtomicInt64Features {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SHADER_ATOMIC_INT64_FEATURES,
+                p_next: *mut c_void,
+                shader_buffer_int_64_atomics: crate::data::Bool32,
+                shader_shared_int_64_atomics: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceShaderAtomicFloatFeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SHADER_ATOMIC_FLOAT_FEATURES_EXT,
+                p_next: *mut c_void,
+                shader_buffer_float_32_atomics: crate::data::Bool32,
+                shader_buffer_float_32_atomic_add: crate::data::Bool32,
+                shader_buffer_float_64_atomics: crate::data::Bool32,
+                shader_buffer_float_64_atomic_add: crate::data::Bool32,
+                shader_shared_float_32_atomics: crate::data::Bool32,
+                shader_shared_float_32_atomic_add: crate::data::Bool32,
+                shader_shared_float_64_atomics: crate::data::Bool32,
+                shader_shared_float_64_atomic_add: crate::data::Bool32,
+                shader_image_float_32_atomics: crate::data::Bool32,
+                shader_image_float_32_atomic_add: crate::data::Bool32,
+                sparse_image_float_32_atomics: crate::data::Bool32,
+                sparse_image_float_32_atomic_add: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceShaderAtomicFloat2FeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SHADER_ATOMIC_FLOAT_2_FEATURES_EXT,
+                p_next: *mut c_void,
+                shader_buffer_float_16_atomics: crate::data::Bool32,
+                shader_buffer_float_16_atomic_add: crate::data::Bool32,
+                shader_buffer_float_16_atomic_min_max: crate::data::Bool32,
+                shader_buffer_float_32_atomic_min_max: crate::data::Bool32,
+                shader_buffer_float_64_atomic_min_max: crate::data::Bool32,
+                shader_shared_float_16_atomics: crate::data::Bool32,
+                shader_shared_float_16_atomic_add: crate::data::Bool32,
+                shader_shared_float_16_atomic_min_max: crate::data::Bool32,
+                shader_shared_float_32_atomic_min_max: crate::data::Bool32,
+                shader_shared_float_64_atomic_min_max: crate::data::Bool32,
+                shader_image_float_32_atomic_min_max: crate::data::Bool32,
+                sparse_image_float_32_atomic_min_max: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceVertexAttributeDivisorFeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_FEATURES_EXT,
+                p_next: *mut c_void,
+                vertex_attribute_instance_rate_divisor: crate::data::Bool32,
+                vertex_attribute_instance_rate_zero_divisor: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct QueueFamilyCheckpointPropertiesNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::QUEUE_FAMILY_CHECKPOINT_PROPERTIES_NV,
+                p_next: *mut c_void,
+                checkpoint_execution_stage_mask: crate::data::PipelineStageFlags,
+        }
+    }
+    impl_aggregate! {
+        struct CheckpointDataNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::CHECKPOINT_DATA_NV,
+                p_next: *mut c_void,
+                stage: crate::data::PipelineStageFlagBits,
+                p_checkpoint_marker: *mut c_void,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceDepthStencilResolveProperties {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_DEPTH_STENCIL_RESOLVE_PROPERTIES,
+                p_next: *mut c_void,
+                supported_depth_resolve_modes: crate::data::ResolveModeFlags,
+                supported_stencil_resolve_modes: crate::data::ResolveModeFlags,
+                independent_resolve_none: crate::data::Bool32,
+                independent_resolve: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct SubpassDescriptionDepthStencilResolve {
+                s_type: crate::data::StructureType = crate::data::StructureType::SUBPASS_DESCRIPTION_DEPTH_STENCIL_RESOLVE,
+                p_next: *const c_void,
+                depth_resolve_mode: crate::data::ResolveModeFlagBits,
+                stencil_resolve_mode: crate::data::ResolveModeFlagBits,
+                p_depth_stencil_resolve_attachment: *const crate::data::AttachmentReference2,
+        }
+    }
+    impl_aggregate! {
+        struct ImageViewASTCDecodeModeEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_VIEW_ASTC_DECODE_MODE_EXT,
+                p_next: *const c_void,
+                decode_mode: crate::data::Format,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceASTCDecodeFeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_ASTC_DECODE_FEATURES_EXT,
+                p_next: *mut c_void,
+                decode_mode_shared_exponent: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceTransformFeedbackFeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_TRANSFORM_FEEDBACK_FEATURES_EXT,
+                p_next: *mut c_void,
+                transform_feedback: crate::data::Bool32,
+                geometry_streams: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceTransformFeedbackPropertiesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_TRANSFORM_FEEDBACK_PROPERTIES_EXT,
+                p_next: *mut c_void,
+                max_transform_feedback_streams: u32,
+                max_transform_feedback_buffers: u32,
+                max_transform_feedback_buffer_size: crate::data::DeviceSize,
+                max_transform_feedback_stream_data_size: u32,
+                max_transform_feedback_buffer_data_size: u32,
+                max_transform_feedback_buffer_data_stride: u32,
+                transform_feedback_queries: crate::data::Bool32,
+                transform_feedback_streams_lines_triangles: crate::data::Bool32,
+                transform_feedback_rasterization_stream_select: crate::data::Bool32,
+                transform_feedback_draw: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PipelineRasterizationStateStreamCreateInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_RASTERIZATION_STATE_STREAM_CREATE_INFO_EXT,
+                p_next: *const c_void,
+                flags: crate::data::PipelineRasterizationStateStreamCreateFlagsEXT,
+                rasterization_stream: u32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceRepresentativeFragmentTestFeaturesNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_REPRESENTATIVE_FRAGMENT_TEST_FEATURES_NV,
+                p_next: *mut c_void,
+                representative_fragment_test: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PipelineRepresentativeFragmentTestStateCreateInfoNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_REPRESENTATIVE_FRAGMENT_TEST_STATE_CREATE_INFO_NV,
+                p_next: *const c_void,
+                representative_fragment_test_enable: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceExclusiveScissorFeaturesNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_EXCLUSIVE_SCISSOR_FEATURES_NV,
+                p_next: *mut c_void,
+                exclusive_scissor: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PipelineViewportExclusiveScissorStateCreateInfoNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_VIEWPORT_EXCLUSIVE_SCISSOR_STATE_CREATE_INFO_NV,
+                p_next: *const c_void,
+                exclusive_scissor_count: u32,
+                p_exclusive_scissors: *const crate::data::Rect2D,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceCornerSampledImageFeaturesNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_CORNER_SAMPLED_IMAGE_FEATURES_NV,
+                p_next: *mut c_void,
+                corner_sampled_image: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceComputeShaderDerivativesFeaturesNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_COMPUTE_SHADER_DERIVATIVES_FEATURES_NV,
+                p_next: *mut c_void,
+                compute_derivative_group_quads: crate::data::Bool32,
+                compute_derivative_group_linear: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceShaderImageFootprintFeaturesNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SHADER_IMAGE_FOOTPRINT_FEATURES_NV,
+                p_next: *mut c_void,
+                image_footprint: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceDedicatedAllocationImageAliasingFeaturesNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_DEDICATED_ALLOCATION_IMAGE_ALIASING_FEATURES_NV,
+                p_next: *mut c_void,
+                dedicated_allocation_image_aliasing: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct ShadingRatePaletteNV {
+                shading_rate_palette_entry_count: u32,
+                p_shading_rate_palette_entries: *const crate::data::ShadingRatePaletteEntryNV,
+        }
+    }
+    impl_aggregate! {
+        struct PipelineViewportShadingRateImageStateCreateInfoNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_VIEWPORT_SHADING_RATE_IMAGE_STATE_CREATE_INFO_NV,
+                p_next: *const c_void,
+                shading_rate_image_enable: crate::data::Bool32,
+                viewport_count: u32,
+                p_shading_rate_palettes: *const crate::data::ShadingRatePaletteNV,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceShadingRateImageFeaturesNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SHADING_RATE_IMAGE_FEATURES_NV,
+                p_next: *mut c_void,
+                shading_rate_image: crate::data::Bool32,
+                shading_rate_coarse_sample_order: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceShadingRateImagePropertiesNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SHADING_RATE_IMAGE_PROPERTIES_NV,
+                p_next: *mut c_void,
+                shading_rate_texel_size: crate::data::Extent2D,
+                shading_rate_palette_size: u32,
+                shading_rate_max_coarse_samples: u32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceInvocationMaskFeaturesHUAWEI {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_INVOCATION_MASK_FEATURES_HUAWEI,
+                p_next: *mut c_void,
+                invocation_mask: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct CoarseSampleLocationNV {
+                pixel_x: u32,
+                pixel_y: u32,
+                sample: u32,
+        }
+    }
+    impl_aggregate! {
+        struct CoarseSampleOrderCustomNV {
+                shading_rate: crate::data::ShadingRatePaletteEntryNV,
+                sample_count: u32,
+                sample_location_count: u32,
+                p_sample_locations: *const crate::data::CoarseSampleLocationNV,
+        }
+    }
+    impl_aggregate! {
+        struct PipelineViewportCoarseSampleOrderStateCreateInfoNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_VIEWPORT_COARSE_SAMPLE_ORDER_STATE_CREATE_INFO_NV,
+                p_next: *const c_void,
+                sample_order_type: crate::data::CoarseSampleOrderTypeNV,
+                custom_sample_order_count: u32,
+                p_custom_sample_orders: *const crate::data::CoarseSampleOrderCustomNV,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceMeshShaderFeaturesNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_MESH_SHADER_FEATURES_NV,
+                p_next: *mut c_void,
+                task_shader: crate::data::Bool32,
+                mesh_shader: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceMeshShaderPropertiesNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_MESH_SHADER_PROPERTIES_NV,
+                p_next: *mut c_void,
+                max_draw_mesh_tasks_count: u32,
+                max_task_work_group_invocations: u32,
+                max_task_work_group_size: [u32; 3],
+                max_task_total_memory_size: u32,
+                max_task_output_count: u32,
+                max_mesh_work_group_invocations: u32,
+                max_mesh_work_group_size: [u32; 3],
+                max_mesh_total_memory_size: u32,
+                max_mesh_output_vertices: u32,
+                max_mesh_output_primitives: u32,
+                max_mesh_multiview_view_count: u32,
+                mesh_output_per_vertex_granularity: u32,
+                mesh_output_per_primitive_granularity: u32,
+        }
+    }
+    impl_aggregate! {
+        struct DrawMeshTasksIndirectCommandNV {
+                task_count: u32,
+                first_task: u32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceMeshShaderFeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_MESH_SHADER_FEATURES_EXT,
+                p_next: *mut c_void,
+                task_shader: crate::data::Bool32,
+                mesh_shader: crate::data::Bool32,
+                multiview_mesh_shader: crate::data::Bool32,
+                primitive_fragment_shading_rate_mesh_shader: crate::data::Bool32,
+                mesh_shader_queries: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceMeshShaderPropertiesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_MESH_SHADER_PROPERTIES_EXT,
+                p_next: *mut c_void,
+                max_task_work_group_total_count: u32,
+                max_task_work_group_count: [u32; 3],
+                max_task_work_group_invocations: u32,
+                max_task_work_group_size: [u32; 3],
+                max_task_payload_size: u32,
+                max_task_shared_memory_size: u32,
+                max_task_payload_and_shared_memory_size: u32,
+                max_mesh_work_group_total_count: u32,
+                max_mesh_work_group_count: [u32; 3],
+                max_mesh_work_group_invocations: u32,
+                max_mesh_work_group_size: [u32; 3],
+                max_mesh_shared_memory_size: u32,
+                max_mesh_payload_and_shared_memory_size: u32,
+                max_mesh_output_memory_size: u32,
+                max_mesh_payload_and_output_memory_size: u32,
+                max_mesh_output_components: u32,
+                max_mesh_output_vertices: u32,
+                max_mesh_output_primitives: u32,
+                max_mesh_output_layers: u32,
+                max_mesh_multiview_view_count: u32,
+                mesh_output_per_vertex_granularity: u32,
+                mesh_output_per_primitive_granularity: u32,
+                max_preferred_task_work_group_invocations: u32,
+                max_preferred_mesh_work_group_invocations: u32,
+                prefers_local_invocation_vertex_output: crate::data::Bool32,
+                prefers_local_invocation_primitive_output: crate::data::Bool32,
+                prefers_compact_vertex_output: crate::data::Bool32,
+                prefers_compact_primitive_output: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct DrawMeshTasksIndirectCommandEXT {
+                group_count_x: u32,
+                group_count_y: u32,
+                group_count_z: u32,
+        }
+    }
+    impl_aggregate! {
+        struct RayTracingShaderGroupCreateInfoNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::RAY_TRACING_SHADER_GROUP_CREATE_INFO_NV,
+                p_next: *const c_void,
+                ty: crate::data::RayTracingShaderGroupTypeKHR,
+                general_shader: u32,
+                closest_hit_shader: u32,
+                any_hit_shader: u32,
+                intersection_shader: u32,
+        }
+    }
+    impl_aggregate! {
+        struct RayTracingShaderGroupCreateInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::RAY_TRACING_SHADER_GROUP_CREATE_INFO_KHR,
+                p_next: *const c_void,
+                ty: crate::data::RayTracingShaderGroupTypeKHR,
+                general_shader: u32,
+                closest_hit_shader: u32,
+                any_hit_shader: u32,
+                intersection_shader: u32,
+                p_shader_group_capture_replay_handle: *const c_void,
+        }
+    }
+    impl_aggregate! {
+        struct RayTracingPipelineCreateInfoNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::RAY_TRACING_PIPELINE_CREATE_INFO_NV,
+                p_next: *const c_void,
+                flags: crate::data::PipelineCreateFlags,
+                stage_count: u32,
+                p_stages: *const crate::data::PipelineShaderStageCreateInfo,
+                group_count: u32,
+                p_groups: *const crate::data::RayTracingShaderGroupCreateInfoNV,
+                max_recursion_depth: u32,
+                layout: crate::data::PipelineLayout,
+                base_pipeline_handle: crate::data::Pipeline,
+                base_pipeline_index: i32,
+        }
+    }
+    impl_aggregate! {
+        struct RayTracingPipelineCreateInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::RAY_TRACING_PIPELINE_CREATE_INFO_KHR,
+                p_next: *const c_void,
+                flags: crate::data::PipelineCreateFlags,
+                stage_count: u32,
+                p_stages: *const crate::data::PipelineShaderStageCreateInfo,
+                group_count: u32,
+                p_groups: *const crate::data::RayTracingShaderGroupCreateInfoKHR,
+                max_pipeline_ray_recursion_depth: u32,
+                p_library_info: *const crate::data::PipelineLibraryCreateInfoKHR,
+                p_library_interface: *const crate::data::RayTracingPipelineInterfaceCreateInfoKHR,
+                p_dynamic_state: *const crate::data::PipelineDynamicStateCreateInfo,
+                layout: crate::data::PipelineLayout,
+                base_pipeline_handle: crate::data::Pipeline,
+                base_pipeline_index: i32,
+        }
+    }
+    impl_aggregate! {
+        struct GeometryTrianglesNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::GEOMETRY_TRIANGLES_NV,
+                p_next: *const c_void,
+                vertex_data: crate::data::Buffer,
+                vertex_offset: crate::data::DeviceSize,
+                vertex_count: u32,
+                vertex_stride: crate::data::DeviceSize,
+                vertex_format: crate::data::Format,
+                index_data: crate::data::Buffer,
+                index_offset: crate::data::DeviceSize,
+                index_count: u32,
+                index_type: crate::data::IndexType,
+                transform_data: crate::data::Buffer,
+                transform_offset: crate::data::DeviceSize,
+        }
+    }
+    impl_aggregate! {
+        struct GeometryAABBNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::GEOMETRY_AABB_NV,
+                p_next: *const c_void,
+                aabb_data: crate::data::Buffer,
+                num_aab_bs: u32,
+                stride: u32,
+                offset: crate::data::DeviceSize,
+        }
+    }
+    impl_aggregate! {
+        struct GeometryDataNV {
+                triangles: crate::data::GeometryTrianglesNV,
+                aabbs: crate::data::GeometryAABBNV,
+        }
+    }
+    impl_aggregate! {
+        struct GeometryNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::GEOMETRY_NV,
+                p_next: *const c_void,
+                geometry_type: crate::data::GeometryTypeKHR,
+                geometry: crate::data::GeometryDataNV,
+                flags: crate::data::GeometryFlagsKHR,
+        }
+    }
+    impl_aggregate! {
+        struct AccelerationStructureInfoNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::ACCELERATION_STRUCTURE_INFO_NV,
+                p_next: *const c_void,
+                ty: crate::data::AccelerationStructureTypeNV,
+                flags: crate::data::BuildAccelerationStructureFlagsNV,
+                instance_count: u32,
+                geometry_count: u32,
+                p_geometries: *const crate::data::GeometryNV,
+        }
+    }
+    impl_aggregate! {
+        struct AccelerationStructureCreateInfoNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::ACCELERATION_STRUCTURE_CREATE_INFO_NV,
+                p_next: *const c_void,
+                compacted_size: crate::data::DeviceSize,
+                info: crate::data::AccelerationStructureInfoNV,
+        }
+    }
+    impl_aggregate! {
+        struct BindAccelerationStructureMemoryInfoNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::BIND_ACCELERATION_STRUCTURE_MEMORY_INFO_NV,
+                p_next: *const c_void,
+                acceleration_structure: crate::data::AccelerationStructureNV,
+                memory: crate::data::DeviceMemory,
+                memory_offset: crate::data::DeviceSize,
+                device_index_count: u32,
+                p_device_indices: *const u32,
+        }
+    }
+    impl_aggregate! {
+        struct WriteDescriptorSetAccelerationStructureKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::WRITE_DESCRIPTOR_SET_ACCELERATION_STRUCTURE_KHR,
+                p_next: *const c_void,
+                acceleration_structure_count: u32,
+                p_acceleration_structures: *const crate::data::AccelerationStructureKHR,
+        }
+    }
+    impl_aggregate! {
+        struct WriteDescriptorSetAccelerationStructureNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::WRITE_DESCRIPTOR_SET_ACCELERATION_STRUCTURE_NV,
+                p_next: *const c_void,
+                acceleration_structure_count: u32,
+                p_acceleration_structures: *const crate::data::AccelerationStructureNV,
+        }
+    }
+    impl_aggregate! {
+        struct AccelerationStructureMemoryRequirementsInfoNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::ACCELERATION_STRUCTURE_MEMORY_REQUIREMENTS_INFO_NV,
+                p_next: *const c_void,
+                ty: crate::data::AccelerationStructureMemoryRequirementsTypeNV,
+                acceleration_structure: crate::data::AccelerationStructureNV,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceAccelerationStructureFeaturesKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_FEATURES_KHR,
+                p_next: *mut c_void,
+                acceleration_structure: crate::data::Bool32,
+                acceleration_structure_capture_replay: crate::data::Bool32,
+                acceleration_structure_indirect_build: crate::data::Bool32,
+                acceleration_structure_host_commands: crate::data::Bool32,
+                descriptor_binding_acceleration_structure_update_after_bind: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceRayTracingPipelineFeaturesKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_FEATURES_KHR,
+                p_next: *mut c_void,
+                ray_tracing_pipeline: crate::data::Bool32,
+                ray_tracing_pipeline_shader_group_handle_capture_replay: crate::data::Bool32,
+                ray_tracing_pipeline_shader_group_handle_capture_replay_mixed: crate::data::Bool32,
+                ray_tracing_pipeline_trace_rays_indirect: crate::data::Bool32,
+                ray_traversal_primitive_culling: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceRayQueryFeaturesKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_RAY_QUERY_FEATURES_KHR,
+                p_next: *mut c_void,
+                ray_query: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceAccelerationStructurePropertiesKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_PROPERTIES_KHR,
+                p_next: *mut c_void,
+                max_geometry_count: u64,
+                max_instance_count: u64,
+                max_primitive_count: u64,
+                max_per_stage_descriptor_acceleration_structures: u32,
+                max_per_stage_descriptor_update_after_bind_acceleration_structures: u32,
+                max_descriptor_set_acceleration_structures: u32,
+                max_descriptor_set_update_after_bind_acceleration_structures: u32,
+                min_acceleration_structure_scratch_offset_alignment: u32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceRayTracingPipelinePropertiesKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_PROPERTIES_KHR,
+                p_next: *mut c_void,
+                shader_group_handle_size: u32,
+                max_ray_recursion_depth: u32,
+                max_shader_group_stride: u32,
+                shader_group_base_alignment: u32,
+                shader_group_handle_capture_replay_size: u32,
+                max_ray_dispatch_invocation_count: u32,
+                shader_group_handle_alignment: u32,
+                max_ray_hit_attribute_size: u32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceRayTracingPropertiesNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_RAY_TRACING_PROPERTIES_NV,
+                p_next: *mut c_void,
+                shader_group_handle_size: u32,
+                max_recursion_depth: u32,
+                max_shader_group_stride: u32,
+                shader_group_base_alignment: u32,
+                max_geometry_count: u64,
+                max_instance_count: u64,
+                max_triangle_count: u64,
+                max_descriptor_set_acceleration_structures: u32,
+        }
+    }
+    impl_aggregate! {
+        struct StridedDeviceAddressRegionKHR {
+                device_address: crate::data::DeviceAddress,
+                stride: crate::data::DeviceSize,
+                size: crate::data::DeviceSize,
+        }
+    }
+    impl_aggregate! {
+        struct TraceRaysIndirectCommandKHR {
+                width: u32,
+                height: u32,
+                depth: u32,
+        }
+    }
+    impl_aggregate! {
+        struct TraceRaysIndirectCommand2KHR {
+                raygen_shader_record_address: crate::data::DeviceAddress,
+                raygen_shader_record_size: crate::data::DeviceSize,
+                miss_shader_binding_table_address: crate::data::DeviceAddress,
+                miss_shader_binding_table_size: crate::data::DeviceSize,
+                miss_shader_binding_table_stride: crate::data::DeviceSize,
+                hit_shader_binding_table_address: crate::data::DeviceAddress,
+                hit_shader_binding_table_size: crate::data::DeviceSize,
+                hit_shader_binding_table_stride: crate::data::DeviceSize,
+                callable_shader_binding_table_address: crate::data::DeviceAddress,
+                callable_shader_binding_table_size: crate::data::DeviceSize,
+                callable_shader_binding_table_stride: crate::data::DeviceSize,
+                width: u32,
+                height: u32,
+                depth: u32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceRayTracingMaintenance1FeaturesKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_RAY_TRACING_MAINTENANCE_1_FEATURES_KHR,
+                p_next: *mut c_void,
+                ray_tracing_maintenance_1: crate::data::Bool32,
+                ray_tracing_pipeline_trace_rays_indirect_2: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct DrmFormatModifierPropertiesListEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::DRM_FORMAT_MODIFIER_PROPERTIES_LIST_EXT,
+                p_next: *mut c_void,
+                drm_format_modifier_count: u32,
+                p_drm_format_modifier_properties: *mut crate::data::DrmFormatModifierPropertiesEXT,
+        }
+    }
+    impl_aggregate! {
+        struct DrmFormatModifierPropertiesEXT {
+                drm_format_modifier: u64,
+                drm_format_modifier_plane_count: u32,
+                drm_format_modifier_tiling_features: crate::data::FormatFeatureFlags,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceImageDrmFormatModifierInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_IMAGE_DRM_FORMAT_MODIFIER_INFO_EXT,
+                p_next: *const c_void,
+                drm_format_modifier: u64,
+                sharing_mode: crate::data::SharingMode,
+                queue_family_index_count: u32,
+                p_queue_family_indices: *const u32,
+        }
+    }
+    impl_aggregate! {
+        struct ImageDrmFormatModifierListCreateInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_DRM_FORMAT_MODIFIER_LIST_CREATE_INFO_EXT,
+                p_next: *const c_void,
+                drm_format_modifier_count: u32,
+                p_drm_format_modifiers: *const u64,
+        }
+    }
+    impl_aggregate! {
+        struct ImageDrmFormatModifierExplicitCreateInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_DRM_FORMAT_MODIFIER_EXPLICIT_CREATE_INFO_EXT,
+                p_next: *const c_void,
+                drm_format_modifier: u64,
+                drm_format_modifier_plane_count: u32,
+                p_plane_layouts: *const crate::data::SubresourceLayout,
+        }
+    }
+    impl_aggregate! {
+        struct ImageDrmFormatModifierPropertiesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_DRM_FORMAT_MODIFIER_PROPERTIES_EXT,
+                p_next: *mut c_void,
+                drm_format_modifier: u64,
+        }
+    }
+    impl_aggregate! {
+        struct ImageStencilUsageCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_STENCIL_USAGE_CREATE_INFO,
+                p_next: *const c_void,
+                stencil_usage: crate::data::ImageUsageFlags,
+        }
+    }
+    impl_aggregate! {
+        struct DeviceMemoryOverallocationCreateInfoAMD {
+                s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_MEMORY_OVERALLOCATION_CREATE_INFO_AMD,
+                p_next: *const c_void,
+                overallocation_behavior: crate::data::MemoryOverallocationBehaviorAMD,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceFragmentDensityMapFeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_FEATURES_EXT,
+                p_next: *mut c_void,
+                fragment_density_map: crate::data::Bool32,
+                fragment_density_map_dynamic: crate::data::Bool32,
+                fragment_density_map_non_subsampled_images: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceFragmentDensityMap2FeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_2_FEATURES_EXT,
+                p_next: *mut c_void,
+                fragment_density_map_deferred: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceFragmentDensityMapOffsetFeaturesQCOM {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_OFFSET_FEATURES_QCOM,
+                p_next: *mut c_void,
+                fragment_density_map_offset: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceFragmentDensityMapPropertiesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_PROPERTIES_EXT,
+                p_next: *mut c_void,
+                min_fragment_density_texel_size: crate::data::Extent2D,
+                max_fragment_density_texel_size: crate::data::Extent2D,
+                fragment_density_invocations: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceFragmentDensityMap2PropertiesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_2_PROPERTIES_EXT,
+                p_next: *mut c_void,
+                subsampled_loads: crate::data::Bool32,
+                subsampled_coarse_reconstruction_early_access: crate::data::Bool32,
+                max_subsampled_array_layers: u32,
+                max_descriptor_set_subsampled_samplers: u32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceFragmentDensityMapOffsetPropertiesQCOM {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_OFFSET_PROPERTIES_QCOM,
+                p_next: *mut c_void,
+                fragment_density_offset_granularity: crate::data::Extent2D,
+        }
+    }
+    impl_aggregate! {
+        struct RenderPassFragmentDensityMapCreateInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::RENDER_PASS_FRAGMENT_DENSITY_MAP_CREATE_INFO_EXT,
+                p_next: *const c_void,
+                fragment_density_map_attachment: crate::data::AttachmentReference,
+        }
+    }
+    impl_aggregate! {
+        struct SubpassFragmentDensityMapOffsetEndInfoQCOM {
+                s_type: crate::data::StructureType = crate::data::StructureType::SUBPASS_FRAGMENT_DENSITY_MAP_OFFSET_END_INFO_QCOM,
+                p_next: *const c_void,
+                fragment_density_offset_count: u32,
+                p_fragment_density_offsets: *const crate::data::Offset2D,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceScalarBlockLayoutFeatures {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SCALAR_BLOCK_LAYOUT_FEATURES,
+                p_next: *mut c_void,
+                scalar_block_layout: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct SurfaceProtectedCapabilitiesKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::SURFACE_PROTECTED_CAPABILITIES_KHR,
+                p_next: *const c_void,
+                supports_protected: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceUniformBufferStandardLayoutFeatures {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_UNIFORM_BUFFER_STANDARD_LAYOUT_FEATURES,
+                p_next: *mut c_void,
+                uniform_buffer_standard_layout: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceDepthClipEnableFeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_DEPTH_CLIP_ENABLE_FEATURES_EXT,
+                p_next: *mut c_void,
+                depth_clip_enable: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PipelineRasterizationDepthClipStateCreateInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_RASTERIZATION_DEPTH_CLIP_STATE_CREATE_INFO_EXT,
+                p_next: *const c_void,
+                flags: crate::data::PipelineRasterizationDepthClipStateCreateFlagsEXT,
+                depth_clip_enable: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceMemoryBudgetPropertiesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_MEMORY_BUDGET_PROPERTIES_EXT,
+                p_next: *mut c_void,
+                heap_budget: [crate::data::DeviceSize; 16],
+                heap_usage: [crate::data::DeviceSize; 16],
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceMemoryPriorityFeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_MEMORY_PRIORITY_FEATURES_EXT,
+                p_next: *mut c_void,
+                memory_priority: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct MemoryPriorityAllocateInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::MEMORY_PRIORITY_ALLOCATE_INFO_EXT,
+                p_next: *const c_void,
+                priority: c_float,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDevicePageableDeviceLocalMemoryFeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PAGEABLE_DEVICE_LOCAL_MEMORY_FEATURES_EXT,
+                p_next: *mut c_void,
+                pageable_device_local_memory: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceBufferDeviceAddressFeatures {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES,
+                p_next: *mut c_void,
+                buffer_device_address: crate::data::Bool32,
+                buffer_device_address_capture_replay: crate::data::Bool32,
+                buffer_device_address_multi_device: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceBufferDeviceAddressFeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES_EXT,
+                p_next: *mut c_void,
+                buffer_device_address: crate::data::Bool32,
+                buffer_device_address_capture_replay: crate::data::Bool32,
+                buffer_device_address_multi_device: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct BufferDeviceAddressInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::BUFFER_DEVICE_ADDRESS_INFO,
+                p_next: *const c_void,
+                buffer: crate::data::Buffer,
+        }
+    }
+    impl_aggregate! {
+        struct BufferOpaqueCaptureAddressCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::BUFFER_OPAQUE_CAPTURE_ADDRESS_CREATE_INFO,
+                p_next: *const c_void,
+                opaque_capture_address: u64,
+        }
+    }
+    impl_aggregate! {
+        struct BufferDeviceAddressCreateInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::BUFFER_DEVICE_ADDRESS_CREATE_INFO_EXT,
+                p_next: *const c_void,
+                device_address: crate::data::DeviceAddress,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceImageViewImageFormatInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_IMAGE_VIEW_IMAGE_FORMAT_INFO_EXT,
+                p_next: *mut c_void,
+                image_view_type: crate::data::ImageViewType,
+        }
+    }
+    impl_aggregate! {
+        struct FilterCubicImageViewImageFormatPropertiesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::FILTER_CUBIC_IMAGE_VIEW_IMAGE_FORMAT_PROPERTIES_EXT,
+                p_next: *mut c_void,
+                filter_cubic: crate::data::Bool32,
+                filter_cubic_minmax: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceImagelessFramebufferFeatures {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_IMAGELESS_FRAMEBUFFER_FEATURES,
+                p_next: *mut c_void,
+                imageless_framebuffer: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct FramebufferAttachmentsCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::FRAMEBUFFER_ATTACHMENTS_CREATE_INFO,
+                p_next: *const c_void,
+                attachment_image_info_count: u32,
+                p_attachment_image_infos: *const crate::data::FramebufferAttachmentImageInfo,
+        }
+    }
+    impl_aggregate! {
+        struct FramebufferAttachmentImageInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::FRAMEBUFFER_ATTACHMENT_IMAGE_INFO,
+                p_next: *const c_void,
+                flags: crate::data::ImageCreateFlags,
+                usage: crate::data::ImageUsageFlags,
+                width: u32,
+                height: u32,
+                layer_count: u32,
+                view_format_count: u32,
+                p_view_formats: *const crate::data::Format,
+        }
+    }
+    impl_aggregate! {
+        struct RenderPassAttachmentBeginInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::RENDER_PASS_ATTACHMENT_BEGIN_INFO,
+                p_next: *const c_void,
+                attachment_count: u32,
+                p_attachments: *const crate::data::ImageView,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceTextureCompressionASTCHDRFeatures {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_TEXTURE_COMPRESSION_ASTC_HDR_FEATURES,
+                p_next: *mut c_void,
+                texture_compression_astc_hdr: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceCooperativeMatrixFeaturesNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_COOPERATIVE_MATRIX_FEATURES_NV,
+                p_next: *mut c_void,
+                cooperative_matrix: crate::data::Bool32,
+                cooperative_matrix_robust_buffer_access: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceCooperativeMatrixPropertiesNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_COOPERATIVE_MATRIX_PROPERTIES_NV,
+                p_next: *mut c_void,
+                cooperative_matrix_supported_stages: crate::data::ShaderStageFlags,
+        }
+    }
+    impl_aggregate! {
+        struct CooperativeMatrixPropertiesNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::COOPERATIVE_MATRIX_PROPERTIES_NV,
+                p_next: *mut c_void,
+                m_size: u32,
+                n_size: u32,
+                k_size: u32,
+                a_type: crate::data::ComponentTypeNV,
+                b_type: crate::data::ComponentTypeNV,
+                c_type: crate::data::ComponentTypeNV,
+                d_type: crate::data::ComponentTypeNV,
+                scope: crate::data::ScopeNV,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceYcbcrImageArraysFeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_YCBCR_IMAGE_ARRAYS_FEATURES_EXT,
+                p_next: *mut c_void,
+                ycbcr_image_arrays: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct ImageViewHandleInfoNVX {
+                s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_VIEW_HANDLE_INFO_NVX,
+                p_next: *const c_void,
+                image_view: crate::data::ImageView,
+                descriptor_type: crate::data::DescriptorType,
+                sampler: crate::data::Sampler,
+        }
+    }
+    impl_aggregate! {
+        struct ImageViewAddressPropertiesNVX {
+                s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_VIEW_ADDRESS_PROPERTIES_NVX,
+                p_next: *mut c_void,
+                device_address: crate::data::DeviceAddress,
+                size: crate::data::DeviceSize,
+        }
+    }
+    impl_aggregate! {
+        struct PipelineCreationFeedback {
+                flags: crate::data::PipelineCreationFeedbackFlags,
+                duration: u64,
+        }
+    }
+    impl_aggregate! {
+        struct PipelineCreationFeedbackCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_CREATION_FEEDBACK_CREATE_INFO,
+                p_next: *const c_void,
+                p_pipeline_creation_feedback: *mut crate::data::PipelineCreationFeedback,
+                pipeline_stage_creation_feedback_count: u32,
+                p_pipeline_stage_creation_feedbacks: *mut crate::data::PipelineCreationFeedback,
+        }
+    }
+    impl_aggregate! {
+        struct SurfaceFullScreenExclusiveInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::SURFACE_FULL_SCREEN_EXCLUSIVE_INFO_EXT,
+                p_next: *mut c_void,
+                full_screen_exclusive: crate::data::FullScreenExclusiveEXT,
+        }
+    }
+    impl_aggregate! {
+        struct SurfaceCapabilitiesFullScreenExclusiveEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::SURFACE_CAPABILITIES_FULL_SCREEN_EXCLUSIVE_EXT,
+                p_next: *mut c_void,
+                full_screen_exclusive_supported: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDevicePresentBarrierFeaturesNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PRESENT_BARRIER_FEATURES_NV,
+                p_next: *mut c_void,
+                present_barrier: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct SurfaceCapabilitiesPresentBarrierNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::SURFACE_CAPABILITIES_PRESENT_BARRIER_NV,
+                p_next: *mut c_void,
+                present_barrier_supported: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct SwapchainPresentBarrierCreateInfoNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::SWAPCHAIN_PRESENT_BARRIER_CREATE_INFO_NV,
+                p_next: *mut c_void,
+                present_barrier_enable: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDevicePerformanceQueryFeaturesKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PERFORMANCE_QUERY_FEATURES_KHR,
+                p_next: *mut c_void,
+                performance_counter_query_pools: crate::data::Bool32,
+                performance_counter_multiple_query_pools: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDevicePerformanceQueryPropertiesKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PERFORMANCE_QUERY_PROPERTIES_KHR,
+                p_next: *mut c_void,
+                allow_command_buffer_query_copies: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PerformanceCounterKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::PERFORMANCE_COUNTER_KHR,
+                p_next: *mut c_void,
+                unit: crate::data::PerformanceCounterUnitKHR,
+                scope: crate::data::PerformanceCounterScopeKHR,
+                storage: crate::data::PerformanceCounterStorageKHR,
+                uuid: [u8; 16],
+        }
+    }
+    impl_aggregate! {
+        struct PerformanceCounterDescriptionKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::PERFORMANCE_COUNTER_DESCRIPTION_KHR,
+                p_next: *mut c_void,
+                flags: crate::data::PerformanceCounterDescriptionFlagsKHR,
+                name: [c_char; 256],
+                category: [c_char; 256],
+                description: [c_char; 256],
+        }
+    }
+    impl_aggregate! {
+        struct QueryPoolPerformanceCreateInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::QUERY_POOL_PERFORMANCE_CREATE_INFO_KHR,
+                p_next: *const c_void,
+                queue_family_index: u32,
+                counter_index_count: u32,
+                p_counter_indices: *const u32,
+        }
+    }
+    impl_aggregate! {
+        union PerformanceCounterResultKHR {
+                int_32: i32,
+                int_64: i64,
+                uint_32: u32,
+                uint_64: u64,
+                float_32: c_float,
+                float_64: c_double,
+        }
+    }
+    impl_aggregate! {
+        struct AcquireProfilingLockInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::ACQUIRE_PROFILING_LOCK_INFO_KHR,
+                p_next: *const c_void,
+                flags: crate::data::AcquireProfilingLockFlagsKHR,
+                timeout: u64,
+        }
+    }
+    impl_aggregate! {
+        struct PerformanceQuerySubmitInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::PERFORMANCE_QUERY_SUBMIT_INFO_KHR,
+                p_next: *const c_void,
+                counter_pass_index: u32,
+        }
+    }
+    impl_aggregate! {
+        struct HeadlessSurfaceCreateInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::HEADLESS_SURFACE_CREATE_INFO_EXT,
+                p_next: *const c_void,
+                flags: crate::data::HeadlessSurfaceCreateFlagsEXT,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceCoverageReductionModeFeaturesNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_COVERAGE_REDUCTION_MODE_FEATURES_NV,
+                p_next: *mut c_void,
+                coverage_reduction_mode: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PipelineCoverageReductionStateCreateInfoNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_COVERAGE_REDUCTION_STATE_CREATE_INFO_NV,
+                p_next: *const c_void,
+                flags: crate::data::PipelineCoverageReductionStateCreateFlagsNV,
+                coverage_reduction_mode: crate::data::CoverageReductionModeNV,
+        }
+    }
+    impl_aggregate! {
+        struct FramebufferMixedSamplesCombinationNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::FRAMEBUFFER_MIXED_SAMPLES_COMBINATION_NV,
+                p_next: *mut c_void,
+                coverage_reduction_mode: crate::data::CoverageReductionModeNV,
+                rasterization_samples: crate::data::SampleCountFlagBits,
+                depth_stencil_samples: crate::data::SampleCountFlags,
+                color_samples: crate::data::SampleCountFlags,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceShaderIntegerFunctions2FeaturesINTEL {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SHADER_INTEGER_FUNCTIONS_2_FEATURES_INTEL,
+                p_next: *mut c_void,
+                shader_integer_functions_2: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        union PerformanceValueDataINTEL {
+                value_32: u32,
+                value_64: u64,
+                value_float: c_float,
+                value_bool: crate::data::Bool32,
+                value_string: *const c_char,
+        }
+    }
+    impl_aggregate! {
+        struct PerformanceValueINTEL {
+                ty: crate::data::PerformanceValueTypeINTEL,
+                data: crate::data::PerformanceValueDataINTEL,
+        }
+    }
+    impl_aggregate! {
+        struct InitializePerformanceApiInfoINTEL {
+                s_type: crate::data::StructureType = crate::data::StructureType::INITIALIZE_PERFORMANCE_API_INFO_INTEL,
+                p_next: *const c_void,
+                p_user_data: *mut c_void,
+        }
+    }
+    impl_aggregate! {
+        struct QueryPoolPerformanceQueryCreateInfoINTEL {
+                s_type: crate::data::StructureType = crate::data::StructureType::QUERY_POOL_PERFORMANCE_QUERY_CREATE_INFO_INTEL,
+                p_next: *const c_void,
+                performance_counters_sampling: crate::data::QueryPoolSamplingModeINTEL,
+        }
+    }
+    impl_aggregate! {
+        struct PerformanceMarkerInfoINTEL {
+                s_type: crate::data::StructureType = crate::data::StructureType::PERFORMANCE_MARKER_INFO_INTEL,
+                p_next: *const c_void,
+                marker: u64,
+        }
+    }
+    impl_aggregate! {
+        struct PerformanceStreamMarkerInfoINTEL {
+                s_type: crate::data::StructureType = crate::data::StructureType::PERFORMANCE_STREAM_MARKER_INFO_INTEL,
+                p_next: *const c_void,
+                marker: u32,
+        }
+    }
+    impl_aggregate! {
+        struct PerformanceOverrideInfoINTEL {
+                s_type: crate::data::StructureType = crate::data::StructureType::PERFORMANCE_OVERRIDE_INFO_INTEL,
+                p_next: *const c_void,
+                ty: crate::data::PerformanceOverrideTypeINTEL,
+                enable: crate::data::Bool32,
+                parameter: u64,
+        }
+    }
+    impl_aggregate! {
+        struct PerformanceConfigurationAcquireInfoINTEL {
+                s_type: crate::data::StructureType = crate::data::StructureType::PERFORMANCE_CONFIGURATION_ACQUIRE_INFO_INTEL,
+                p_next: *const c_void,
+                ty: crate::data::PerformanceConfigurationTypeINTEL,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceShaderClockFeaturesKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SHADER_CLOCK_FEATURES_KHR,
+                p_next: *mut c_void,
+                shader_subgroup_clock: crate::data::Bool32,
+                shader_device_clock: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceIndexTypeUint8FeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_INDEX_TYPE_UINT8_FEATURES_EXT,
+                p_next: *mut c_void,
+                index_type_uint_8: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceShaderSMBuiltinsPropertiesNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SHADER_SM_BUILTINS_PROPERTIES_NV,
+                p_next: *mut c_void,
+                shader_sm_count: u32,
+                shader_warps_per_sm: u32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceShaderSMBuiltinsFeaturesNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SHADER_SM_BUILTINS_FEATURES_NV,
+                p_next: *mut c_void,
+                shader_sm_builtins: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceFragmentShaderInterlockFeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_FRAGMENT_SHADER_INTERLOCK_FEATURES_EXT,
+                p_next: *mut c_void,
+                fragment_shader_sample_interlock: crate::data::Bool32,
+                fragment_shader_pixel_interlock: crate::data::Bool32,
+                fragment_shader_shading_rate_interlock: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceSeparateDepthStencilLayoutsFeatures {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SEPARATE_DEPTH_STENCIL_LAYOUTS_FEATURES,
+                p_next: *mut c_void,
+                separate_depth_stencil_layouts: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct AttachmentReferenceStencilLayout {
+                s_type: crate::data::StructureType = crate::data::StructureType::ATTACHMENT_REFERENCE_STENCIL_LAYOUT,
+                p_next: *mut c_void,
+                stencil_layout: crate::data::ImageLayout,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDevicePrimitiveTopologyListRestartFeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PRIMITIVE_TOPOLOGY_LIST_RESTART_FEATURES_EXT,
+                p_next: *mut c_void,
+                primitive_topology_list_restart: crate::data::Bool32,
+                primitive_topology_patch_list_restart: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct AttachmentDescriptionStencilLayout {
+                s_type: crate::data::StructureType = crate::data::StructureType::ATTACHMENT_DESCRIPTION_STENCIL_LAYOUT,
+                p_next: *mut c_void,
+                stencil_initial_layout: crate::data::ImageLayout,
+                stencil_final_layout: crate::data::ImageLayout,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDevicePipelineExecutablePropertiesFeaturesKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PIPELINE_EXECUTABLE_PROPERTIES_FEATURES_KHR,
+                p_next: *mut c_void,
+                pipeline_executable_info: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PipelineInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_INFO_KHR,
+                p_next: *const c_void,
+                pipeline: crate::data::Pipeline,
+        }
+    }
+    impl_aggregate! {
+        struct PipelineExecutablePropertiesKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_EXECUTABLE_PROPERTIES_KHR,
+                p_next: *mut c_void,
+                stages: crate::data::ShaderStageFlags,
+                name: [c_char; 256],
+                description: [c_char; 256],
+                subgroup_size: u32,
+        }
+    }
+    impl_aggregate! {
+        struct PipelineExecutableInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_EXECUTABLE_INFO_KHR,
+                p_next: *const c_void,
+                pipeline: crate::data::Pipeline,
+                executable_index: u32,
+        }
+    }
+    impl_aggregate! {
+        union PipelineExecutableStatisticValueKHR {
+                b_32: crate::data::Bool32,
+                i_64: i64,
+                u_64: u64,
+                f_64: c_double,
+        }
+    }
+    impl_aggregate! {
+        struct PipelineExecutableStatisticKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_EXECUTABLE_STATISTIC_KHR,
+                p_next: *mut c_void,
+                name: [c_char; 256],
+                description: [c_char; 256],
+                format: crate::data::PipelineExecutableStatisticFormatKHR,
+                value: crate::data::PipelineExecutableStatisticValueKHR,
+        }
+    }
+    impl_aggregate! {
+        struct PipelineExecutableInternalRepresentationKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_EXECUTABLE_INTERNAL_REPRESENTATION_KHR,
+                p_next: *mut c_void,
+                name: [c_char; 256],
+                description: [c_char; 256],
+                is_text: crate::data::Bool32,
+                data_size: usize,
+                p_data: *mut c_void,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceShaderDemoteToHelperInvocationFeatures {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SHADER_DEMOTE_TO_HELPER_INVOCATION_FEATURES,
+                p_next: *mut c_void,
+                shader_demote_to_helper_invocation: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceTexelBufferAlignmentFeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_TEXEL_BUFFER_ALIGNMENT_FEATURES_EXT,
+                p_next: *mut c_void,
+                texel_buffer_alignment: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceTexelBufferAlignmentProperties {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_TEXEL_BUFFER_ALIGNMENT_PROPERTIES,
+                p_next: *mut c_void,
+                storage_texel_buffer_offset_alignment_bytes: crate::data::DeviceSize,
+                storage_texel_buffer_offset_single_texel_alignment: crate::data::Bool32,
+                uniform_texel_buffer_offset_alignment_bytes: crate::data::DeviceSize,
+                uniform_texel_buffer_offset_single_texel_alignment: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceSubgroupSizeControlFeatures {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SUBGROUP_SIZE_CONTROL_FEATURES,
+                p_next: *mut c_void,
+                subgroup_size_control: crate::data::Bool32,
+                compute_full_subgroups: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceSubgroupSizeControlProperties {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SUBGROUP_SIZE_CONTROL_PROPERTIES,
+                p_next: *mut c_void,
+                min_subgroup_size: u32,
+                max_subgroup_size: u32,
+                max_compute_workgroup_subgroups: u32,
+                required_subgroup_size_stages: crate::data::ShaderStageFlags,
+        }
+    }
+    impl_aggregate! {
+        struct PipelineShaderStageRequiredSubgroupSizeCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_SHADER_STAGE_REQUIRED_SUBGROUP_SIZE_CREATE_INFO,
+                p_next: *mut c_void,
+                required_subgroup_size: u32,
+        }
+    }
+    impl_aggregate! {
+        struct SubpassShadingPipelineCreateInfoHUAWEI {
+                s_type: crate::data::StructureType = crate::data::StructureType::SUBPASS_SHADING_PIPELINE_CREATE_INFO_HUAWEI,
+                p_next: *mut c_void,
+                render_pass: crate::data::RenderPass,
+                subpass: u32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceSubpassShadingPropertiesHUAWEI {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SUBPASS_SHADING_PROPERTIES_HUAWEI,
+                p_next: *mut c_void,
+                max_subpass_shading_workgroup_size_aspect_ratio: u32,
+        }
+    }
+    impl_aggregate! {
+        struct MemoryOpaqueCaptureAddressAllocateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::MEMORY_OPAQUE_CAPTURE_ADDRESS_ALLOCATE_INFO,
+                p_next: *const c_void,
+                opaque_capture_address: u64,
+        }
+    }
+    impl_aggregate! {
+        struct DeviceMemoryOpaqueCaptureAddressInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_MEMORY_OPAQUE_CAPTURE_ADDRESS_INFO,
+                p_next: *const c_void,
+                memory: crate::data::DeviceMemory,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceLineRasterizationFeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_LINE_RASTERIZATION_FEATURES_EXT,
+                p_next: *mut c_void,
+                rectangular_lines: crate::data::Bool32,
+                bresenham_lines: crate::data::Bool32,
+                smooth_lines: crate::data::Bool32,
+                stippled_rectangular_lines: crate::data::Bool32,
+                stippled_bresenham_lines: crate::data::Bool32,
+                stippled_smooth_lines: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceLineRasterizationPropertiesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_LINE_RASTERIZATION_PROPERTIES_EXT,
+                p_next: *mut c_void,
+                line_sub_pixel_precision_bits: u32,
+        }
+    }
+    impl_aggregate! {
+        struct PipelineRasterizationLineStateCreateInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_RASTERIZATION_LINE_STATE_CREATE_INFO_EXT,
+                p_next: *const c_void,
+                line_rasterization_mode: crate::data::LineRasterizationModeEXT,
+                stippled_line_enable: crate::data::Bool32,
+                line_stipple_factor: u32,
+                line_stipple_pattern: u16,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDevicePipelineCreationCacheControlFeatures {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PIPELINE_CREATION_CACHE_CONTROL_FEATURES,
+                p_next: *mut c_void,
+                pipeline_creation_cache_control: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceVulkan11Features {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_VULKAN_1_1_FEATURES,
+                p_next: *mut c_void,
+                storage_buffer_16_bit_access: crate::data::Bool32,
+                uniform_and_storage_buffer_16_bit_access: crate::data::Bool32,
+                storage_push_constant_16: crate::data::Bool32,
+                storage_input_output_16: crate::data::Bool32,
+                multiview: crate::data::Bool32,
+                multiview_geometry_shader: crate::data::Bool32,
+                multiview_tessellation_shader: crate::data::Bool32,
+                variable_pointers_storage_buffer: crate::data::Bool32,
+                variable_pointers: crate::data::Bool32,
+                protected_memory: crate::data::Bool32,
+                sampler_ycbcr_conversion: crate::data::Bool32,
+                shader_draw_parameters: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceVulkan11Properties {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_VULKAN_1_1_PROPERTIES,
+                p_next: *mut c_void,
+                device_uuid: [u8; 16],
+                driver_uuid: [u8; 16],
+                device_luid: [u8; 8],
+                device_node_mask: u32,
+                device_luid_valid: crate::data::Bool32,
+                subgroup_size: u32,
+                subgroup_supported_stages: crate::data::ShaderStageFlags,
+                subgroup_supported_operations: crate::data::SubgroupFeatureFlags,
+                subgroup_quad_operations_in_all_stages: crate::data::Bool32,
+                point_clipping_behavior: crate::data::PointClippingBehavior,
+                max_multiview_view_count: u32,
+                max_multiview_instance_index: u32,
+                protected_no_fault: crate::data::Bool32,
+                max_per_set_descriptors: u32,
+                max_memory_allocation_size: crate::data::DeviceSize,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceVulkan12Features {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_VULKAN_1_2_FEATURES,
+                p_next: *mut c_void,
+                sampler_mirror_clamp_to_edge: crate::data::Bool32,
+                draw_indirect_count: crate::data::Bool32,
+                storage_buffer_8_bit_access: crate::data::Bool32,
+                uniform_and_storage_buffer_8_bit_access: crate::data::Bool32,
+                storage_push_constant_8: crate::data::Bool32,
+                shader_buffer_int_64_atomics: crate::data::Bool32,
+                shader_shared_int_64_atomics: crate::data::Bool32,
+                shader_float_16: crate::data::Bool32,
+                shader_int_8: crate::data::Bool32,
+                descriptor_indexing: crate::data::Bool32,
+                shader_input_attachment_array_dynamic_indexing: crate::data::Bool32,
+                shader_uniform_texel_buffer_array_dynamic_indexing: crate::data::Bool32,
+                shader_storage_texel_buffer_array_dynamic_indexing: crate::data::Bool32,
+                shader_uniform_buffer_array_non_uniform_indexing: crate::data::Bool32,
+                shader_sampled_image_array_non_uniform_indexing: crate::data::Bool32,
+                shader_storage_buffer_array_non_uniform_indexing: crate::data::Bool32,
+                shader_storage_image_array_non_uniform_indexing: crate::data::Bool32,
+                shader_input_attachment_array_non_uniform_indexing: crate::data::Bool32,
+                shader_uniform_texel_buffer_array_non_uniform_indexing: crate::data::Bool32,
+                shader_storage_texel_buffer_array_non_uniform_indexing: crate::data::Bool32,
+                descriptor_binding_uniform_buffer_update_after_bind: crate::data::Bool32,
+                descriptor_binding_sampled_image_update_after_bind: crate::data::Bool32,
+                descriptor_binding_storage_image_update_after_bind: crate::data::Bool32,
+                descriptor_binding_storage_buffer_update_after_bind: crate::data::Bool32,
+                descriptor_binding_uniform_texel_buffer_update_after_bind: crate::data::Bool32,
+                descriptor_binding_storage_texel_buffer_update_after_bind: crate::data::Bool32,
+                descriptor_binding_update_unused_while_pending: crate::data::Bool32,
+                descriptor_binding_partially_bound: crate::data::Bool32,
+                descriptor_binding_variable_descriptor_count: crate::data::Bool32,
+                runtime_descriptor_array: crate::data::Bool32,
+                sampler_filter_minmax: crate::data::Bool32,
+                scalar_block_layout: crate::data::Bool32,
+                imageless_framebuffer: crate::data::Bool32,
+                uniform_buffer_standard_layout: crate::data::Bool32,
+                shader_subgroup_extended_types: crate::data::Bool32,
+                separate_depth_stencil_layouts: crate::data::Bool32,
+                host_query_reset: crate::data::Bool32,
+                timeline_semaphore: crate::data::Bool32,
+                buffer_device_address: crate::data::Bool32,
+                buffer_device_address_capture_replay: crate::data::Bool32,
+                buffer_device_address_multi_device: crate::data::Bool32,
+                vulkan_memory_model: crate::data::Bool32,
+                vulkan_memory_model_device_scope: crate::data::Bool32,
+                vulkan_memory_model_availability_visibility_chains: crate::data::Bool32,
+                shader_output_viewport_index: crate::data::Bool32,
+                shader_output_layer: crate::data::Bool32,
+                subgroup_broadcast_dynamic_id: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceVulkan12Properties {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_VULKAN_1_2_PROPERTIES,
+                p_next: *mut c_void,
+                driver_id: crate::data::DriverId,
+                driver_name: [c_char; 256],
+                driver_info: [c_char; 256],
+                conformance_version: crate::data::ConformanceVersion,
+                denorm_behavior_independence: crate::data::ShaderFloatControlsIndependence,
+                rounding_mode_independence: crate::data::ShaderFloatControlsIndependence,
+                shader_signed_zero_inf_nan_preserve_float_16: crate::data::Bool32,
+                shader_signed_zero_inf_nan_preserve_float_32: crate::data::Bool32,
+                shader_signed_zero_inf_nan_preserve_float_64: crate::data::Bool32,
+                shader_denorm_preserve_float_16: crate::data::Bool32,
+                shader_denorm_preserve_float_32: crate::data::Bool32,
+                shader_denorm_preserve_float_64: crate::data::Bool32,
+                shader_denorm_flush_to_zero_float_16: crate::data::Bool32,
+                shader_denorm_flush_to_zero_float_32: crate::data::Bool32,
+                shader_denorm_flush_to_zero_float_64: crate::data::Bool32,
+                shader_rounding_mode_rte_float_16: crate::data::Bool32,
+                shader_rounding_mode_rte_float_32: crate::data::Bool32,
+                shader_rounding_mode_rte_float_64: crate::data::Bool32,
+                shader_rounding_mode_rtz_float_16: crate::data::Bool32,
+                shader_rounding_mode_rtz_float_32: crate::data::Bool32,
+                shader_rounding_mode_rtz_float_64: crate::data::Bool32,
+                max_update_after_bind_descriptors_in_all_pools: u32,
+                shader_uniform_buffer_array_non_uniform_indexing_native: crate::data::Bool32,
+                shader_sampled_image_array_non_uniform_indexing_native: crate::data::Bool32,
+                shader_storage_buffer_array_non_uniform_indexing_native: crate::data::Bool32,
+                shader_storage_image_array_non_uniform_indexing_native: crate::data::Bool32,
+                shader_input_attachment_array_non_uniform_indexing_native: crate::data::Bool32,
+                robust_buffer_access_update_after_bind: crate::data::Bool32,
+                quad_divergent_implicit_lod: crate::data::Bool32,
+                max_per_stage_descriptor_update_after_bind_samplers: u32,
+                max_per_stage_descriptor_update_after_bind_uniform_buffers: u32,
+                max_per_stage_descriptor_update_after_bind_storage_buffers: u32,
+                max_per_stage_descriptor_update_after_bind_sampled_images: u32,
+                max_per_stage_descriptor_update_after_bind_storage_images: u32,
+                max_per_stage_descriptor_update_after_bind_input_attachments: u32,
+                max_per_stage_update_after_bind_resources: u32,
+                max_descriptor_set_update_after_bind_samplers: u32,
+                max_descriptor_set_update_after_bind_uniform_buffers: u32,
+                max_descriptor_set_update_after_bind_uniform_buffers_dynamic: u32,
+                max_descriptor_set_update_after_bind_storage_buffers: u32,
+                max_descriptor_set_update_after_bind_storage_buffers_dynamic: u32,
+                max_descriptor_set_update_after_bind_sampled_images: u32,
+                max_descriptor_set_update_after_bind_storage_images: u32,
+                max_descriptor_set_update_after_bind_input_attachments: u32,
+                supported_depth_resolve_modes: crate::data::ResolveModeFlags,
+                supported_stencil_resolve_modes: crate::data::ResolveModeFlags,
+                independent_resolve_none: crate::data::Bool32,
+                independent_resolve: crate::data::Bool32,
+                filter_minmax_single_component_formats: crate::data::Bool32,
+                filter_minmax_image_component_mapping: crate::data::Bool32,
+                max_timeline_semaphore_value_difference: u64,
+                framebuffer_integer_color_sample_counts: crate::data::SampleCountFlags,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceVulkan13Features {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_VULKAN_1_3_FEATURES,
+                p_next: *mut c_void,
+                robust_image_access: crate::data::Bool32,
+                inline_uniform_block: crate::data::Bool32,
+                descriptor_binding_inline_uniform_block_update_after_bind: crate::data::Bool32,
+                pipeline_creation_cache_control: crate::data::Bool32,
+                private_data: crate::data::Bool32,
+                shader_demote_to_helper_invocation: crate::data::Bool32,
+                shader_terminate_invocation: crate::data::Bool32,
+                subgroup_size_control: crate::data::Bool32,
+                compute_full_subgroups: crate::data::Bool32,
+                synchronization_2: crate::data::Bool32,
+                texture_compression_astc_hdr: crate::data::Bool32,
+                shader_zero_initialize_workgroup_memory: crate::data::Bool32,
+                dynamic_rendering: crate::data::Bool32,
+                shader_integer_dot_product: crate::data::Bool32,
+                maintenance_4: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceVulkan13Properties {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_VULKAN_1_3_PROPERTIES,
+                p_next: *mut c_void,
+                min_subgroup_size: u32,
+                max_subgroup_size: u32,
+                max_compute_workgroup_subgroups: u32,
+                required_subgroup_size_stages: crate::data::ShaderStageFlags,
+                max_inline_uniform_block_size: u32,
+                max_per_stage_descriptor_inline_uniform_blocks: u32,
+                max_per_stage_descriptor_update_after_bind_inline_uniform_blocks: u32,
+                max_descriptor_set_inline_uniform_blocks: u32,
+                max_descriptor_set_update_after_bind_inline_uniform_blocks: u32,
+                max_inline_uniform_total_size: u32,
+                integer_dot_product_8_bit_unsigned_accelerated: crate::data::Bool32,
+                integer_dot_product_8_bit_signed_accelerated: crate::data::Bool32,
+                integer_dot_product_8_bit_mixed_signedness_accelerated: crate::data::Bool32,
+                integer_dot_product_4x_8_bit_packed_unsigned_accelerated: crate::data::Bool32,
+                integer_dot_product_4x_8_bit_packed_signed_accelerated: crate::data::Bool32,
+                integer_dot_product_4x_8_bit_packed_mixed_signedness_accelerated: crate::data::Bool32,
+                integer_dot_product_16_bit_unsigned_accelerated: crate::data::Bool32,
+                integer_dot_product_16_bit_signed_accelerated: crate::data::Bool32,
+                integer_dot_product_16_bit_mixed_signedness_accelerated: crate::data::Bool32,
+                integer_dot_product_32_bit_unsigned_accelerated: crate::data::Bool32,
+                integer_dot_product_32_bit_signed_accelerated: crate::data::Bool32,
+                integer_dot_product_32_bit_mixed_signedness_accelerated: crate::data::Bool32,
+                integer_dot_product_64_bit_unsigned_accelerated: crate::data::Bool32,
+                integer_dot_product_64_bit_signed_accelerated: crate::data::Bool32,
+                integer_dot_product_64_bit_mixed_signedness_accelerated: crate::data::Bool32,
+                integer_dot_product_accumulating_saturating_8_bit_unsigned_accelerated: crate::data::Bool32,
+                integer_dot_product_accumulating_saturating_8_bit_signed_accelerated: crate::data::Bool32,
+                integer_dot_product_accumulating_saturating_8_bit_mixed_signedness_accelerated: crate::data::Bool32,
+                integer_dot_product_accumulating_saturating_4x_8_bit_packed_unsigned_accelerated: crate::data::Bool32,
+                integer_dot_product_accumulating_saturating_4x_8_bit_packed_signed_accelerated: crate::data::Bool32,
+                integer_dot_product_accumulating_saturating_4x_8_bit_packed_mixed_signedness_accelerated: crate::data::Bool32,
+                integer_dot_product_accumulating_saturating_16_bit_unsigned_accelerated: crate::data::Bool32,
+                integer_dot_product_accumulating_saturating_16_bit_signed_accelerated: crate::data::Bool32,
+                integer_dot_product_accumulating_saturating_16_bit_mixed_signedness_accelerated: crate::data::Bool32,
+                integer_dot_product_accumulating_saturating_32_bit_unsigned_accelerated: crate::data::Bool32,
+                integer_dot_product_accumulating_saturating_32_bit_signed_accelerated: crate::data::Bool32,
+                integer_dot_product_accumulating_saturating_32_bit_mixed_signedness_accelerated: crate::data::Bool32,
+                integer_dot_product_accumulating_saturating_64_bit_unsigned_accelerated: crate::data::Bool32,
+                integer_dot_product_accumulating_saturating_64_bit_signed_accelerated: crate::data::Bool32,
+                integer_dot_product_accumulating_saturating_64_bit_mixed_signedness_accelerated: crate::data::Bool32,
+                storage_texel_buffer_offset_alignment_bytes: crate::data::DeviceSize,
+                storage_texel_buffer_offset_single_texel_alignment: crate::data::Bool32,
+                uniform_texel_buffer_offset_alignment_bytes: crate::data::DeviceSize,
+                uniform_texel_buffer_offset_single_texel_alignment: crate::data::Bool32,
+                max_buffer_size: crate::data::DeviceSize,
+        }
+    }
+    impl_aggregate! {
+        struct PipelineCompilerControlCreateInfoAMD {
+                s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_COMPILER_CONTROL_CREATE_INFO_AMD,
+                p_next: *const c_void,
+                compiler_control_flags: crate::data::PipelineCompilerControlFlagsAMD,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceCoherentMemoryFeaturesAMD {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_COHERENT_MEMORY_FEATURES_AMD,
+                p_next: *mut c_void,
+                device_coherent_memory: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceToolProperties {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_TOOL_PROPERTIES,
+                p_next: *mut c_void,
+                name: [c_char; 256],
+                version: [c_char; 256],
+                purposes: crate::data::ToolPurposeFlags,
+                description: [c_char; 256],
+                layer: [c_char; 256],
+        }
+    }
+    impl_aggregate! {
+        struct SamplerCustomBorderColorCreateInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::SAMPLER_CUSTOM_BORDER_COLOR_CREATE_INFO_EXT,
+                p_next: *const c_void,
+                custom_border_color: crate::data::ClearColorValue,
+                format: crate::data::Format,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceCustomBorderColorPropertiesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_CUSTOM_BORDER_COLOR_PROPERTIES_EXT,
+                p_next: *mut c_void,
+                max_custom_border_color_samplers: u32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceCustomBorderColorFeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_CUSTOM_BORDER_COLOR_FEATURES_EXT,
+                p_next: *mut c_void,
+                custom_border_colors: crate::data::Bool32,
+                custom_border_color_without_format: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct SamplerBorderColorComponentMappingCreateInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::SAMPLER_BORDER_COLOR_COMPONENT_MAPPING_CREATE_INFO_EXT,
+                p_next: *const c_void,
+                components: crate::data::ComponentMapping,
+                srgb: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceBorderColorSwizzleFeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_BORDER_COLOR_SWIZZLE_FEATURES_EXT,
+                p_next: *mut c_void,
+                border_color_swizzle: crate::data::Bool32,
+                border_color_swizzle_from_image: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        union DeviceOrHostAddressKHR {
+                device_address: crate::data::DeviceAddress,
+                host_address: *mut c_void,
+        }
+    }
+    impl_aggregate! {
+        union DeviceOrHostAddressConstKHR {
+                device_address: crate::data::DeviceAddress,
+                host_address: *const c_void,
+        }
+    }
+    impl_aggregate! {
+        struct AccelerationStructureGeometryTrianglesDataKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR,
+                p_next: *const c_void,
+                vertex_format: crate::data::Format,
+                vertex_data: crate::data::DeviceOrHostAddressConstKHR,
+                vertex_stride: crate::data::DeviceSize,
+                max_vertex: u32,
+                index_type: crate::data::IndexType,
+                index_data: crate::data::DeviceOrHostAddressConstKHR,
+                transform_data: crate::data::DeviceOrHostAddressConstKHR,
+        }
+    }
+    impl_aggregate! {
+        struct AccelerationStructureGeometryAabbsDataKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::ACCELERATION_STRUCTURE_GEOMETRY_AABBS_DATA_KHR,
+                p_next: *const c_void,
+                data: crate::data::DeviceOrHostAddressConstKHR,
+                stride: crate::data::DeviceSize,
+        }
+    }
+    impl_aggregate! {
+        struct AccelerationStructureGeometryInstancesDataKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::ACCELERATION_STRUCTURE_GEOMETRY_INSTANCES_DATA_KHR,
+                p_next: *const c_void,
+                array_of_pointers: crate::data::Bool32,
+                data: crate::data::DeviceOrHostAddressConstKHR,
+        }
+    }
+    impl_aggregate! {
+        union AccelerationStructureGeometryDataKHR {
+                triangles: crate::data::AccelerationStructureGeometryTrianglesDataKHR,
+                aabbs: crate::data::AccelerationStructureGeometryAabbsDataKHR,
+                instances: crate::data::AccelerationStructureGeometryInstancesDataKHR,
+        }
+    }
+    impl_aggregate! {
+        struct AccelerationStructureGeometryKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::ACCELERATION_STRUCTURE_GEOMETRY_KHR,
+                p_next: *const c_void,
+                geometry_type: crate::data::GeometryTypeKHR,
+                geometry: crate::data::AccelerationStructureGeometryDataKHR,
+                flags: crate::data::GeometryFlagsKHR,
+        }
+    }
+    impl_aggregate! {
+        struct AccelerationStructureBuildGeometryInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::ACCELERATION_STRUCTURE_BUILD_GEOMETRY_INFO_KHR,
+                p_next: *const c_void,
+                ty: crate::data::AccelerationStructureTypeKHR,
+                flags: crate::data::BuildAccelerationStructureFlagsKHR,
+                mode: crate::data::BuildAccelerationStructureModeKHR,
+                src_acceleration_structure: crate::data::AccelerationStructureKHR,
+                dst_acceleration_structure: crate::data::AccelerationStructureKHR,
+                geometry_count: u32,
+                p_geometries: *const crate::data::AccelerationStructureGeometryKHR,
+                pp_geometries: *const *const crate::data::AccelerationStructureGeometryKHR,
+                scratch_data: crate::data::DeviceOrHostAddressKHR,
+        }
+    }
+    impl_aggregate! {
+        struct AccelerationStructureBuildRangeInfoKHR {
+                primitive_count: u32,
+                primitive_offset: u32,
+                first_vertex: u32,
+                transform_offset: u32,
+        }
+    }
+    impl_aggregate! {
+        struct AccelerationStructureCreateInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::ACCELERATION_STRUCTURE_CREATE_INFO_KHR,
+                p_next: *const c_void,
+                create_flags: crate::data::AccelerationStructureCreateFlagsKHR,
+                buffer: crate::data::Buffer,
+                offset: crate::data::DeviceSize,
+                size: crate::data::DeviceSize,
+                ty: crate::data::AccelerationStructureTypeKHR,
+                device_address: crate::data::DeviceAddress,
+        }
+    }
+    impl_aggregate! {
+        struct AabbPositionsKHR {
+                min_x: c_float,
+                min_y: c_float,
+                min_z: c_float,
+                max_x: c_float,
+                max_y: c_float,
+                max_z: c_float,
+        }
+    }
+    impl_aggregate! {
+        struct TransformMatrixKHR {
+                matrix: [c_float; 3],
+        }
+    }
+    impl_aggregate! {
+        struct AccelerationStructureInstanceKHR {
+                transform: crate::data::TransformMatrixKHR,
+                instance_custom_index: u32,
+                mask: u32,
+                instance_shader_binding_table_record_offset: u32,
+                flags: crate::data::GeometryInstanceFlagsKHR,
+                acceleration_structure_reference: u64,
+        }
+    }
+    impl_aggregate! {
+        struct AccelerationStructureDeviceAddressInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::ACCELERATION_STRUCTURE_DEVICE_ADDRESS_INFO_KHR,
+                p_next: *const c_void,
+                acceleration_structure: crate::data::AccelerationStructureKHR,
+        }
+    }
+    impl_aggregate! {
+        struct AccelerationStructureVersionInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::ACCELERATION_STRUCTURE_VERSION_INFO_KHR,
+                p_next: *const c_void,
+                p_version_data: *const u8,
+        }
+    }
+    impl_aggregate! {
+        struct CopyAccelerationStructureInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::COPY_ACCELERATION_STRUCTURE_INFO_KHR,
+                p_next: *const c_void,
+                src: crate::data::AccelerationStructureKHR,
+                dst: crate::data::AccelerationStructureKHR,
+                mode: crate::data::CopyAccelerationStructureModeKHR,
+        }
+    }
+    impl_aggregate! {
+        struct CopyAccelerationStructureToMemoryInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::COPY_ACCELERATION_STRUCTURE_TO_MEMORY_INFO_KHR,
+                p_next: *const c_void,
+                src: crate::data::AccelerationStructureKHR,
+                dst: crate::data::DeviceOrHostAddressKHR,
+                mode: crate::data::CopyAccelerationStructureModeKHR,
+        }
+    }
+    impl_aggregate! {
+        struct CopyMemoryToAccelerationStructureInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::COPY_MEMORY_TO_ACCELERATION_STRUCTURE_INFO_KHR,
+                p_next: *const c_void,
+                src: crate::data::DeviceOrHostAddressConstKHR,
+                dst: crate::data::AccelerationStructureKHR,
+                mode: crate::data::CopyAccelerationStructureModeKHR,
+        }
+    }
+    impl_aggregate! {
+        struct RayTracingPipelineInterfaceCreateInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::RAY_TRACING_PIPELINE_INTERFACE_CREATE_INFO_KHR,
+                p_next: *const c_void,
+                max_pipeline_ray_payload_size: u32,
+                max_pipeline_ray_hit_attribute_size: u32,
+        }
+    }
+    impl_aggregate! {
+        struct PipelineLibraryCreateInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_LIBRARY_CREATE_INFO_KHR,
+                p_next: *const c_void,
+                library_count: u32,
+                p_libraries: *const crate::data::Pipeline,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceExtendedDynamicStateFeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_EXTENDED_DYNAMIC_STATE_FEATURES_EXT,
+                p_next: *mut c_void,
+                extended_dynamic_state: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceExtendedDynamicState2FeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_EXTENDED_DYNAMIC_STATE_2_FEATURES_EXT,
+                p_next: *mut c_void,
+                extended_dynamic_state_2: crate::data::Bool32,
+                extended_dynamic_state_2_logic_op: crate::data::Bool32,
+                extended_dynamic_state_2_patch_control_points: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceExtendedDynamicState3FeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_EXTENDED_DYNAMIC_STATE_3_FEATURES_EXT,
+                p_next: *mut c_void,
+                extended_dynamic_state_3_tessellation_domain_origin: crate::data::Bool32,
+                extended_dynamic_state_3_depth_clamp_enable: crate::data::Bool32,
+                extended_dynamic_state_3_polygon_mode: crate::data::Bool32,
+                extended_dynamic_state_3_rasterization_samples: crate::data::Bool32,
+                extended_dynamic_state_3_sample_mask: crate::data::Bool32,
+                extended_dynamic_state_3_alpha_to_coverage_enable: crate::data::Bool32,
+                extended_dynamic_state_3_alpha_to_one_enable: crate::data::Bool32,
+                extended_dynamic_state_3_logic_op_enable: crate::data::Bool32,
+                extended_dynamic_state_3_color_blend_enable: crate::data::Bool32,
+                extended_dynamic_state_3_color_blend_equation: crate::data::Bool32,
+                extended_dynamic_state_3_color_write_mask: crate::data::Bool32,
+                extended_dynamic_state_3_rasterization_stream: crate::data::Bool32,
+                extended_dynamic_state_3_conservative_rasterization_mode: crate::data::Bool32,
+                extended_dynamic_state_3_extra_primitive_overestimation_size: crate::data::Bool32,
+                extended_dynamic_state_3_depth_clip_enable: crate::data::Bool32,
+                extended_dynamic_state_3_sample_locations_enable: crate::data::Bool32,
+                extended_dynamic_state_3_color_blend_advanced: crate::data::Bool32,
+                extended_dynamic_state_3_provoking_vertex_mode: crate::data::Bool32,
+                extended_dynamic_state_3_line_rasterization_mode: crate::data::Bool32,
+                extended_dynamic_state_3_line_stipple_enable: crate::data::Bool32,
+                extended_dynamic_state_3_depth_clip_negative_one_to_one: crate::data::Bool32,
+                extended_dynamic_state_3_viewport_w_scaling_enable: crate::data::Bool32,
+                extended_dynamic_state_3_viewport_swizzle: crate::data::Bool32,
+                extended_dynamic_state_3_coverage_to_color_enable: crate::data::Bool32,
+                extended_dynamic_state_3_coverage_to_color_location: crate::data::Bool32,
+                extended_dynamic_state_3_coverage_modulation_mode: crate::data::Bool32,
+                extended_dynamic_state_3_coverage_modulation_table_enable: crate::data::Bool32,
+                extended_dynamic_state_3_coverage_modulation_table: crate::data::Bool32,
+                extended_dynamic_state_3_coverage_reduction_mode: crate::data::Bool32,
+                extended_dynamic_state_3_representative_fragment_test_enable: crate::data::Bool32,
+                extended_dynamic_state_3_shading_rate_image_enable: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceExtendedDynamicState3PropertiesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_EXTENDED_DYNAMIC_STATE_3_PROPERTIES_EXT,
+                p_next: *mut c_void,
+                dynamic_primitive_topology_unrestricted: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct ColorBlendEquationEXT {
+                src_color_blend_factor: crate::data::BlendFactor,
+                dst_color_blend_factor: crate::data::BlendFactor,
+                color_blend_op: crate::data::BlendOp,
+                src_alpha_blend_factor: crate::data::BlendFactor,
+                dst_alpha_blend_factor: crate::data::BlendFactor,
+                alpha_blend_op: crate::data::BlendOp,
+        }
+    }
+    impl_aggregate! {
+        struct ColorBlendAdvancedEXT {
+                advanced_blend_op: crate::data::BlendOp,
+                src_premultiplied: crate::data::Bool32,
+                dst_premultiplied: crate::data::Bool32,
+                blend_overlap: crate::data::BlendOverlapEXT,
+                clamp_results: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct RenderPassTransformBeginInfoQCOM {
+                s_type: crate::data::StructureType = crate::data::StructureType::RENDER_PASS_TRANSFORM_BEGIN_INFO_QCOM,
+                p_next: *mut c_void,
+                transform: crate::data::SurfaceTransformFlagBitsKHR,
+        }
+    }
+    impl_aggregate! {
+        struct CopyCommandTransformInfoQCOM {
+                s_type: crate::data::StructureType = crate::data::StructureType::COPY_COMMAND_TRANSFORM_INFO_QCOM,
+                p_next: *const c_void,
+                transform: crate::data::SurfaceTransformFlagBitsKHR,
+        }
+    }
+    impl_aggregate! {
+        struct CommandBufferInheritanceRenderPassTransformInfoQCOM {
+                s_type: crate::data::StructureType = crate::data::StructureType::COMMAND_BUFFER_INHERITANCE_RENDER_PASS_TRANSFORM_INFO_QCOM,
+                p_next: *mut c_void,
+                transform: crate::data::SurfaceTransformFlagBitsKHR,
+                render_area: crate::data::Rect2D,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceDiagnosticsConfigFeaturesNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_DIAGNOSTICS_CONFIG_FEATURES_NV,
+                p_next: *mut c_void,
+                diagnostics_config: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct DeviceDiagnosticsConfigCreateInfoNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_DIAGNOSTICS_CONFIG_CREATE_INFO_NV,
+                p_next: *const c_void,
+                flags: crate::data::DeviceDiagnosticsConfigFlagsNV,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceZeroInitializeWorkgroupMemoryFeatures {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_ZERO_INITIALIZE_WORKGROUP_MEMORY_FEATURES,
+                p_next: *mut c_void,
+                shader_zero_initialize_workgroup_memory: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceShaderSubgroupUniformControlFlowFeaturesKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SHADER_SUBGROUP_UNIFORM_CONTROL_FLOW_FEATURES_KHR,
+                p_next: *mut c_void,
+                shader_subgroup_uniform_control_flow: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceRobustness2FeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_ROBUSTNESS_2_FEATURES_EXT,
+                p_next: *mut c_void,
+                robust_buffer_access_2: crate::data::Bool32,
+                robust_image_access_2: crate::data::Bool32,
+                null_descriptor: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceRobustness2PropertiesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_ROBUSTNESS_2_PROPERTIES_EXT,
+                p_next: *mut c_void,
+                robust_storage_buffer_access_size_alignment: crate::data::DeviceSize,
+                robust_uniform_buffer_access_size_alignment: crate::data::DeviceSize,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceImageRobustnessFeatures {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_IMAGE_ROBUSTNESS_FEATURES,
+                p_next: *mut c_void,
+                robust_image_access: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceWorkgroupMemoryExplicitLayoutFeaturesKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_WORKGROUP_MEMORY_EXPLICIT_LAYOUT_FEATURES_KHR,
+                p_next: *mut c_void,
+                workgroup_memory_explicit_layout: crate::data::Bool32,
+                workgroup_memory_explicit_layout_scalar_block_layout: crate::data::Bool32,
+                workgroup_memory_explicit_layout_8_bit_access: crate::data::Bool32,
+                workgroup_memory_explicit_layout_16_bit_access: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDevicePortabilitySubsetFeaturesKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PORTABILITY_SUBSET_FEATURES_KHR,
+                p_next: *mut c_void,
+                constant_alpha_color_blend_factors: crate::data::Bool32,
+                events: crate::data::Bool32,
+                image_view_format_reinterpretation: crate::data::Bool32,
+                image_view_format_swizzle: crate::data::Bool32,
+                image_view_2d_on_3d_image: crate::data::Bool32,
+                multisample_array_image: crate::data::Bool32,
+                mutable_comparison_samplers: crate::data::Bool32,
+                point_polygons: crate::data::Bool32,
+                sampler_mip_lod_bias: crate::data::Bool32,
+                separate_stencil_mask_ref: crate::data::Bool32,
+                shader_sample_rate_interpolation_functions: crate::data::Bool32,
+                tessellation_isolines: crate::data::Bool32,
+                tessellation_point_mode: crate::data::Bool32,
+                triangle_fans: crate::data::Bool32,
+                vertex_attribute_access_beyond_stride: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDevicePortabilitySubsetPropertiesKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PORTABILITY_SUBSET_PROPERTIES_KHR,
+                p_next: *mut c_void,
+                min_vertex_input_binding_stride_alignment: u32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDevice4444FormatsFeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_4444_FORMATS_FEATURES_EXT,
+                p_next: *mut c_void,
+                format_a_4r_4g_4b_4: crate::data::Bool32,
+                format_a_4b_4g_4r_4: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceSubpassShadingFeaturesHUAWEI {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SUBPASS_SHADING_FEATURES_HUAWEI,
+                p_next: *mut c_void,
+                subpass_shading: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct BufferCopy2 {
+                s_type: crate::data::StructureType = crate::data::StructureType::BUFFER_COPY_2,
+                p_next: *const c_void,
+                src_offset: crate::data::DeviceSize,
+                dst_offset: crate::data::DeviceSize,
+                size: crate::data::DeviceSize,
+        }
+    }
+    impl_aggregate! {
+        struct ImageCopy2 {
+                s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_COPY_2,
+                p_next: *const c_void,
+                src_subresource: crate::data::ImageSubresourceLayers,
+                src_offset: crate::data::Offset3D,
+                dst_subresource: crate::data::ImageSubresourceLayers,
+                dst_offset: crate::data::Offset3D,
+                extent: crate::data::Extent3D,
+        }
+    }
+    impl_aggregate! {
+        struct ImageBlit2 {
+                s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_BLIT_2,
+                p_next: *const c_void,
+                src_subresource: crate::data::ImageSubresourceLayers,
+                src_offsets: [crate::data::Offset3D; 2],
+                dst_subresource: crate::data::ImageSubresourceLayers,
+                dst_offsets: [crate::data::Offset3D; 2],
+        }
+    }
+    impl_aggregate! {
+        struct BufferImageCopy2 {
+                s_type: crate::data::StructureType = crate::data::StructureType::BUFFER_IMAGE_COPY_2,
+                p_next: *const c_void,
+                buffer_offset: crate::data::DeviceSize,
+                buffer_row_length: u32,
+                buffer_image_height: u32,
+                image_subresource: crate::data::ImageSubresourceLayers,
+                image_offset: crate::data::Offset3D,
+                image_extent: crate::data::Extent3D,
+        }
+    }
+    impl_aggregate! {
+        struct ImageResolve2 {
+                s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_RESOLVE_2,
+                p_next: *const c_void,
+                src_subresource: crate::data::ImageSubresourceLayers,
+                src_offset: crate::data::Offset3D,
+                dst_subresource: crate::data::ImageSubresourceLayers,
+                dst_offset: crate::data::Offset3D,
+                extent: crate::data::Extent3D,
+        }
+    }
+    impl_aggregate! {
+        struct CopyBufferInfo2 {
+                s_type: crate::data::StructureType = crate::data::StructureType::COPY_BUFFER_INFO_2,
+                p_next: *const c_void,
+                src_buffer: crate::data::Buffer,
+                dst_buffer: crate::data::Buffer,
+                region_count: u32,
+                p_regions: *const crate::data::BufferCopy2,
+        }
+    }
+    impl_aggregate! {
+        struct CopyImageInfo2 {
+                s_type: crate::data::StructureType = crate::data::StructureType::COPY_IMAGE_INFO_2,
+                p_next: *const c_void,
+                src_image: crate::data::Image,
+                src_image_layout: crate::data::ImageLayout,
+                dst_image: crate::data::Image,
+                dst_image_layout: crate::data::ImageLayout,
+                region_count: u32,
+                p_regions: *const crate::data::ImageCopy2,
+        }
+    }
+    impl_aggregate! {
+        struct BlitImageInfo2 {
+                s_type: crate::data::StructureType = crate::data::StructureType::BLIT_IMAGE_INFO_2,
+                p_next: *const c_void,
+                src_image: crate::data::Image,
+                src_image_layout: crate::data::ImageLayout,
+                dst_image: crate::data::Image,
+                dst_image_layout: crate::data::ImageLayout,
+                region_count: u32,
+                p_regions: *const crate::data::ImageBlit2,
+                filter: crate::data::Filter,
+        }
+    }
+    impl_aggregate! {
+        struct CopyBufferToImageInfo2 {
+                s_type: crate::data::StructureType = crate::data::StructureType::COPY_BUFFER_TO_IMAGE_INFO_2,
+                p_next: *const c_void,
+                src_buffer: crate::data::Buffer,
+                dst_image: crate::data::Image,
+                dst_image_layout: crate::data::ImageLayout,
+                region_count: u32,
+                p_regions: *const crate::data::BufferImageCopy2,
+        }
+    }
+    impl_aggregate! {
+        struct CopyImageToBufferInfo2 {
+                s_type: crate::data::StructureType = crate::data::StructureType::COPY_IMAGE_TO_BUFFER_INFO_2,
+                p_next: *const c_void,
+                src_image: crate::data::Image,
+                src_image_layout: crate::data::ImageLayout,
+                dst_buffer: crate::data::Buffer,
+                region_count: u32,
+                p_regions: *const crate::data::BufferImageCopy2,
+        }
+    }
+    impl_aggregate! {
+        struct ResolveImageInfo2 {
+                s_type: crate::data::StructureType = crate::data::StructureType::RESOLVE_IMAGE_INFO_2,
+                p_next: *const c_void,
+                src_image: crate::data::Image,
+                src_image_layout: crate::data::ImageLayout,
+                dst_image: crate::data::Image,
+                dst_image_layout: crate::data::ImageLayout,
+                region_count: u32,
+                p_regions: *const crate::data::ImageResolve2,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceShaderImageAtomicInt64FeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SHADER_IMAGE_ATOMIC_INT64_FEATURES_EXT,
+                p_next: *mut c_void,
+                shader_image_int_64_atomics: crate::data::Bool32,
+                sparse_image_int_64_atomics: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct FragmentShadingRateAttachmentInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::FRAGMENT_SHADING_RATE_ATTACHMENT_INFO_KHR,
+                p_next: *const c_void,
+                p_fragment_shading_rate_attachment: *const crate::data::AttachmentReference2,
+                shading_rate_attachment_texel_size: crate::data::Extent2D,
+        }
+    }
+    impl_aggregate! {
+        struct PipelineFragmentShadingRateStateCreateInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_FRAGMENT_SHADING_RATE_STATE_CREATE_INFO_KHR,
+                p_next: *const c_void,
+                fragment_size: crate::data::Extent2D,
+                combiner_ops: [crate::data::FragmentShadingRateCombinerOpKHR; 2],
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceFragmentShadingRateFeaturesKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_FEATURES_KHR,
+                p_next: *mut c_void,
+                pipeline_fragment_shading_rate: crate::data::Bool32,
+                primitive_fragment_shading_rate: crate::data::Bool32,
+                attachment_fragment_shading_rate: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceFragmentShadingRatePropertiesKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_PROPERTIES_KHR,
+                p_next: *mut c_void,
+                min_fragment_shading_rate_attachment_texel_size: crate::data::Extent2D,
+                max_fragment_shading_rate_attachment_texel_size: crate::data::Extent2D,
+                max_fragment_shading_rate_attachment_texel_size_aspect_ratio: u32,
+                primitive_fragment_shading_rate_with_multiple_viewports: crate::data::Bool32,
+                layered_shading_rate_attachments: crate::data::Bool32,
+                fragment_shading_rate_non_trivial_combiner_ops: crate::data::Bool32,
+                max_fragment_size: crate::data::Extent2D,
+                max_fragment_size_aspect_ratio: u32,
+                max_fragment_shading_rate_coverage_samples: u32,
+                max_fragment_shading_rate_rasterization_samples: crate::data::SampleCountFlagBits,
+                fragment_shading_rate_with_shader_depth_stencil_writes: crate::data::Bool32,
+                fragment_shading_rate_with_sample_mask: crate::data::Bool32,
+                fragment_shading_rate_with_shader_sample_mask: crate::data::Bool32,
+                fragment_shading_rate_with_conservative_rasterization: crate::data::Bool32,
+                fragment_shading_rate_with_fragment_shader_interlock: crate::data::Bool32,
+                fragment_shading_rate_with_custom_sample_locations: crate::data::Bool32,
+                fragment_shading_rate_strict_multiply_combiner: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceFragmentShadingRateKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_KHR,
+                p_next: *mut c_void,
+                sample_counts: crate::data::SampleCountFlags,
+                fragment_size: crate::data::Extent2D,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceShaderTerminateInvocationFeatures {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SHADER_TERMINATE_INVOCATION_FEATURES,
+                p_next: *mut c_void,
+                shader_terminate_invocation: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceFragmentShadingRateEnumsFeaturesNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_ENUMS_FEATURES_NV,
+                p_next: *mut c_void,
+                fragment_shading_rate_enums: crate::data::Bool32,
+                supersample_fragment_shading_rates: crate::data::Bool32,
+                no_invocation_fragment_shading_rates: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceFragmentShadingRateEnumsPropertiesNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_ENUMS_PROPERTIES_NV,
+                p_next: *mut c_void,
+                max_fragment_shading_rate_invocation_count: crate::data::SampleCountFlagBits,
+        }
+    }
+    impl_aggregate! {
+        struct PipelineFragmentShadingRateEnumStateCreateInfoNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_FRAGMENT_SHADING_RATE_ENUM_STATE_CREATE_INFO_NV,
+                p_next: *const c_void,
+                shading_rate_type: crate::data::FragmentShadingRateTypeNV,
+                shading_rate: crate::data::FragmentShadingRateNV,
+                combiner_ops: [crate::data::FragmentShadingRateCombinerOpKHR; 2],
+        }
+    }
+    impl_aggregate! {
+        struct AccelerationStructureBuildSizesInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::ACCELERATION_STRUCTURE_BUILD_SIZES_INFO_KHR,
+                p_next: *const c_void,
+                acceleration_structure_size: crate::data::DeviceSize,
+                update_scratch_size: crate::data::DeviceSize,
+                build_scratch_size: crate::data::DeviceSize,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceImage2DViewOf3DFeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_IMAGE_2D_VIEW_OF_3D_FEATURES_EXT,
+                p_next: *mut c_void,
+                image_2d_view_of_3d: crate::data::Bool32,
+                sampler_2d_view_of_3d: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceMutableDescriptorTypeFeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_MUTABLE_DESCRIPTOR_TYPE_FEATURES_EXT,
+                p_next: *mut c_void,
+                mutable_descriptor_type: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct MutableDescriptorTypeListEXT {
+                descriptor_type_count: u32,
+                p_descriptor_types: *const crate::data::DescriptorType,
+        }
+    }
+    impl_aggregate! {
+        struct MutableDescriptorTypeCreateInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::MUTABLE_DESCRIPTOR_TYPE_CREATE_INFO_EXT,
+                p_next: *const c_void,
+                mutable_descriptor_type_list_count: u32,
+                p_mutable_descriptor_type_lists: *const crate::data::MutableDescriptorTypeListEXT,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceDepthClipControlFeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_DEPTH_CLIP_CONTROL_FEATURES_EXT,
+                p_next: *mut c_void,
+                depth_clip_control: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PipelineViewportDepthClipControlCreateInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_VIEWPORT_DEPTH_CLIP_CONTROL_CREATE_INFO_EXT,
+                p_next: *const c_void,
+                negative_one_to_one: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceVertexInputDynamicStateFeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_VERTEX_INPUT_DYNAMIC_STATE_FEATURES_EXT,
+                p_next: *mut c_void,
+                vertex_input_dynamic_state: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceExternalMemoryRDMAFeaturesNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_EXTERNAL_MEMORY_RDMA_FEATURES_NV,
+                p_next: *mut c_void,
+                external_memory_rdma: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct VertexInputBindingDescription2EXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::VERTEX_INPUT_BINDING_DESCRIPTION_2_EXT,
+                p_next: *mut c_void,
+                binding: u32,
+                stride: u32,
+                input_rate: crate::data::VertexInputRate,
+                divisor: u32,
+        }
+    }
+    impl_aggregate! {
+        struct VertexInputAttributeDescription2EXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::VERTEX_INPUT_ATTRIBUTE_DESCRIPTION_2_EXT,
+                p_next: *mut c_void,
+                location: u32,
+                binding: u32,
+                format: crate::data::Format,
+                offset: u32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceColorWriteEnableFeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_COLOR_WRITE_ENABLE_FEATURES_EXT,
+                p_next: *mut c_void,
+                color_write_enable: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PipelineColorWriteCreateInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_COLOR_WRITE_CREATE_INFO_EXT,
+                p_next: *const c_void,
+                attachment_count: u32,
+                p_color_write_enables: *const crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct MemoryBarrier2 {
+                s_type: crate::data::StructureType = crate::data::StructureType::MEMORY_BARRIER_2,
+                p_next: *const c_void,
+                src_stage_mask: crate::data::PipelineStageFlags2,
+                src_access_mask: crate::data::AccessFlags2,
+                dst_stage_mask: crate::data::PipelineStageFlags2,
+                dst_access_mask: crate::data::AccessFlags2,
+        }
+    }
+    impl_aggregate! {
+        struct ImageMemoryBarrier2 {
+                s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_MEMORY_BARRIER_2,
+                p_next: *const c_void,
+                src_stage_mask: crate::data::PipelineStageFlags2,
+                src_access_mask: crate::data::AccessFlags2,
+                dst_stage_mask: crate::data::PipelineStageFlags2,
+                dst_access_mask: crate::data::AccessFlags2,
+                old_layout: crate::data::ImageLayout,
+                new_layout: crate::data::ImageLayout,
+                src_queue_family_index: u32,
+                dst_queue_family_index: u32,
+                image: crate::data::Image,
+                subresource_range: crate::data::ImageSubresourceRange,
+        }
+    }
+    impl_aggregate! {
+        struct BufferMemoryBarrier2 {
+                s_type: crate::data::StructureType = crate::data::StructureType::BUFFER_MEMORY_BARRIER_2,
+                p_next: *const c_void,
+                src_stage_mask: crate::data::PipelineStageFlags2,
+                src_access_mask: crate::data::AccessFlags2,
+                dst_stage_mask: crate::data::PipelineStageFlags2,
+                dst_access_mask: crate::data::AccessFlags2,
+                src_queue_family_index: u32,
+                dst_queue_family_index: u32,
+                buffer: crate::data::Buffer,
+                offset: crate::data::DeviceSize,
+                size: crate::data::DeviceSize,
+        }
+    }
+    impl_aggregate! {
+        struct DependencyInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::DEPENDENCY_INFO,
+                p_next: *const c_void,
+                dependency_flags: crate::data::DependencyFlags,
+                memory_barrier_count: u32,
+                p_memory_barriers: *const crate::data::MemoryBarrier2,
+                buffer_memory_barrier_count: u32,
+                p_buffer_memory_barriers: *const crate::data::BufferMemoryBarrier2,
+                image_memory_barrier_count: u32,
+                p_image_memory_barriers: *const crate::data::ImageMemoryBarrier2,
+        }
+    }
+    impl_aggregate! {
+        struct SemaphoreSubmitInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::SEMAPHORE_SUBMIT_INFO,
+                p_next: *const c_void,
+                semaphore: crate::data::Semaphore,
+                value: u64,
+                stage_mask: crate::data::PipelineStageFlags2,
+                device_index: u32,
+        }
+    }
+    impl_aggregate! {
+        struct CommandBufferSubmitInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::COMMAND_BUFFER_SUBMIT_INFO,
+                p_next: *const c_void,
+                command_buffer: crate::data::CommandBuffer,
+                device_mask: u32,
+        }
+    }
+    impl_aggregate! {
+        struct SubmitInfo2 {
+                s_type: crate::data::StructureType = crate::data::StructureType::SUBMIT_INFO_2,
+                p_next: *const c_void,
+                flags: crate::data::SubmitFlags,
+                wait_semaphore_info_count: u32,
+                p_wait_semaphore_infos: *const crate::data::SemaphoreSubmitInfo,
+                command_buffer_info_count: u32,
+                p_command_buffer_infos: *const crate::data::CommandBufferSubmitInfo,
+                signal_semaphore_info_count: u32,
+                p_signal_semaphore_infos: *const crate::data::SemaphoreSubmitInfo,
+        }
+    }
+    impl_aggregate! {
+        struct QueueFamilyCheckpointProperties2NV {
+                s_type: crate::data::StructureType = crate::data::StructureType::QUEUE_FAMILY_CHECKPOINT_PROPERTIES_2_NV,
+                p_next: *mut c_void,
+                checkpoint_execution_stage_mask: crate::data::PipelineStageFlags2,
+        }
+    }
+    impl_aggregate! {
+        struct CheckpointData2NV {
+                s_type: crate::data::StructureType = crate::data::StructureType::CHECKPOINT_DATA_2_NV,
+                p_next: *mut c_void,
+                stage: crate::data::PipelineStageFlags2,
+                p_checkpoint_marker: *mut c_void,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceSynchronization2Features {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SYNCHRONIZATION_2_FEATURES,
+                p_next: *mut c_void,
+                synchronization_2: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDevicePrimitivesGeneratedQueryFeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PRIMITIVES_GENERATED_QUERY_FEATURES_EXT,
+                p_next: *mut c_void,
+                primitives_generated_query: crate::data::Bool32,
+                primitives_generated_query_with_rasterizer_discard: crate::data::Bool32,
+                primitives_generated_query_with_non_zero_streams: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceLegacyDitheringFeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_LEGACY_DITHERING_FEATURES_EXT,
+                p_next: *mut c_void,
+                legacy_dithering: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceMultisampledRenderToSingleSampledFeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_MULTISAMPLED_RENDER_TO_SINGLE_SAMPLED_FEATURES_EXT,
+                p_next: *mut c_void,
+                multisampled_render_to_single_sampled: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct SubpassResolvePerformanceQueryEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::SUBPASS_RESOLVE_PERFORMANCE_QUERY_EXT,
+                p_next: *mut c_void,
+                optimal: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct MultisampledRenderToSingleSampledInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::MULTISAMPLED_RENDER_TO_SINGLE_SAMPLED_INFO_EXT,
+                p_next: *const c_void,
+                multisampled_render_to_single_sampled_enable: crate::data::Bool32,
+                rasterization_samples: crate::data::SampleCountFlagBits,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDevicePipelineProtectedAccessFeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PIPELINE_PROTECTED_ACCESS_FEATURES_EXT,
+                p_next: *mut c_void,
+                pipeline_protected_access: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct QueueFamilyVideoPropertiesKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::QUEUE_FAMILY_VIDEO_PROPERTIES_KHR,
+                p_next: *mut c_void,
+                video_codec_operations: crate::data::VideoCodecOperationFlagsKHR,
+        }
+    }
+    impl_aggregate! {
+        struct QueueFamilyQueryResultStatusPropertiesKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::QUEUE_FAMILY_QUERY_RESULT_STATUS_PROPERTIES_KHR,
+                p_next: *mut c_void,
+                query_result_status_support: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct VideoProfileListInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_PROFILE_LIST_INFO_KHR,
+                p_next: *const c_void,
+                profile_count: u32,
+                p_profiles: *const crate::data::VideoProfileInfoKHR,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceVideoFormatInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_VIDEO_FORMAT_INFO_KHR,
+                p_next: *const c_void,
+                image_usage: crate::data::ImageUsageFlags,
+        }
+    }
+    impl_aggregate! {
+        struct VideoFormatPropertiesKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_FORMAT_PROPERTIES_KHR,
+                p_next: *mut c_void,
+                format: crate::data::Format,
+                component_mapping: crate::data::ComponentMapping,
+                image_create_flags: crate::data::ImageCreateFlags,
+                image_type: crate::data::ImageType,
+                image_tiling: crate::data::ImageTiling,
+                image_usage_flags: crate::data::ImageUsageFlags,
+        }
+    }
+    impl_aggregate! {
+        struct VideoProfileInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_PROFILE_INFO_KHR,
+                p_next: *const c_void,
+                video_codec_operation: crate::data::VideoCodecOperationFlagBitsKHR,
+                chroma_subsampling: crate::data::VideoChromaSubsamplingFlagsKHR,
+                luma_bit_depth: crate::data::VideoComponentBitDepthFlagsKHR,
+                chroma_bit_depth: crate::data::VideoComponentBitDepthFlagsKHR,
+        }
+    }
+    impl_aggregate! {
+        struct VideoCapabilitiesKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_CAPABILITIES_KHR,
+                p_next: *mut c_void,
+                flags: crate::data::VideoCapabilityFlagsKHR,
+                min_bitstream_buffer_offset_alignment: crate::data::DeviceSize,
+                min_bitstream_buffer_size_alignment: crate::data::DeviceSize,
+                picture_access_granularity: crate::data::Extent2D,
+                min_coded_extent: crate::data::Extent2D,
+                max_coded_extent: crate::data::Extent2D,
+                max_dpb_slots: u32,
+                max_active_reference_pictures: u32,
+                std_header_version: crate::data::ExtensionProperties,
+        }
+    }
+    impl_aggregate! {
+        struct VideoSessionMemoryRequirementsKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_SESSION_MEMORY_REQUIREMENTS_KHR,
+                p_next: *mut c_void,
+                memory_bind_index: u32,
+                memory_requirements: crate::data::MemoryRequirements,
+        }
+    }
+    impl_aggregate! {
+        struct BindVideoSessionMemoryInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::BIND_VIDEO_SESSION_MEMORY_INFO_KHR,
+                p_next: *const c_void,
+                memory_bind_index: u32,
+                memory: crate::data::DeviceMemory,
+                memory_offset: crate::data::DeviceSize,
+                memory_size: crate::data::DeviceSize,
+        }
+    }
+    impl_aggregate! {
+        struct VideoPictureResourceInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_PICTURE_RESOURCE_INFO_KHR,
+                p_next: *const c_void,
+                coded_offset: crate::data::Offset2D,
+                coded_extent: crate::data::Extent2D,
+                base_array_layer: u32,
+                image_view_binding: crate::data::ImageView,
+        }
+    }
+    impl_aggregate! {
+        struct VideoReferenceSlotInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_REFERENCE_SLOT_INFO_KHR,
+                p_next: *const c_void,
+                slot_index: i32,
+                p_picture_resource: *const crate::data::VideoPictureResourceInfoKHR,
+        }
+    }
+    impl_aggregate! {
+        struct VideoDecodeCapabilitiesKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_DECODE_CAPABILITIES_KHR,
+                p_next: *mut c_void,
+                flags: crate::data::VideoDecodeCapabilityFlagsKHR,
+        }
+    }
+    impl_aggregate! {
+        struct VideoDecodeUsageInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_DECODE_USAGE_INFO_KHR,
+                p_next: *const c_void,
+                video_usage_hints: crate::data::VideoDecodeUsageFlagsKHR,
+        }
+    }
+    impl_aggregate! {
+        struct VideoDecodeInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_DECODE_INFO_KHR,
+                p_next: *const c_void,
+                flags: crate::data::VideoDecodeFlagsKHR,
+                src_buffer: crate::data::Buffer,
+                src_buffer_offset: crate::data::DeviceSize,
+                src_buffer_range: crate::data::DeviceSize,
+                dst_picture_resource: crate::data::VideoPictureResourceInfoKHR,
+                p_setup_reference_slot: *const crate::data::VideoReferenceSlotInfoKHR,
+                reference_slot_count: u32,
+                p_reference_slots: *const crate::data::VideoReferenceSlotInfoKHR,
+        }
+    }
+    impl_aggregate! {
+        struct VideoSessionCreateInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_SESSION_CREATE_INFO_KHR,
+                p_next: *const c_void,
+                queue_family_index: u32,
+                flags: crate::data::VideoSessionCreateFlagsKHR,
+                p_video_profile: *const crate::data::VideoProfileInfoKHR,
+                picture_format: crate::data::Format,
+                max_coded_extent: crate::data::Extent2D,
+                reference_picture_format: crate::data::Format,
+                max_dpb_slots: u32,
+                max_active_reference_pictures: u32,
+                p_std_header_version: *const crate::data::ExtensionProperties,
+        }
+    }
+    impl_aggregate! {
+        struct VideoSessionParametersCreateInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_SESSION_PARAMETERS_CREATE_INFO_KHR,
+                p_next: *const c_void,
+                flags: crate::data::VideoSessionParametersCreateFlagsKHR,
+                video_session_parameters_template: crate::data::VideoSessionParametersKHR,
+                video_session: crate::data::VideoSessionKHR,
+        }
+    }
+    impl_aggregate! {
+        struct VideoSessionParametersUpdateInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_SESSION_PARAMETERS_UPDATE_INFO_KHR,
+                p_next: *const c_void,
+                update_sequence_count: u32,
+        }
+    }
+    impl_aggregate! {
+        struct VideoBeginCodingInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_BEGIN_CODING_INFO_KHR,
+                p_next: *const c_void,
+                flags: crate::data::VideoBeginCodingFlagsKHR,
+                video_session: crate::data::VideoSessionKHR,
+                video_session_parameters: crate::data::VideoSessionParametersKHR,
+                reference_slot_count: u32,
+                p_reference_slots: *const crate::data::VideoReferenceSlotInfoKHR,
+        }
+    }
+    impl_aggregate! {
+        struct VideoEndCodingInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_END_CODING_INFO_KHR,
+                p_next: *const c_void,
+                flags: crate::data::VideoEndCodingFlagsKHR,
+        }
+    }
+    impl_aggregate! {
+        struct VideoCodingControlInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_CODING_CONTROL_INFO_KHR,
+                p_next: *const c_void,
+                flags: crate::data::VideoCodingControlFlagsKHR,
+        }
+    }
+    impl_aggregate! {
+        struct VideoEncodeUsageInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_ENCODE_USAGE_INFO_KHR,
+                p_next: *const c_void,
+                video_usage_hints: crate::data::VideoEncodeUsageFlagsKHR,
+                video_content_hints: crate::data::VideoEncodeContentFlagsKHR,
+                tuning_mode: crate::data::VideoEncodeTuningModeKHR,
+        }
+    }
+    impl_aggregate! {
+        struct VideoEncodeInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_ENCODE_INFO_KHR,
+                p_next: *const c_void,
+                flags: crate::data::VideoEncodeFlagsKHR,
+                quality_level: u32,
+                dst_bitstream_buffer: crate::data::Buffer,
+                dst_bitstream_buffer_offset: crate::data::DeviceSize,
+                dst_bitstream_buffer_max_range: crate::data::DeviceSize,
+                src_picture_resource: crate::data::VideoPictureResourceInfoKHR,
+                p_setup_reference_slot: *const crate::data::VideoReferenceSlotInfoKHR,
+                reference_slot_count: u32,
+                p_reference_slots: *const crate::data::VideoReferenceSlotInfoKHR,
+                preceding_externally_encoded_bytes: u32,
+        }
+    }
+    impl_aggregate! {
+        struct VideoEncodeRateControlInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_ENCODE_RATE_CONTROL_INFO_KHR,
+                p_next: *const c_void,
+                flags: crate::data::VideoEncodeRateControlFlagsKHR,
+                rate_control_mode: crate::data::VideoEncodeRateControlModeFlagBitsKHR,
+                layer_count: u8,
+                p_layer_configs: *const crate::data::VideoEncodeRateControlLayerInfoKHR,
+        }
+    }
+    impl_aggregate! {
+        struct VideoEncodeRateControlLayerInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_ENCODE_RATE_CONTROL_LAYER_INFO_KHR,
+                p_next: *const c_void,
+                average_bitrate: u32,
+                max_bitrate: u32,
+                frame_rate_numerator: u32,
+                frame_rate_denominator: u32,
+                virtual_buffer_size_in_ms: u32,
+                initial_virtual_buffer_size_in_ms: u32,
+        }
+    }
+    impl_aggregate! {
+        struct VideoEncodeCapabilitiesKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_ENCODE_CAPABILITIES_KHR,
+                p_next: *mut c_void,
+                flags: crate::data::VideoEncodeCapabilityFlagsKHR,
+                rate_control_modes: crate::data::VideoEncodeRateControlModeFlagsKHR,
+                rate_control_layer_count: u8,
+                quality_level_count: u8,
+                input_image_data_fill_alignment: crate::data::Extent2D,
+        }
+    }
+    impl_aggregate! {
+        struct VideoEncodeH264CapabilitiesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_ENCODE_H264_CAPABILITIES_EXT,
+                p_next: *mut c_void,
+                flags: crate::data::VideoEncodeH264CapabilityFlagsEXT,
+                input_mode_flags: crate::data::VideoEncodeH264InputModeFlagsEXT,
+                output_mode_flags: crate::data::VideoEncodeH264OutputModeFlagsEXT,
+                max_p_picture_l_0_reference_count: u8,
+                max_b_picture_l_0_reference_count: u8,
+                max_l_1_reference_count: u8,
+                motion_vectors_over_pic_boundaries_flag: crate::data::Bool32,
+                max_bytes_per_pic_denom: u32,
+                max_bits_per_mb_denom: u32,
+                log_2_max_mv_length_horizontal: u32,
+                log_2_max_mv_length_vertical: u32,
+        }
+    }
+    impl_aggregate! {
+        struct VideoEncodeH264EmitPictureParametersInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_ENCODE_H264_EMIT_PICTURE_PARAMETERS_INFO_EXT,
+                p_next: *const c_void,
+                sps_id: u8,
+                emit_sps_enable: crate::data::Bool32,
+                pps_id_entry_count: u32,
+                pps_id_entries: *const u8,
+        }
+    }
+    impl_aggregate! {
+        struct VideoEncodeH264RateControlInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_ENCODE_H264_RATE_CONTROL_INFO_EXT,
+                p_next: *const c_void,
+                gop_frame_count: u32,
+                idr_period: u32,
+                consecutive_b_frame_count: u32,
+                rate_control_structure: crate::data::VideoEncodeH264RateControlStructureEXT,
+                temporal_layer_count: u8,
+        }
+    }
+    impl_aggregate! {
+        struct VideoEncodeH264QpEXT {
+                qp_i: i32,
+                qp_p: i32,
+                qp_b: i32,
+        }
+    }
+    impl_aggregate! {
+        struct VideoEncodeH264FrameSizeEXT {
+                frame_i_size: u32,
+                frame_p_size: u32,
+                frame_b_size: u32,
+        }
+    }
+    impl_aggregate! {
+        struct VideoEncodeH264RateControlLayerInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_ENCODE_H264_RATE_CONTROL_LAYER_INFO_EXT,
+                p_next: *const c_void,
+                temporal_layer_id: u8,
+                use_initial_rc_qp: crate::data::Bool32,
+                initial_rc_qp: crate::data::VideoEncodeH264QpEXT,
+                use_min_qp: crate::data::Bool32,
+                min_qp: crate::data::VideoEncodeH264QpEXT,
+                use_max_qp: crate::data::Bool32,
+                max_qp: crate::data::VideoEncodeH264QpEXT,
+                use_max_frame_size: crate::data::Bool32,
+                max_frame_size: crate::data::VideoEncodeH264FrameSizeEXT,
+        }
+    }
+    impl_aggregate! {
+        struct VideoEncodeH265CapabilitiesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_ENCODE_H265_CAPABILITIES_EXT,
+                p_next: *mut c_void,
+                flags: crate::data::VideoEncodeH265CapabilityFlagsEXT,
+                input_mode_flags: crate::data::VideoEncodeH265InputModeFlagsEXT,
+                output_mode_flags: crate::data::VideoEncodeH265OutputModeFlagsEXT,
+                ctb_sizes: crate::data::VideoEncodeH265CtbSizeFlagsEXT,
+                transform_block_sizes: crate::data::VideoEncodeH265TransformBlockSizeFlagsEXT,
+                max_p_picture_l_0_reference_count: u8,
+                max_b_picture_l_0_reference_count: u8,
+                max_l_1_reference_count: u8,
+                max_sub_layers_count: u8,
+                min_log_2_min_luma_coding_block_size_minus_3: u8,
+                max_log_2_min_luma_coding_block_size_minus_3: u8,
+                min_log_2_min_luma_transform_block_size_minus_2: u8,
+                max_log_2_min_luma_transform_block_size_minus_2: u8,
+                min_max_transform_hierarchy_depth_inter: u8,
+                max_max_transform_hierarchy_depth_inter: u8,
+                min_max_transform_hierarchy_depth_intra: u8,
+                max_max_transform_hierarchy_depth_intra: u8,
+                max_diff_cu_qp_delta_depth: u8,
+                min_max_num_merge_cand: u8,
+                max_max_num_merge_cand: u8,
+        }
+    }
+    impl_aggregate! {
+        struct VideoEncodeH265EmitPictureParametersInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_ENCODE_H265_EMIT_PICTURE_PARAMETERS_INFO_EXT,
+                p_next: *const c_void,
+                vps_id: u8,
+                sps_id: u8,
+                emit_vps_enable: crate::data::Bool32,
+                emit_sps_enable: crate::data::Bool32,
+                pps_id_entry_count: u32,
+                pps_id_entries: *const u8,
+        }
+    }
+    impl_aggregate! {
+        struct VideoEncodeH265RateControlInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_ENCODE_H265_RATE_CONTROL_INFO_EXT,
+                p_next: *const c_void,
+                gop_frame_count: u32,
+                idr_period: u32,
+                consecutive_b_frame_count: u32,
+                rate_control_structure: crate::data::VideoEncodeH265RateControlStructureEXT,
+                sub_layer_count: u8,
+        }
+    }
+    impl_aggregate! {
+        struct VideoEncodeH265QpEXT {
+                qp_i: i32,
+                qp_p: i32,
+                qp_b: i32,
+        }
+    }
+    impl_aggregate! {
+        struct VideoEncodeH265FrameSizeEXT {
+                frame_i_size: u32,
+                frame_p_size: u32,
+                frame_b_size: u32,
+        }
+    }
+    impl_aggregate! {
+        struct VideoEncodeH265RateControlLayerInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::VIDEO_ENCODE_H265_RATE_CONTROL_LAYER_INFO_EXT,
+                p_next: *const c_void,
+                temporal_id: u8,
+                use_initial_rc_qp: crate::data::Bool32,
+                initial_rc_qp: crate::data::VideoEncodeH265QpEXT,
+                use_min_qp: crate::data::Bool32,
+                min_qp: crate::data::VideoEncodeH265QpEXT,
+                use_max_qp: crate::data::Bool32,
+                max_qp: crate::data::VideoEncodeH265QpEXT,
+                use_max_frame_size: crate::data::Bool32,
+                max_frame_size: crate::data::VideoEncodeH265FrameSizeEXT,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceInheritedViewportScissorFeaturesNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_INHERITED_VIEWPORT_SCISSOR_FEATURES_NV,
+                p_next: *mut c_void,
+                inherited_viewport_scissor_2d: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct CommandBufferInheritanceViewportScissorInfoNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::COMMAND_BUFFER_INHERITANCE_VIEWPORT_SCISSOR_INFO_NV,
+                p_next: *const c_void,
+                viewport_scissor_2d: crate::data::Bool32,
+                viewport_depth_count: u32,
+                p_viewport_depths: *const crate::data::Viewport,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceYcbcr2Plane444FormatsFeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_YCBCR_2_PLANE_444_FORMATS_FEATURES_EXT,
+                p_next: *mut c_void,
+                ycbcr_2plane_444_formats: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceProvokingVertexFeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PROVOKING_VERTEX_FEATURES_EXT,
+                p_next: *mut c_void,
+                provoking_vertex_last: crate::data::Bool32,
+                transform_feedback_preserves_provoking_vertex: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceProvokingVertexPropertiesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PROVOKING_VERTEX_PROPERTIES_EXT,
+                p_next: *mut c_void,
+                provoking_vertex_mode_per_pipeline: crate::data::Bool32,
+                transform_feedback_preserves_triangle_fan_provoking_vertex: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PipelineRasterizationProvokingVertexStateCreateInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_RASTERIZATION_PROVOKING_VERTEX_STATE_CREATE_INFO_EXT,
+                p_next: *const c_void,
+                provoking_vertex_mode: crate::data::ProvokingVertexModeEXT,
+        }
+    }
+    impl_aggregate! {
+        struct CuModuleCreateInfoNVX {
+                s_type: crate::data::StructureType = crate::data::StructureType::CU_MODULE_CREATE_INFO_NVX,
+                p_next: *const c_void,
+                data_size: usize,
+                p_data: *const c_void,
+        }
+    }
+    impl_aggregate! {
+        struct CuFunctionCreateInfoNVX {
+                s_type: crate::data::StructureType = crate::data::StructureType::CU_FUNCTION_CREATE_INFO_NVX,
+                p_next: *const c_void,
+                module: crate::data::CuModuleNVX,
+                p_name: *const c_char,
+        }
+    }
+    impl_aggregate! {
+        struct CuLaunchInfoNVX {
+                s_type: crate::data::StructureType = crate::data::StructureType::CU_LAUNCH_INFO_NVX,
+                p_next: *const c_void,
+                function: crate::data::CuFunctionNVX,
+                grid_dim_x: u32,
+                grid_dim_y: u32,
+                grid_dim_z: u32,
+                block_dim_x: u32,
+                block_dim_y: u32,
+                block_dim_z: u32,
+                shared_mem_bytes: u32,
+                param_count: usize,
+                p_params: *const *const c_void,
+                extra_count: usize,
+                p_extras: *const *const c_void,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceShaderIntegerDotProductFeatures {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SHADER_INTEGER_DOT_PRODUCT_FEATURES,
+                p_next: *mut c_void,
+                shader_integer_dot_product: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceShaderIntegerDotProductProperties {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SHADER_INTEGER_DOT_PRODUCT_PROPERTIES,
+                p_next: *mut c_void,
+                integer_dot_product_8_bit_unsigned_accelerated: crate::data::Bool32,
+                integer_dot_product_8_bit_signed_accelerated: crate::data::Bool32,
+                integer_dot_product_8_bit_mixed_signedness_accelerated: crate::data::Bool32,
+                integer_dot_product_4x_8_bit_packed_unsigned_accelerated: crate::data::Bool32,
+                integer_dot_product_4x_8_bit_packed_signed_accelerated: crate::data::Bool32,
+                integer_dot_product_4x_8_bit_packed_mixed_signedness_accelerated: crate::data::Bool32,
+                integer_dot_product_16_bit_unsigned_accelerated: crate::data::Bool32,
+                integer_dot_product_16_bit_signed_accelerated: crate::data::Bool32,
+                integer_dot_product_16_bit_mixed_signedness_accelerated: crate::data::Bool32,
+                integer_dot_product_32_bit_unsigned_accelerated: crate::data::Bool32,
+                integer_dot_product_32_bit_signed_accelerated: crate::data::Bool32,
+                integer_dot_product_32_bit_mixed_signedness_accelerated: crate::data::Bool32,
+                integer_dot_product_64_bit_unsigned_accelerated: crate::data::Bool32,
+                integer_dot_product_64_bit_signed_accelerated: crate::data::Bool32,
+                integer_dot_product_64_bit_mixed_signedness_accelerated: crate::data::Bool32,
+                integer_dot_product_accumulating_saturating_8_bit_unsigned_accelerated: crate::data::Bool32,
+                integer_dot_product_accumulating_saturating_8_bit_signed_accelerated: crate::data::Bool32,
+                integer_dot_product_accumulating_saturating_8_bit_mixed_signedness_accelerated: crate::data::Bool32,
+                integer_dot_product_accumulating_saturating_4x_8_bit_packed_unsigned_accelerated: crate::data::Bool32,
+                integer_dot_product_accumulating_saturating_4x_8_bit_packed_signed_accelerated: crate::data::Bool32,
+                integer_dot_product_accumulating_saturating_4x_8_bit_packed_mixed_signedness_accelerated: crate::data::Bool32,
+                integer_dot_product_accumulating_saturating_16_bit_unsigned_accelerated: crate::data::Bool32,
+                integer_dot_product_accumulating_saturating_16_bit_signed_accelerated: crate::data::Bool32,
+                integer_dot_product_accumulating_saturating_16_bit_mixed_signedness_accelerated: crate::data::Bool32,
+                integer_dot_product_accumulating_saturating_32_bit_unsigned_accelerated: crate::data::Bool32,
+                integer_dot_product_accumulating_saturating_32_bit_signed_accelerated: crate::data::Bool32,
+                integer_dot_product_accumulating_saturating_32_bit_mixed_signedness_accelerated: crate::data::Bool32,
+                integer_dot_product_accumulating_saturating_64_bit_unsigned_accelerated: crate::data::Bool32,
+                integer_dot_product_accumulating_saturating_64_bit_signed_accelerated: crate::data::Bool32,
+                integer_dot_product_accumulating_saturating_64_bit_mixed_signedness_accelerated: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceDrmPropertiesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_DRM_PROPERTIES_EXT,
+                p_next: *mut c_void,
+                has_primary: crate::data::Bool32,
+                has_render: crate::data::Bool32,
+                primary_major: i64,
+                primary_minor: i64,
+                render_major: i64,
+                render_minor: i64,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceFragmentShaderBarycentricFeaturesKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_FRAGMENT_SHADER_BARYCENTRIC_FEATURES_KHR,
+                p_next: *mut c_void,
+                fragment_shader_barycentric: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceFragmentShaderBarycentricPropertiesKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_FRAGMENT_SHADER_BARYCENTRIC_PROPERTIES_KHR,
+                p_next: *mut c_void,
+                tri_strip_vertex_order_independent_of_provoking_vertex: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceRayTracingMotionBlurFeaturesNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_RAY_TRACING_MOTION_BLUR_FEATURES_NV,
+                p_next: *mut c_void,
+                ray_tracing_motion_blur: crate::data::Bool32,
+                ray_tracing_motion_blur_pipeline_trace_rays_indirect: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct AccelerationStructureGeometryMotionTrianglesDataNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::ACCELERATION_STRUCTURE_GEOMETRY_MOTION_TRIANGLES_DATA_NV,
+                p_next: *const c_void,
+                vertex_data: crate::data::DeviceOrHostAddressConstKHR,
+        }
+    }
+    impl_aggregate! {
+        struct AccelerationStructureMotionInfoNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::ACCELERATION_STRUCTURE_MOTION_INFO_NV,
+                p_next: *const c_void,
+                max_instances: u32,
+                flags: crate::data::AccelerationStructureMotionInfoFlagsNV,
+        }
+    }
+    impl_aggregate! {
+        struct SRTDataNV {
+                sx: c_float,
+                a: c_float,
+                b: c_float,
+                pvx: c_float,
+                sy: c_float,
+                c: c_float,
+                pvy: c_float,
+                sz: c_float,
+                pvz: c_float,
+                qx: c_float,
+                qy: c_float,
+                qz: c_float,
+                qw: c_float,
+                tx: c_float,
+                ty: c_float,
+                tz: c_float,
+        }
+    }
+    impl_aggregate! {
+        struct AccelerationStructureSRTMotionInstanceNV {
+                transform_t_0: crate::data::SRTDataNV,
+                transform_t_1: crate::data::SRTDataNV,
+                instance_custom_index: u32,
+                mask: u32,
+                instance_shader_binding_table_record_offset: u32,
+                flags: crate::data::GeometryInstanceFlagsKHR,
+                acceleration_structure_reference: u64,
+        }
+    }
+    impl_aggregate! {
+        struct AccelerationStructureMatrixMotionInstanceNV {
+                transform_t_0: crate::data::TransformMatrixKHR,
+                transform_t_1: crate::data::TransformMatrixKHR,
+                instance_custom_index: u32,
+                mask: u32,
+                instance_shader_binding_table_record_offset: u32,
+                flags: crate::data::GeometryInstanceFlagsKHR,
+                acceleration_structure_reference: u64,
+        }
+    }
+    impl_aggregate! {
+        union AccelerationStructureMotionInstanceDataNV {
+                static_instance: crate::data::AccelerationStructureInstanceKHR,
+                matrix_motion_instance: crate::data::AccelerationStructureMatrixMotionInstanceNV,
+                srt_motion_instance: crate::data::AccelerationStructureSRTMotionInstanceNV,
+        }
+    }
+    impl_aggregate! {
+        struct AccelerationStructureMotionInstanceNV {
+                ty: crate::data::AccelerationStructureMotionInstanceTypeNV,
+                flags: crate::data::AccelerationStructureMotionInstanceFlagsNV,
+                data: crate::data::AccelerationStructureMotionInstanceDataNV,
+        }
+    }
+    impl_aggregate! {
+        struct MemoryGetRemoteAddressInfoNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::MEMORY_GET_REMOTE_ADDRESS_INFO_NV,
+                p_next: *const c_void,
+                memory: crate::data::DeviceMemory,
+                handle_type: crate::data::ExternalMemoryHandleTypeFlagBits,
+        }
+    }
+    impl_aggregate! {
+        struct ImportMemoryBufferCollectionFUCHSIA {
+                s_type: crate::data::StructureType = crate::data::StructureType::IMPORT_MEMORY_BUFFER_COLLECTION_FUCHSIA,
+                p_next: *const c_void,
+                collection: crate::data::BufferCollectionFUCHSIA,
+                index: u32,
+        }
+    }
+    impl_aggregate! {
+        struct BufferCollectionImageCreateInfoFUCHSIA {
+                s_type: crate::data::StructureType = crate::data::StructureType::BUFFER_COLLECTION_IMAGE_CREATE_INFO_FUCHSIA,
+                p_next: *const c_void,
+                collection: crate::data::BufferCollectionFUCHSIA,
+                index: u32,
+        }
+    }
+    impl_aggregate! {
+        struct BufferCollectionBufferCreateInfoFUCHSIA {
+                s_type: crate::data::StructureType = crate::data::StructureType::BUFFER_COLLECTION_BUFFER_CREATE_INFO_FUCHSIA,
+                p_next: *const c_void,
+                collection: crate::data::BufferCollectionFUCHSIA,
+                index: u32,
+        }
+    }
+    impl_aggregate! {
+        struct BufferCollectionPropertiesFUCHSIA {
+                s_type: crate::data::StructureType = crate::data::StructureType::BUFFER_COLLECTION_PROPERTIES_FUCHSIA,
+                p_next: *mut c_void,
+                memory_type_bits: u32,
+                buffer_count: u32,
+                create_info_index: u32,
+                sysmem_pixel_format: u64,
+                format_features: crate::data::FormatFeatureFlags,
+                sysmem_color_space_index: crate::data::SysmemColorSpaceFUCHSIA,
+                sampler_ycbcr_conversion_components: crate::data::ComponentMapping,
+                suggested_ycbcr_model: crate::data::SamplerYcbcrModelConversion,
+                suggested_ycbcr_range: crate::data::SamplerYcbcrRange,
+                suggested_x_chroma_offset: crate::data::ChromaLocation,
+                suggested_y_chroma_offset: crate::data::ChromaLocation,
+        }
+    }
+    impl_aggregate! {
+        struct BufferConstraintsInfoFUCHSIA {
+                s_type: crate::data::StructureType = crate::data::StructureType::BUFFER_CONSTRAINTS_INFO_FUCHSIA,
+                p_next: *const c_void,
+                create_info: crate::data::BufferCreateInfo,
+                required_format_features: crate::data::FormatFeatureFlags,
+                buffer_collection_constraints: crate::data::BufferCollectionConstraintsInfoFUCHSIA,
+        }
+    }
+    impl_aggregate! {
+        struct SysmemColorSpaceFUCHSIA {
+                s_type: crate::data::StructureType = crate::data::StructureType::SYSMEM_COLOR_SPACE_FUCHSIA,
+                p_next: *const c_void,
+                color_space: u32,
+        }
+    }
+    impl_aggregate! {
+        struct ImageFormatConstraintsInfoFUCHSIA {
+                s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_FORMAT_CONSTRAINTS_INFO_FUCHSIA,
+                p_next: *const c_void,
+                image_create_info: crate::data::ImageCreateInfo,
+                required_format_features: crate::data::FormatFeatureFlags,
+                flags: crate::data::ImageFormatConstraintsFlagsFUCHSIA,
+                sysmem_pixel_format: u64,
+                color_space_count: u32,
+                p_color_spaces: *const crate::data::SysmemColorSpaceFUCHSIA,
+        }
+    }
+    impl_aggregate! {
+        struct ImageConstraintsInfoFUCHSIA {
+                s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_CONSTRAINTS_INFO_FUCHSIA,
+                p_next: *const c_void,
+                format_constraints_count: u32,
+                p_format_constraints: *const crate::data::ImageFormatConstraintsInfoFUCHSIA,
+                buffer_collection_constraints: crate::data::BufferCollectionConstraintsInfoFUCHSIA,
+                flags: crate::data::ImageConstraintsInfoFlagsFUCHSIA,
+        }
+    }
+    impl_aggregate! {
+        struct BufferCollectionConstraintsInfoFUCHSIA {
+                s_type: crate::data::StructureType = crate::data::StructureType::BUFFER_COLLECTION_CONSTRAINTS_INFO_FUCHSIA,
+                p_next: *const c_void,
+                min_buffer_count: u32,
+                max_buffer_count: u32,
+                min_buffer_count_for_camping: u32,
+                min_buffer_count_for_dedicated_slack: u32,
+                min_buffer_count_for_shared_slack: u32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceRGBA10X6FormatsFeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_RGBA10X6_FORMATS_FEATURES_EXT,
+                p_next: *mut c_void,
+                format_rgba_10x_6_without_y_cb_cr_sampler: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct FormatProperties3 {
+                s_type: crate::data::StructureType = crate::data::StructureType::FORMAT_PROPERTIES_3,
+                p_next: *mut c_void,
+                linear_tiling_features: crate::data::FormatFeatureFlags2,
+                optimal_tiling_features: crate::data::FormatFeatureFlags2,
+                buffer_features: crate::data::FormatFeatureFlags2,
+        }
+    }
+    impl_aggregate! {
+        struct DrmFormatModifierPropertiesList2EXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::DRM_FORMAT_MODIFIER_PROPERTIES_LIST_2_EXT,
+                p_next: *mut c_void,
+                drm_format_modifier_count: u32,
+                p_drm_format_modifier_properties: *mut crate::data::DrmFormatModifierProperties2EXT,
+        }
+    }
+    impl_aggregate! {
+        struct DrmFormatModifierProperties2EXT {
+                drm_format_modifier: u64,
+                drm_format_modifier_plane_count: u32,
+                drm_format_modifier_tiling_features: crate::data::FormatFeatureFlags2,
+        }
+    }
+    impl_aggregate! {
+        struct AndroidHardwareBufferFormatProperties2ANDROID {
+                s_type: crate::data::StructureType = crate::data::StructureType::ANDROID_HARDWARE_BUFFER_FORMAT_PROPERTIES_2_ANDROID,
+                p_next: *mut c_void,
+                format: crate::data::Format,
+                external_format: u64,
+                format_features: crate::data::FormatFeatureFlags2,
+                sampler_ycbcr_conversion_components: crate::data::ComponentMapping,
+                suggested_ycbcr_model: crate::data::SamplerYcbcrModelConversion,
+                suggested_ycbcr_range: crate::data::SamplerYcbcrRange,
+                suggested_x_chroma_offset: crate::data::ChromaLocation,
+                suggested_y_chroma_offset: crate::data::ChromaLocation,
+        }
+    }
+    impl_aggregate! {
+        struct PipelineRenderingCreateInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_RENDERING_CREATE_INFO,
+                p_next: *const c_void,
+                view_mask: u32,
+                color_attachment_count: u32,
+                p_color_attachment_formats: *const crate::data::Format,
+                depth_attachment_format: crate::data::Format,
+                stencil_attachment_format: crate::data::Format,
+        }
+    }
+    impl_aggregate! {
+        struct RenderingInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::RENDERING_INFO,
+                p_next: *const c_void,
+                flags: crate::data::RenderingFlags,
+                render_area: crate::data::Rect2D,
+                layer_count: u32,
+                view_mask: u32,
+                color_attachment_count: u32,
+                p_color_attachments: *const crate::data::RenderingAttachmentInfo,
+                p_depth_attachment: *const crate::data::RenderingAttachmentInfo,
+                p_stencil_attachment: *const crate::data::RenderingAttachmentInfo,
+        }
+    }
+    impl_aggregate! {
+        struct RenderingAttachmentInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::RENDERING_ATTACHMENT_INFO,
+                p_next: *const c_void,
+                image_view: crate::data::ImageView,
+                image_layout: crate::data::ImageLayout,
+                resolve_mode: crate::data::ResolveModeFlagBits,
+                resolve_image_view: crate::data::ImageView,
+                resolve_image_layout: crate::data::ImageLayout,
+                load_op: crate::data::AttachmentLoadOp,
+                store_op: crate::data::AttachmentStoreOp,
+                clear_value: crate::data::ClearValue,
+        }
+    }
+    impl_aggregate! {
+        struct RenderingFragmentShadingRateAttachmentInfoKHR {
+                s_type: crate::data::StructureType = crate::data::StructureType::RENDERING_FRAGMENT_SHADING_RATE_ATTACHMENT_INFO_KHR,
+                p_next: *const c_void,
+                image_view: crate::data::ImageView,
+                image_layout: crate::data::ImageLayout,
+                shading_rate_attachment_texel_size: crate::data::Extent2D,
+        }
+    }
+    impl_aggregate! {
+        struct RenderingFragmentDensityMapAttachmentInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::RENDERING_FRAGMENT_DENSITY_MAP_ATTACHMENT_INFO_EXT,
+                p_next: *const c_void,
+                image_view: crate::data::ImageView,
+                image_layout: crate::data::ImageLayout,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceDynamicRenderingFeatures {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES,
+                p_next: *mut c_void,
+                dynamic_rendering: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct CommandBufferInheritanceRenderingInfo {
+                s_type: crate::data::StructureType = crate::data::StructureType::COMMAND_BUFFER_INHERITANCE_RENDERING_INFO,
+                p_next: *const c_void,
+                flags: crate::data::RenderingFlags,
+                view_mask: u32,
+                color_attachment_count: u32,
+                p_color_attachment_formats: *const crate::data::Format,
+                depth_attachment_format: crate::data::Format,
+                stencil_attachment_format: crate::data::Format,
+                rasterization_samples: crate::data::SampleCountFlagBits,
+        }
+    }
+    impl_aggregate! {
+        struct AttachmentSampleCountInfoAMD {
+                s_type: crate::data::StructureType = crate::data::StructureType::ATTACHMENT_SAMPLE_COUNT_INFO_AMD,
+                p_next: *const c_void,
+                color_attachment_count: u32,
+                p_color_attachment_samples: *const crate::data::SampleCountFlagBits,
+                depth_stencil_attachment_samples: crate::data::SampleCountFlagBits,
+        }
+    }
+    impl_aggregate! {
+        struct MultiviewPerViewAttributesInfoNVX {
+                s_type: crate::data::StructureType = crate::data::StructureType::MULTIVIEW_PER_VIEW_ATTRIBUTES_INFO_NVX,
+                p_next: *const c_void,
+                per_view_attributes: crate::data::Bool32,
+                per_view_attributes_position_x_only: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceImageViewMinLodFeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_IMAGE_VIEW_MIN_LOD_FEATURES_EXT,
+                p_next: *mut c_void,
+                min_lod: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct ImageViewMinLodCreateInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_VIEW_MIN_LOD_CREATE_INFO_EXT,
+                p_next: *const c_void,
+                min_lod: c_float,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceRasterizationOrderAttachmentAccessFeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_RASTERIZATION_ORDER_ATTACHMENT_ACCESS_FEATURES_EXT,
+                p_next: *mut c_void,
+                rasterization_order_color_attachment_access: crate::data::Bool32,
+                rasterization_order_depth_attachment_access: crate::data::Bool32,
+                rasterization_order_stencil_attachment_access: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceLinearColorAttachmentFeaturesNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_LINEAR_COLOR_ATTACHMENT_FEATURES_NV,
+                p_next: *mut c_void,
+                linear_color_attachment: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceGraphicsPipelineLibraryFeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_GRAPHICS_PIPELINE_LIBRARY_FEATURES_EXT,
+                p_next: *mut c_void,
+                graphics_pipeline_library: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceGraphicsPipelineLibraryPropertiesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_GRAPHICS_PIPELINE_LIBRARY_PROPERTIES_EXT,
+                p_next: *mut c_void,
+                graphics_pipeline_library_fast_linking: crate::data::Bool32,
+                graphics_pipeline_library_independent_interpolation_decoration: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct GraphicsPipelineLibraryCreateInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::GRAPHICS_PIPELINE_LIBRARY_CREATE_INFO_EXT,
+                p_next: *mut c_void,
+                flags: crate::data::GraphicsPipelineLibraryFlagsEXT,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceDescriptorSetHostMappingFeaturesVALVE {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_DESCRIPTOR_SET_HOST_MAPPING_FEATURES_VALVE,
+                p_next: *mut c_void,
+                descriptor_set_host_mapping: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct DescriptorSetBindingReferenceVALVE {
+                s_type: crate::data::StructureType = crate::data::StructureType::DESCRIPTOR_SET_BINDING_REFERENCE_VALVE,
+                p_next: *const c_void,
+                descriptor_set_layout: crate::data::DescriptorSetLayout,
+                binding: u32,
+        }
+    }
+    impl_aggregate! {
+        struct DescriptorSetLayoutHostMappingInfoVALVE {
+                s_type: crate::data::StructureType = crate::data::StructureType::DESCRIPTOR_SET_LAYOUT_HOST_MAPPING_INFO_VALVE,
+                p_next: *mut c_void,
+                descriptor_offset: usize,
+                descriptor_size: u32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceShaderModuleIdentifierFeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SHADER_MODULE_IDENTIFIER_FEATURES_EXT,
+                p_next: *mut c_void,
+                shader_module_identifier: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceShaderModuleIdentifierPropertiesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SHADER_MODULE_IDENTIFIER_PROPERTIES_EXT,
+                p_next: *mut c_void,
+                shader_module_identifier_algorithm_uuid: [u8; 16],
+        }
+    }
+    impl_aggregate! {
+        struct PipelineShaderStageModuleIdentifierCreateInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_SHADER_STAGE_MODULE_IDENTIFIER_CREATE_INFO_EXT,
+                p_next: *const c_void,
+                identifier_size: u32,
+                p_identifier: *const u8,
+        }
+    }
+    impl_aggregate! {
+        struct ShaderModuleIdentifierEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::SHADER_MODULE_IDENTIFIER_EXT,
+                p_next: *mut c_void,
+                identifier_size: u32,
+                identifier: [u8; 32],
+        }
+    }
+    impl_aggregate! {
+        struct ImageCompressionControlEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_COMPRESSION_CONTROL_EXT,
+                p_next: *const c_void,
+                flags: crate::data::ImageCompressionFlagsEXT,
+                compression_control_plane_count: u32,
+                p_fixed_rate_flags: *mut crate::data::ImageCompressionFixedRateFlagsEXT,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceImageCompressionControlFeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_IMAGE_COMPRESSION_CONTROL_FEATURES_EXT,
+                p_next: *mut c_void,
+                image_compression_control: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct ImageCompressionPropertiesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_COMPRESSION_PROPERTIES_EXT,
+                p_next: *mut c_void,
+                image_compression_flags: crate::data::ImageCompressionFlagsEXT,
+                image_compression_fixed_rate_flags: crate::data::ImageCompressionFixedRateFlagsEXT,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceImageCompressionControlSwapchainFeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_IMAGE_COMPRESSION_CONTROL_SWAPCHAIN_FEATURES_EXT,
+                p_next: *mut c_void,
+                image_compression_control_swapchain: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct ImageSubresource2EXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_SUBRESOURCE_2_EXT,
+                p_next: *mut c_void,
+                image_subresource: crate::data::ImageSubresource,
+        }
+    }
+    impl_aggregate! {
+        struct SubresourceLayout2EXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::SUBRESOURCE_LAYOUT_2_EXT,
+                p_next: *mut c_void,
+                subresource_layout: crate::data::SubresourceLayout,
+        }
+    }
+    impl_aggregate! {
+        struct RenderPassCreationControlEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::RENDER_PASS_CREATION_CONTROL_EXT,
+                p_next: *const c_void,
+                disallow_merging: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct RenderPassCreationFeedbackInfoEXT {
+                post_merge_subpass_count: u32,
+        }
+    }
+    impl_aggregate! {
+        struct RenderPassCreationFeedbackCreateInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::RENDER_PASS_CREATION_FEEDBACK_CREATE_INFO_EXT,
+                p_next: *const c_void,
+                p_render_pass_feedback: *mut crate::data::RenderPassCreationFeedbackInfoEXT,
+        }
+    }
+    impl_aggregate! {
+        struct RenderPassSubpassFeedbackInfoEXT {
+                subpass_merge_status: crate::data::SubpassMergeStatusEXT,
+                description: [c_char; 256],
+                post_merge_index: u32,
+        }
+    }
+    impl_aggregate! {
+        struct RenderPassSubpassFeedbackCreateInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::RENDER_PASS_SUBPASS_FEEDBACK_CREATE_INFO_EXT,
+                p_next: *const c_void,
+                p_subpass_feedback: *mut crate::data::RenderPassSubpassFeedbackInfoEXT,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceSubpassMergeFeedbackFeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SUBPASS_MERGE_FEEDBACK_FEATURES_EXT,
+                p_next: *mut c_void,
+                subpass_merge_feedback: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct MicromapBuildInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::MICROMAP_BUILD_INFO_EXT,
+                p_next: *const c_void,
+                ty: crate::data::MicromapTypeEXT,
+                flags: crate::data::BuildMicromapFlagsEXT,
+                mode: crate::data::BuildMicromapModeEXT,
+                dst_micromap: crate::data::MicromapEXT,
+                usage_counts_count: u32,
+                p_usage_counts: *const crate::data::MicromapUsageEXT,
+                pp_usage_counts: *const *const crate::data::MicromapUsageEXT,
+                data: crate::data::DeviceOrHostAddressConstKHR,
+                scratch_data: crate::data::DeviceOrHostAddressKHR,
+                triangle_array: crate::data::DeviceOrHostAddressConstKHR,
+                triangle_array_stride: crate::data::DeviceSize,
+        }
+    }
+    impl_aggregate! {
+        struct MicromapCreateInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::MICROMAP_CREATE_INFO_EXT,
+                p_next: *const c_void,
+                create_flags: crate::data::MicromapCreateFlagsEXT,
+                buffer: crate::data::Buffer,
+                offset: crate::data::DeviceSize,
+                size: crate::data::DeviceSize,
+                ty: crate::data::MicromapTypeEXT,
+                device_address: crate::data::DeviceAddress,
+        }
+    }
+    impl_aggregate! {
+        struct MicromapVersionInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::MICROMAP_VERSION_INFO_EXT,
+                p_next: *const c_void,
+                p_version_data: *const u8,
+        }
+    }
+    impl_aggregate! {
+        struct CopyMicromapInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::COPY_MICROMAP_INFO_EXT,
+                p_next: *const c_void,
+                src: crate::data::MicromapEXT,
+                dst: crate::data::MicromapEXT,
+                mode: crate::data::CopyMicromapModeEXT,
+        }
+    }
+    impl_aggregate! {
+        struct CopyMicromapToMemoryInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::COPY_MICROMAP_TO_MEMORY_INFO_EXT,
+                p_next: *const c_void,
+                src: crate::data::MicromapEXT,
+                dst: crate::data::DeviceOrHostAddressKHR,
+                mode: crate::data::CopyMicromapModeEXT,
+        }
+    }
+    impl_aggregate! {
+        struct CopyMemoryToMicromapInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::COPY_MEMORY_TO_MICROMAP_INFO_EXT,
+                p_next: *const c_void,
+                src: crate::data::DeviceOrHostAddressConstKHR,
+                dst: crate::data::MicromapEXT,
+                mode: crate::data::CopyMicromapModeEXT,
+        }
+    }
+    impl_aggregate! {
+        struct MicromapBuildSizesInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::MICROMAP_BUILD_SIZES_INFO_EXT,
+                p_next: *const c_void,
+                micromap_size: crate::data::DeviceSize,
+                build_scratch_size: crate::data::DeviceSize,
+                discardable: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct MicromapUsageEXT {
+                count: u32,
+                subdivision_level: u32,
+                format: u32,
+        }
+    }
+    impl_aggregate! {
+        struct MicromapTriangleEXT {
+                data_offset: u32,
+                subdivision_level: u16,
+                format: u16,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceOpacityMicromapFeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_OPACITY_MICROMAP_FEATURES_EXT,
+                p_next: *mut c_void,
+                micromap: crate::data::Bool32,
+                micromap_capture_replay: crate::data::Bool32,
+                micromap_host_commands: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceOpacityMicromapPropertiesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_OPACITY_MICROMAP_PROPERTIES_EXT,
+                p_next: *mut c_void,
+                max_opacity_2_state_subdivision_level: u32,
+                max_opacity_4_state_subdivision_level: u32,
+        }
+    }
+    impl_aggregate! {
+        struct AccelerationStructureTrianglesOpacityMicromapEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::ACCELERATION_STRUCTURE_TRIANGLES_OPACITY_MICROMAP_EXT,
+                p_next: *mut c_void,
+                index_type: crate::data::IndexType,
+                index_buffer: crate::data::DeviceOrHostAddressConstKHR,
+                index_stride: crate::data::DeviceSize,
+                base_triangle: u32,
+                usage_counts_count: u32,
+                p_usage_counts: *const crate::data::MicromapUsageEXT,
+                pp_usage_counts: *const *const crate::data::MicromapUsageEXT,
+                micromap: crate::data::MicromapEXT,
+        }
+    }
+    impl_aggregate! {
+        struct PipelinePropertiesIdentifierEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_PROPERTIES_IDENTIFIER_EXT,
+                p_next: *mut c_void,
+                pipeline_identifier: [u8; 16],
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDevicePipelinePropertiesFeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PIPELINE_PROPERTIES_FEATURES_EXT,
+                p_next: *mut c_void,
+                pipeline_properties_identifier: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceShaderEarlyAndLateFragmentTestsFeaturesAMD {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_SHADER_EARLY_AND_LATE_FRAGMENT_TESTS_FEATURES_AMD,
+                p_next: *mut c_void,
+                shader_early_and_late_fragment_tests: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct ExportMetalObjectCreateInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::EXPORT_METAL_OBJECT_CREATE_INFO_EXT,
+                p_next: *const c_void,
+                export_object_type: crate::data::ExportMetalObjectTypeFlagBitsEXT,
+        }
+    }
+    impl_aggregate! {
+        struct ExportMetalObjectsInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::EXPORT_METAL_OBJECTS_INFO_EXT,
+                p_next: *const c_void,
+        }
+    }
+    impl_aggregate! {
+        struct ExportMetalDeviceInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::EXPORT_METAL_DEVICE_INFO_EXT,
+                p_next: *const c_void,
+                mtl_device: MTLDeviceId,
+        }
+    }
+    impl_aggregate! {
+        struct ExportMetalCommandQueueInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::EXPORT_METAL_COMMAND_QUEUE_INFO_EXT,
+                p_next: *const c_void,
+                queue: crate::data::Queue,
+                mtl_command_queue: MTLCommandQueueId,
+        }
+    }
+    impl_aggregate! {
+        struct ExportMetalBufferInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::EXPORT_METAL_BUFFER_INFO_EXT,
+                p_next: *const c_void,
+                memory: crate::data::DeviceMemory,
+                mtl_buffer: MTLBufferId,
+        }
+    }
+    impl_aggregate! {
+        struct ImportMetalBufferInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::IMPORT_METAL_BUFFER_INFO_EXT,
+                p_next: *const c_void,
+                mtl_buffer: MTLBufferId,
+        }
+    }
+    impl_aggregate! {
+        struct ExportMetalTextureInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::EXPORT_METAL_TEXTURE_INFO_EXT,
+                p_next: *const c_void,
+                image: crate::data::Image,
+                image_view: crate::data::ImageView,
+                buffer_view: crate::data::BufferView,
+                plane: crate::data::ImageAspectFlagBits,
+                mtl_texture: MTLTextureId,
+        }
+    }
+    impl_aggregate! {
+        struct ImportMetalTextureInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::IMPORT_METAL_TEXTURE_INFO_EXT,
+                p_next: *const c_void,
+                plane: crate::data::ImageAspectFlagBits,
+                mtl_texture: MTLTextureId,
+        }
+    }
+    impl_aggregate! {
+        struct ExportMetalIOSurfaceInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::EXPORT_METAL_IO_SURFACE_INFO_EXT,
+                p_next: *const c_void,
+                image: crate::data::Image,
+                io_surface: IOSurfaceRef,
+        }
+    }
+    impl_aggregate! {
+        struct ImportMetalIOSurfaceInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::IMPORT_METAL_IO_SURFACE_INFO_EXT,
+                p_next: *const c_void,
+                io_surface: IOSurfaceRef,
+        }
+    }
+    impl_aggregate! {
+        struct ExportMetalSharedEventInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::EXPORT_METAL_SHARED_EVENT_INFO_EXT,
+                p_next: *const c_void,
+                semaphore: crate::data::Semaphore,
+                event: crate::data::Event,
+                mtl_shared_event: MTLSharedEventId,
+        }
+    }
+    impl_aggregate! {
+        struct ImportMetalSharedEventInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::IMPORT_METAL_SHARED_EVENT_INFO_EXT,
+                p_next: *const c_void,
+                mtl_shared_event: MTLSharedEventId,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceNonSeamlessCubeMapFeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_NON_SEAMLESS_CUBE_MAP_FEATURES_EXT,
+                p_next: *mut c_void,
+                non_seamless_cube_map: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDevicePipelineRobustnessFeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PIPELINE_ROBUSTNESS_FEATURES_EXT,
+                p_next: *mut c_void,
+                pipeline_robustness: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PipelineRobustnessCreateInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PIPELINE_ROBUSTNESS_CREATE_INFO_EXT,
+                p_next: *const c_void,
+                storage_buffers: crate::data::PipelineRobustnessBufferBehaviorEXT,
+                uniform_buffers: crate::data::PipelineRobustnessBufferBehaviorEXT,
+                vertex_inputs: crate::data::PipelineRobustnessBufferBehaviorEXT,
+                images: crate::data::PipelineRobustnessImageBehaviorEXT,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDevicePipelineRobustnessPropertiesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_PIPELINE_ROBUSTNESS_PROPERTIES_EXT,
+                p_next: *mut c_void,
+                default_robustness_storage_buffers: crate::data::PipelineRobustnessBufferBehaviorEXT,
+                default_robustness_uniform_buffers: crate::data::PipelineRobustnessBufferBehaviorEXT,
+                default_robustness_vertex_inputs: crate::data::PipelineRobustnessBufferBehaviorEXT,
+                default_robustness_images: crate::data::PipelineRobustnessImageBehaviorEXT,
+        }
+    }
+    impl_aggregate! {
+        struct ImageViewSampleWeightCreateInfoQCOM {
+                s_type: crate::data::StructureType = crate::data::StructureType::IMAGE_VIEW_SAMPLE_WEIGHT_CREATE_INFO_QCOM,
+                p_next: *const c_void,
+                filter_center: crate::data::Offset2D,
+                filter_size: crate::data::Extent2D,
+                num_phases: u32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceImageProcessingFeaturesQCOM {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_IMAGE_PROCESSING_FEATURES_QCOM,
+                p_next: *mut c_void,
+                texture_sample_weighted: crate::data::Bool32,
+                texture_box_filter: crate::data::Bool32,
+                texture_block_match: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceImageProcessingPropertiesQCOM {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_IMAGE_PROCESSING_PROPERTIES_QCOM,
+                p_next: *mut c_void,
+                max_weight_filter_phases: u32,
+                max_weight_filter_dimension: crate::data::Extent2D,
+                max_block_match_region: crate::data::Extent2D,
+                max_box_filter_block_size: crate::data::Extent2D,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceTilePropertiesFeaturesQCOM {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_TILE_PROPERTIES_FEATURES_QCOM,
+                p_next: *mut c_void,
+                tile_properties: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct TilePropertiesQCOM {
+                s_type: crate::data::StructureType = crate::data::StructureType::TILE_PROPERTIES_QCOM,
+                p_next: *mut c_void,
+                tile_size: crate::data::Extent3D,
+                apron_size: crate::data::Extent2D,
+                origin: crate::data::Offset2D,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceAmigoProfilingFeaturesSEC {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_AMIGO_PROFILING_FEATURES_SEC,
+                p_next: *mut c_void,
+                amigo_profiling: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct AmigoProfilingSubmitInfoSEC {
+                s_type: crate::data::StructureType = crate::data::StructureType::AMIGO_PROFILING_SUBMIT_INFO_SEC,
+                p_next: *const c_void,
+                first_draw_timestamp: u64,
+                swap_buffer_timestamp: u64,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceAttachmentFeedbackLoopLayoutFeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_ATTACHMENT_FEEDBACK_LOOP_LAYOUT_FEATURES_EXT,
+                p_next: *mut c_void,
+                attachment_feedback_loop_layout: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceDepthClampZeroOneFeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_DEPTH_CLAMP_ZERO_ONE_FEATURES_EXT,
+                p_next: *mut c_void,
+                depth_clamp_zero_one: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceAddressBindingReportFeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_ADDRESS_BINDING_REPORT_FEATURES_EXT,
+                p_next: *mut c_void,
+                report_address_binding: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct DeviceAddressBindingCallbackDataEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_ADDRESS_BINDING_CALLBACK_DATA_EXT,
+                p_next: *mut c_void,
+                flags: crate::data::DeviceAddressBindingFlagsEXT,
+                base_address: crate::data::DeviceAddress,
+                size: crate::data::DeviceSize,
+                binding_type: crate::data::DeviceAddressBindingTypeEXT,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceOpticalFlowFeaturesNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_OPTICAL_FLOW_FEATURES_NV,
+                p_next: *mut c_void,
+                optical_flow: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceOpticalFlowPropertiesNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_OPTICAL_FLOW_PROPERTIES_NV,
+                p_next: *mut c_void,
+                supported_output_grid_sizes: crate::data::OpticalFlowGridSizeFlagsNV,
+                supported_hint_grid_sizes: crate::data::OpticalFlowGridSizeFlagsNV,
+                hint_supported: crate::data::Bool32,
+                cost_supported: crate::data::Bool32,
+                bidirectional_flow_supported: crate::data::Bool32,
+                global_flow_supported: crate::data::Bool32,
+                min_width: u32,
+                min_height: u32,
+                max_width: u32,
+                max_height: u32,
+                max_num_regions_of_interest: u32,
+        }
+    }
+    impl_aggregate! {
+        struct OpticalFlowImageFormatInfoNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::OPTICAL_FLOW_IMAGE_FORMAT_INFO_NV,
+                p_next: *const c_void,
+                usage: crate::data::OpticalFlowUsageFlagsNV,
+        }
+    }
+    impl_aggregate! {
+        struct OpticalFlowImageFormatPropertiesNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::OPTICAL_FLOW_IMAGE_FORMAT_PROPERTIES_NV,
+                p_next: *const c_void,
+                format: crate::data::Format,
+        }
+    }
+    impl_aggregate! {
+        struct OpticalFlowSessionCreateInfoNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::OPTICAL_FLOW_SESSION_CREATE_INFO_NV,
+                p_next: *mut c_void,
+                width: u32,
+                height: u32,
+                image_format: crate::data::Format,
+                flow_vector_format: crate::data::Format,
+                cost_format: crate::data::Format,
+                output_grid_size: crate::data::OpticalFlowGridSizeFlagsNV,
+                hint_grid_size: crate::data::OpticalFlowGridSizeFlagsNV,
+                performance_level: crate::data::OpticalFlowPerformanceLevelNV,
+                flags: crate::data::OpticalFlowSessionCreateFlagsNV,
+        }
+    }
+    impl_aggregate! {
+        struct OpticalFlowSessionCreatePrivateDataInfoNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::OPTICAL_FLOW_SESSION_CREATE_PRIVATE_DATA_INFO_NV,
+                p_next: *mut c_void,
+                id: u32,
+                size: u32,
+                p_private_data: *const c_void,
+        }
+    }
+    impl_aggregate! {
+        struct OpticalFlowExecuteInfoNV {
+                s_type: crate::data::StructureType = crate::data::StructureType::OPTICAL_FLOW_EXECUTE_INFO_NV,
+                p_next: *mut c_void,
+                flags: crate::data::OpticalFlowExecuteFlagsNV,
+                region_count: u32,
+                p_regions: *const crate::data::Rect2D,
+        }
+    }
+    impl_aggregate! {
+        struct PhysicalDeviceFaultFeaturesEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::PHYSICAL_DEVICE_FAULT_FEATURES_EXT,
+                p_next: *mut c_void,
+                device_fault: crate::data::Bool32,
+                device_fault_vendor_binary: crate::data::Bool32,
+        }
+    }
+    impl_aggregate! {
+        struct DeviceFaultAddressInfoEXT {
+                address_type: crate::data::DeviceFaultAddressTypeEXT,
+                reported_address: crate::data::DeviceAddress,
+                address_precision: crate::data::DeviceSize,
+        }
+    }
+    impl_aggregate! {
+        struct DeviceFaultVendorInfoEXT {
+                description: [c_char; 256],
+                vendor_fault_code: u64,
+                vendor_fault_data: u64,
+        }
+    }
+    impl_aggregate! {
+        struct DeviceFaultCountsEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_FAULT_COUNTS_EXT,
+                p_next: *mut c_void,
+                address_info_count: u32,
+                vendor_info_count: u32,
+                vendor_binary_size: crate::data::DeviceSize,
+        }
+    }
+    impl_aggregate! {
+        struct DeviceFaultInfoEXT {
+                s_type: crate::data::StructureType = crate::data::StructureType::DEVICE_FAULT_INFO_EXT,
+                p_next: *mut c_void,
+                description: [c_char; 256],
+                p_address_infos: *mut crate::data::DeviceFaultAddressInfoEXT,
+                p_vendor_infos: *mut crate::data::DeviceFaultVendorInfoEXT,
+                p_vendor_binary_data: *mut c_void,
+        }
+    }
+    impl_aggregate! {
+        struct DeviceFaultVendorBinaryHeaderVersionOneEXT {
+                header_size: u32,
+                header_version: crate::data::DeviceFaultVendorBinaryHeaderVersionEXT,
+                vendor_id: u32,
+                device_id: u32,
+                driver_version: u32,
+                pipeline_cache_uuid: [u8; 16],
+                application_name_offset: u32,
+                application_version: u32,
+                engine_name_offset: u32,
+        }
+    }
 }
 
 impl_commands! {
@@ -13338,10 +14961,5 @@ impl_externs! {
     ANativeWindow,
     AHardwareBuffer,
     CAMetalLayer,
-    MTLDevice_id,
-    MTLCommandQueue_id,
-    MTLBuffer_id,
-    MTLTexture_id,
-    MTLSharedEvent_id,
-    IOSurfaceRef,
+    IOSurface,
 }

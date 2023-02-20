@@ -1,9 +1,14 @@
 """This module parses the Vulkan XML registry for use by code generators
 and the like.
 """
+from __future__ import annotations
+
+import copy
+from os import name
 import re
 import typing as ty
 from dataclasses import dataclass, field
+from xml.etree.ElementTree import Element
 
 
 ARRAY_SIZES = {
@@ -28,6 +33,15 @@ ARRAY_SIZES = {
     'VK_MAX_SHADER_MODULE_IDENTIFIER_SIZE_EXT': 32,
 }
 
+RENAME = {
+    'MTLDevice_id': 'MTLDeviceId',
+    'MTLCommandQueue_id': 'MTLCommandQueueId',
+    'MTLBuffer_id': 'MTLBufferId',
+    'MTLTexture_id': 'MTLTextureId',
+    'MTLSharedEvent_id': 'MTLSharedEventId',
+}
+
+
 def array_len(len):
     try:
         return int(len)
@@ -35,12 +49,14 @@ def array_len(len):
         return ARRAY_SIZES[len]
 
 
-### Here be C PARSING STUFF
+# Here be C PARSING STUFF
 
 # FYI, these parsers give bogus results if there are any syntax errors
 
 
 class TokenStream:
+    tokens: list[str]
+
     def __init__(self, tokens):
         self.tokens = tokens
 
@@ -61,12 +77,12 @@ class TokenStream:
         self.tokens = self.tokens[1:]
         return res
 
-    def take(self, n):
+    def take(self, n: int):
         res = self.tokens[:n]
         self.tokens = self.tokens[n:]
         return res
 
-    def expect(self, expected):
+    def expect(self, expected: str | list[str]):
         """Removes the given prefix from the stream and raises an error
         if the prefix is not found."""
         if isinstance(expected, str):
@@ -77,7 +93,7 @@ class TokenStream:
         else:
             self.take(len(expected))
 
-    def accept(self, accepted):
+    def accept(self, accepted: str | list[str]):
         """Removes the given prefix from the stream if found."""
         if isinstance(accepted, str):
             accepted = [accepted]
@@ -89,7 +105,8 @@ class TokenStream:
 
 TOKENIZE_REGEX = re.compile(r'\w+|\S')
 
-def tokenize_c(src):
+
+def tokenize_c(src: str) -> TokenStream:
     """Breaks up a string of C code into its component tokens.
 
     Not very accurately of course; it only matches ASCII identifiers and
@@ -98,7 +115,7 @@ def tokenize_c(src):
     return TokenStream(TOKENIZE_REGEX.findall(src))
 
 
-def c_tokens(source):
+def c_tokens(source: str):
     if isinstance(source, str):
         return tokenize_c(source)
     else:
@@ -115,6 +132,7 @@ def parse_c_basic_type(source):
     tokens = c_tokens(source)
     base = None
     qualifiers = []
+    idx = 0
     for idx, token in enumerate(tokens):
         if token in ('const', '*'):
             qualifiers.append(token)
@@ -122,7 +140,9 @@ def parse_c_basic_type(source):
             pass
         elif not base:
             base = token
-        else: break
+        else:
+            break
+    assert name
     tokens.take(idx)
     return TypeExpr(Name.from_ident(base), qualifiers)
 
@@ -170,7 +190,7 @@ def parse_c_func_pointer(source):
     return FuncPointer(Name.from_ident(fp_name), ret, args)
 
 
-### Here be REGISTRY STUFF
+# Here be REGISTRY STUFF
 
 
 def strip_prefix(prefix, name):
@@ -178,6 +198,7 @@ def strip_prefix(prefix, name):
         return name[len(prefix):]
     else:
         return name
+
 
 def strip_suffix(name, suffix):
     if name.endswith(suffix):
@@ -187,6 +208,7 @@ def strip_suffix(name, suffix):
 
 
 TITLE_WORDS_REGEX = re.compile(r'(?<=[a-z])[A-Z]')
+
 
 def title_to_all_caps(title):
     """Converts a title-case string to all caps."""
@@ -203,11 +225,18 @@ class Name:
 
     PREFIX_REGEX = re.compile('^(?:vk|Vk|VK_|PFN_vk)')
 
-    def from_ident(ident):
+    @staticmethod
+    def from_ident(ident: str) -> Name:
+        namespace = ''
+        base = ''
         if m := Name.PREFIX_REGEX.match(ident):
-            return Name(namespace=ident[:m.end()], base=ident[m.end():])
+            namespace = ident[:m.end()]
+            base = ident[m.end():]
         else:
-            return Name(namespace='', base=ident)
+            base = ident
+        if base in RENAME:
+            base = RENAME[base]
+        return Name(namespace=namespace, base=base)
 
 
 @dataclass
@@ -253,6 +282,7 @@ class EnumMember:
 
 VENDOR_TAGS = []
 
+
 def strip_vendor_suffix(name):
     for tag in VENDOR_TAGS:
         if name.endswith(tag):
@@ -271,7 +301,7 @@ class Enum:
     members: ty.List[EnumMember] = field(default_factory=list)
 
     def __post_init__(self):
-        assert self.ty in ('bitmask', 'enum')
+        assert self.ty in ('bitmask', 'bitmask64', 'enum')
         self.prefix = self.get_prefix()
 
     def get_prefix(self):
@@ -303,7 +333,7 @@ class Alias:
 @dataclass
 class Extern:
     name: str
-    header: ty.Optional[str]
+    header: ty.Optional[str] = None
 
     def __post_init__(self):
         assert not self.header or self.header.endswith('.h')
@@ -312,6 +342,7 @@ class Extern:
 def datatype(category):
     def impl_category(self):
         return category
+
     def inner(cls):
         cls.category = impl_category
         return cls
@@ -360,6 +391,24 @@ class Extension:
     level: str
 
 
+# Stuff that's easier to hardcode than to parse
+EXTERNS = [
+    Extern('ANativeWindow'),
+    Extern('AHardwareBuffer'),
+    Extern('CAMetalLayer'),
+    Extern('IOSurface'),
+]
+
+ALIASES = [
+    TypeAlias(Name.from_ident('MTLDeviceId'), Name('', '*mut c_void')),
+    TypeAlias(Name.from_ident('MTLCommandQueueId'), Name('', '*mut c_void')),
+    TypeAlias(Name.from_ident('MTLBufferId'), Name('', '*mut c_void')),
+    TypeAlias(Name.from_ident('MTLTextureId'), Name('', '*mut c_void')),
+    TypeAlias(Name.from_ident('MTLSharedEventId'), Name('', '*mut c_void')),
+    TypeAlias(Name.from_ident('IOSurfaceRef'), Name('', '*mut IOSurface')),
+]
+
+
 def remove_comments(elem):
     for child in elem:
         if child.tag == 'comment':
@@ -405,11 +454,10 @@ class Registry:
     def __init__(self, **kwargs):
         self.builtins = []
         self.enums = {}
-        self.externs = []
-        self.types = []
+        self.externs = copy.deepcopy(EXTERNS)
+        self.types = copy.deepcopy(ALIASES)
         self.commands = []
         self.extensions = []
-
 
     def parse_registry(self, root):
         # N.B. this modifies input
@@ -441,7 +489,6 @@ class Registry:
 
         fill_handle_levels(self.types)
 
-
     def parse_enums(self, elem):
         """Parses enum member definitions."""
         raw_name = elem.attrib['name']
@@ -454,6 +501,8 @@ class Registry:
 
         enum = entry['enum']
         enum.ty = elem.attrib['type']
+        if elem.attrib.get('bitwidth') == '64':
+            enum.ty = 'bitmask64'
 
         for child in elem.findall('enum'):
             name = child.attrib['name']
@@ -471,8 +520,7 @@ class Registry:
 
             enum.add_member(name, value)
 
-
-    def parse_type(self, elem) -> None:
+    def parse_type(self, elem: Element) -> None:
         if elem.tag == 'comment':
             return
         assert elem.tag == 'type'
@@ -497,7 +545,8 @@ class Registry:
                 target = Name.from_ident(ty.text)
                 self.types.append(TypeAlias(name, target))
             else:
-                self.externs.append(Extern(name, header=None))
+                # Remaining cases are hardcoded since the
+                pass
         elif category == 'enum':
             self.parse_enum(elem)
         elif category == 'bitmask':
@@ -511,7 +560,6 @@ class Registry:
         elif category in ('struct', 'union'):
             self.parse_aggregate(elem)
 
-
     def add_enum_stub(self, raw_name):
         """Defines a memberless enum that may get filled in later."""
         assert raw_name not in self.enums
@@ -523,7 +571,6 @@ class Registry:
         self.enums[raw_name] = entry
         return entry
 
-
     def parse_enum(self, elem):
         """Parses an enum type declaration.
 
@@ -531,7 +578,6 @@ class Registry:
         parse_enums method.
         """
         self.add_enum_stub(elem.attrib['name'])
-
 
     def parse_bitmask(self, elem):
         name = elem.find('name').text
@@ -542,11 +588,14 @@ class Registry:
             self.types.append(TypeAlias(enum_name, target))
         except KeyError:
             # Define a memberless placeholder enum
+            if elem.find('type').text == 'VkFlags64':
+                ty = 'bitmask64'
+            else:
+                ty = 'bitmask'
             self.enums[name] = {
-                'enum': Enum(name=enum_name, ty='bitmask'),
+                'enum': Enum(name=enum_name, ty=ty),
                 'aliases': [],
             }
-
 
     def parse_handle(self, elem):
         name = Name.from_ident(elem.find('name').text)
@@ -560,7 +609,6 @@ class Registry:
             assert ty == 'VK_DEFINE_NON_DISPATCHABLE_HANDLE'
 
         self.types.append(Handle(name, parents, dispatchable))
-
 
     def parse_aggregate(self, elem):
         name = Name.from_ident(elem.attrib['name'])
@@ -579,14 +627,12 @@ class Registry:
         category = elem.attrib['category']
         self.types.append(Aggregate(name, members, category))
 
-
     def parse_opaque_type(self, elem):
         name = elem.attrib['name']
         if (requires := elem.get('requires')) and requires != 'vk_platform':
             self.externs.append(Extern(name, header=requires))
         else:
             self.builtins.append(name)
-
 
     def parse_command(self, elem):
         try:
@@ -604,11 +650,9 @@ class Registry:
         command = Command(name=name, ret=ret, args=args)
         self.commands.append(command)
 
-
     def parse_feature(self, elem):
         for child in elem.findall('./require/enum'):
             self.parse_enum_ext(0, child)
-
 
     def parse_extensions(self, elem):
         for ext in elem:
@@ -617,13 +661,11 @@ class Registry:
             for child in ext.findall('./require/enum'):
                 self.parse_enum_ext(base_extnumber, child)
 
-
     def parse_extension(self, elem):
         if elem.get('supported') == 'vulkan':
             name = elem.attrib['name']
             level = elem.attrib['type']
             self.extensions.append(Extension(name, level))
-
 
     def parse_enum_ext(self, base_extnumber, elem):
         try:
@@ -671,7 +713,6 @@ class Registry:
         value *= sign
 
         enum.add_member(name, value)
-
 
     def tree(self):
         """Returns a serialization-friendly version of the registry."""

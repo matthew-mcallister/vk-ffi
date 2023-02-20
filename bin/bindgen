@@ -30,6 +30,7 @@ TITLE_WORDS_REGEX = re.compile(
     r'(?<=[0-9])(?=[A-Z]{2,}$)'
 )
 
+
 def camel_to_snake(ident):
     return TITLE_WORDS_REGEX.sub('_', ident).lower()
 
@@ -39,10 +40,8 @@ class Renderer:
         self.namespace_data = kwargs.get('namespace_data', True)
         self.namespace_pfn = kwargs.get('namespace_pfn', True)
 
-
     def indent(self, lines, count=1):
         return (count * self.indent_str + line for line in lines)
-
 
     def render_data(self, ident):
         if self.namespace_data:
@@ -50,13 +49,11 @@ class Renderer:
         else:
             return ident
 
-
     def render_pfn(self, ident):
         if self.namespace_pfn:
             return f'crate::pfn::{ident}'
         else:
             return ident
-
 
     BUILTIN_MAP = {
         'void': 'c_void',
@@ -81,7 +78,6 @@ class Renderer:
         else:
             return self.BUILTIN_MAP.get(name.base, name.base)
 
-
     def render_quals(self, quals):
         quals = list(reversed(quals))
         res = []
@@ -97,7 +93,6 @@ class Renderer:
                 res.append('*mut')
         return res
 
-
     def render_type_expr(self, expr):
         quals = self.render_quals(expr.qualifiers)
         base = self.render_type_expr_base(expr.base)
@@ -107,7 +102,6 @@ class Renderer:
         else:
             return basic
 
-
     KEYWORD_MAP = {
         'type': 'ty',
     }
@@ -115,12 +109,10 @@ class Renderer:
     def render_var(self, name):
         return camel_to_snake(self.KEYWORD_MAP.get(name, name))
 
-
     def render_decl(self, decl):
         name = self.render_var(decl.name)
         ty = self.render_type_expr(decl.ty)
         return f'{name}: {ty}'
-
 
     def render_func(self, func):
         if any(arg.name is None for arg in func.args):
@@ -134,7 +126,6 @@ class Renderer:
         ret = '' if ret_ty == 'c_void' else ' -> ' + ret_ty
 
         return {'name': func.name.base, 'args': args, 'ret': ret}
-
 
     def render_aggregate(self, agg):
         def default(mem):
@@ -193,14 +184,17 @@ class BindingsVisitor:
           {% endfor %}
         }
 
-        impl_aggregates! {
-          {% for agg in bindings.aggregates %}
-            {{agg['ty']}} {{agg['name']}} {
-              {% for member in agg['members'] %}
-                {{member['decl']}}{{member['default']}},
-              {% endfor %}
-            };
-          {% endfor %}
+        mod aggregates {
+            aggregate_imports!();
+            {% for agg in bindings.aggregates %}
+            impl_aggregate! {
+                {{agg['ty']}} {{agg['name']}} {
+                    {% for member in agg['members'] %}
+                        {{member['decl']}}{{member['default']}},
+                    {% endfor %}
+                }
+            }
+            {% endfor %}
         }
 
         impl_commands! {
@@ -226,12 +220,10 @@ class BindingsVisitor:
         }
     """)
 
-
     AVAILABLE_HEADERS = [
         'X11/Xlib.h',
         'X11/extensions/Xrandr.h',
     ]
-
 
     def __init__(self):
         self.enums = []
@@ -254,10 +246,8 @@ class BindingsVisitor:
             lstrip_blocks=True,
         )
 
-
     def command_is_excised(self, command):
         return any(arg.ty.base.base in self.excised for arg in command.args)
-
 
     def visit(self, reg):
         for extern in reg.externs:
@@ -271,21 +261,18 @@ class BindingsVisitor:
         for extension in reg.extensions:
             self.visit_extension(extension)
 
-
     def visit_extern(self, extern):
         if not extern.header:
             self.externs.append(extern.name)
         elif extern.header not in self.AVAILABLE_HEADERS:
             self.excised.add(extern.name)
 
-
     def visit_extension(self, extension):
         name = strip_prefix('VK_', extension.name).upper() + '_EXTENSION_NAME'
         self.extensions.append({'name': name, 'value': extension.name})
 
-
     def visit_enum(self, enum):
-        assert enum.ty in ('bitmask', 'enum')
+        assert enum.ty in ('bitmask', 'bitmask64', 'enum')
 
         def ensure_valid(ident):
             if ident[0] in '0123456789':
@@ -306,13 +293,11 @@ class BindingsVisitor:
             'members': members,
         })
 
-
     def visit_command(self, command):
         if self.command_is_excised(command):
             # Depends on an external header
             return
         self.commands.append(self.renderer.render_func(command))
-
 
     def visit_type(self, ty):
         category = ty.category()
@@ -327,18 +312,15 @@ class BindingsVisitor:
         else:
             raise ValueError(f'unexpected category: {category}')
 
-
     def visit_alias(self, alias):
         ty = self.renderer.render_type_expr_base(alias.target)
         self.aliases.append({'name': alias.name.base, 'target': ty})
-
 
     def visit_handle(self, handle):
         self.handles.append({
             'name': handle.name.base,
             'disp': handle.dispatchable,
         })
-
 
     def visit_aggregate(self, agg):
         assert agg.ty in ('struct', 'union')
@@ -349,7 +331,6 @@ class BindingsVisitor:
             return
 
         self.aggregates.append(self.renderer.render_aggregate(agg))
-
 
     def render(self, out):
         template = self.env.get_template('bindings.rs')
@@ -456,7 +437,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('-i', '--input', help='Path to vk.xml.')
     parser.add_argument('-o', '--output',
-        help='Output directory for generated sources')
+                        help='Output directory for generated sources')
     args = parser.parse_args()
 
     root = etree.parse(args.input).getroot()
